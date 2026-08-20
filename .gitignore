@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+monitor.log
+*.log
+dashboard_test.js
+dashboard_browser_fix_test.js
+source_health_test.js
+final_dark_blue_test.js
+app_before_*.py
+index_before_*.html

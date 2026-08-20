@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>THE CONSTANT — Live</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;padding:0;background:#07111f!important}.tc-shell{min-height:100vh;padding:1px 0;color:#fff;background:radial-gradient(circle at 18% 18%,rgba(0,200,255,.16),transparent 30%),radial-gradient(circle at 82% 12%,rgba(123,97,255,.14),transparent 28%),linear-gradient(180deg,#081423 0%,#0b1830 45%,#07111f 100%);background-attachment:fixed;}body{color:#fff;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#07111f!important;}font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{max-width:1450px;margin:auto;padding:20px}.header{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;padding:20px 0 26px;border-bottom:1px solid rgba(255,255,255,.08)}.logo{font-size:34px;font-weight:950;color:#00c8ff}.badge{display:inline-block;margin-top:7px;padding:6px 11px;border-radius:999px;color:#51cf66;background:rgba(81,207,102,.1);border:1px solid rgba(81,207,102,.25);font-size:11px;font-weight:800}.clock{font:900 28px ui-monospace,monospace;color:#00c8ff;text-align:right}.clocklabel{font-size:10px;color:rgba(255,255,255,.35);text-align:right}.grid{display:grid;grid-template-columns:2fr 1fr;gap:22px;margin-top:22px}.card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.065);border-radius:19px;padding:22px;margin-bottom:22px}.title{font-size:15px;font-weight:850;color:rgba(255,255,255,.65);margin-bottom:15px}.four{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.stat{text-align:center;padding:15px 9px;border-radius:13px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.045)}.lab{font-size:10px;text-transform:uppercase;color:rgba(255,255,255,.37);font-weight:800}.val{font-size:22px;font-weight:900;margin-top:4px}.cyan{color:#00c8ff}.gold{color:#ffd43b}.red{color:#ff6b6b}.purple{color:#b197fc}.orange{color:#ffa94d}.source,.event,.upcoming-event{padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:11px}.row{display:flex;justify-content:space-between;gap:12px}.ok{color:#51cf66;font-weight:800}.warn{color:#ffd43b;font-weight:800}.err{color:#ff6b6b;font-weight:800}.sub{font-size:10px;color:rgba(255,255,255,.3);margin-top:4px}.claimtable{width:100%;border-collapse:collapse;font-size:11px}.claimtable th,.claimtable td{padding:9px 8px;border-bottom:1px solid rgba(255,255,255,.06);text-align:left}.claimtable th{color:rgba(255,255,255,.42);font-size:9px;text-transform:uppercase}.claimtag{display:inline-block;padding:3px 7px;border-radius:999px;background:rgba(0,200,255,.1);color:#7ee5ff;font-weight:800;font-size:9px}.archivebtn{border:0;background:rgba(255,255,255,.08);color:white;padding:9px 12px;border-radius:9px;font-weight:800;cursor:pointer}.archivepanel{display:none;margin-top:14px}.archivepanel.open{display:block}.announcement-archive-btn{border:0;background:rgba(255,255,255,.08);color:white;padding:9px 12px;border-radius:9px;font-weight:800;cursor:pointer;margin-top:12px}.announcement-archive{display:none;margin-top:12px}.announcement-archive.open{display:block}.linkedin{display:inline-block;text-decoration:none;color:white;background:#0a66c2;padding:11px 16px;border-radius:10px;font-weight:800;font-size:12px}.footer{border-top:1px solid rgba(255,255,255,.06);padding:18px 0;color:rgba(255,255,255,.28);font-size:11px}@media(max-width:1000px){.grid{grid-template-columns:1fr}.four{grid-template-columns:repeat(2,1fr)}}@media(max-width:620px){.four,.three{grid-template-columns:1fr}.header{justify-content:center;text-align:center}.clock,.clocklabel{text-align:center}}
+</style>
+
+<style id="the-constant-dark-blue-fix">
+
+html {
+    min-height: 100%;
+    background: #06152b !important;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0 !important;
+    background:
+        radial-gradient(
+            circle at 18% 12%,
+            rgba(0, 180, 255, 0.10),
+            transparent 32%
+        ),
+        linear-gradient(
+            180deg,
+            #06152b 0%,
+            #081a35 45%,
+            #061326 100%
+        ) !important;
+
+    background-attachment: fixed !important;
+    color: #ffffff;
+}
+
+.tc-shell,
+.wrap {
+    min-height: 100vh;
+    background: transparent !important;
+}
+
+/* Keep cards slightly lighter than page */
+.card {
+    background: rgba(10, 31, 61, 0.88) !important;
+    border: 1px solid rgba(110, 190, 255, 0.14) !important;
+}
+
+/* Prevent white flash / white overscroll on mobile Safari */
+html,
+body {
+    overscroll-behavior: none;
+}
+
+</style>
+
+
+<style id="tc-explanation-style">
+
+.tc-explainer {
+    margin: 10px 0 16px;
+    padding: 11px 14px;
+    border-radius: 11px;
+    background: rgba(0, 200, 255, 0.055);
+    border-left: 3px solid rgba(0, 200, 255, 0.65);
+    color: rgba(255,255,255,0.66);
+    font-size: 11px;
+    line-height: 1.55;
+}
+
+.tc-explainer strong {
+    color: #8be7ff;
+}
+
+.tc-howto {
+    margin: 18px 0 22px;
+    padding: 15px 17px;
+    border-radius: 14px;
+    background: rgba(0, 200, 255, 0.07);
+    border: 1px solid rgba(0, 200, 255, 0.18);
+    color: rgba(255,255,255,0.76);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.tc-howto-title {
+    color: #00c8ff;
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin-bottom: 5px;
+}
+
+</style>
+
+
+<style id="tc-final-dark-blue">
+
+:root {
+    color-scheme: dark;
+}
+
+html,
+body {
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 100% !important;
+    background: #041226 !important;
+}
+
+body {
+    color: #ffffff !important;
+    background:
+        radial-gradient(
+            circle at 18% 8%,
+            rgba(0, 170, 255, 0.09),
+            transparent 30%
+        ),
+        linear-gradient(
+            180deg,
+            #041226 0%,
+            #06172f 48%,
+            #031020 100%
+        ) !important;
+
+    background-attachment: fixed !important;
+}
+
+.tc-shell {
+    min-height: 100vh !important;
+    background: #041226 !important;
+}
+
+.wrap {
+    min-height: 100vh !important;
+    background: transparent !important;
+}
+
+/* Main dashboard panels */
+.card {
+    background: #091d38 !important;
+    border: 1px solid rgba(83, 181, 255, 0.15) !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,.18);
+}
+
+/* Individual figures */
+.stat {
+    background: #07182f !important;
+    border: 1px solid rgba(255,255,255,.055) !important;
+}
+
+/* Explanations */
+.tc-howto,
+.tc-explainer {
+    background: #08203c !important;
+}
+
+/* Tables */
+.claimtable th,
+.claimtable td {
+    background: #07182f !important;
+}
+
+/* Archive controls */
+.archivebtn,
+.announcement-archive-btn {
+    background: #0a2443 !important;
+}
+
+/* Header */
+.header {
+    background: transparent !important;
+}
+
+/* Prevent mobile white overscroll */
+html,
+body,
+.tc-shell {
+    overscroll-behavior: none;
+}
+
+</style>
+
+</head>
+<body><div class="tc-shell">
+
+<div class="tc-howto" id="tc-how-to-read">
+    <div class="tc-howto-title">How to read THE CONSTANT</div>
+
+    <strong>Official data</strong> shows what has actually occurred.
+    <strong>THE CONSTANT counterfactuals</strong> show what the same
+    economic systems would look like under the corrected-wage benchmark.
+
+    Official observations, calculated comparisons and counterfactual
+    estimates are deliberately identified separately throughout this
+    live monitor.
+</div>
+
+<div class="wrap">
+<header class="header"><div><div class="logo">THE CONSTANT</div><span class="badge">● LIVE OFFICIAL SOURCE MONITOR</span></div><div><div id="clock" class="clock">--:--:--</div><div class="clocklabel">Viewer local time</div></div>
+</header>
+
+<section class="card" id="current-verified">
+    <div class="title">CURRENT VERIFIED — 2026 Q3</div>
+
+    <div class="four">
+
+        <div class="stat">
+            <div class="lab">Minimum Wage</div>
+            <div id="mw" class="val cyan">—</div>
+            <div class="sub">per week</div>
+        </div>
+
+        <div class="stat">
+            <div class="lab">Chart C / fortnight</div>
+            <div id="cc" class="val gold">—</div>
+            <div class="sub">current verified</div>
+        </div>
+
+        <div class="stat">
+            <div class="lab">Wage / Chart C</div>
+            <div id="ratio" class="val red">—</div>
+            <div class="sub">current ratio</div>
+        </div>
+
+        <div class="stat">
+            <div class="lab">Weekly Gap</div>
+            <div id="gap" class="val red">—</div>
+            <div class="sub">Chart C weekly − NMW</div>
+        </div>
+
+    </div>
+</section>
+
+<section class="card"><div class="title">OFFICIALLY ANNOUNCED — 20 SEPTEMBER 2026</div><div class="four">
+<div class="stat"><div class="lab">Forward Chart C</div><div id="fcc" class="val gold">—</div></div>
+<div class="stat"><div class="lab">Weekly Chart C</div><div id="fcw" class="val gold">—</div></div>
+<div class="stat"><div class="lab">Forward Gap</div><div id="fgap" class="val red">—</div></div>
+<div class="stat"><div class="lab">Forward Ratio</div><div id="fratio" class="val red">—</div></div></div><div id="fstatus" class="sub" style="margin-top:10px"></div></section>
+<section class="card"><div class="title">CURRENT ECONOMIC INFORMATION SET</div><div class="three">
+<div class="stat"><div class="lab">Monthly CPI</div><div id="cpi" class="val orange">—</div><div id="cpirp" class="sub"></div></div>
+<div class="stat"><div class="lab">Employee LCI</div><div id="lci" class="val purple">—</div></div>
+<div class="stat"><div class="lab">RBA Cash Rate</div><div id="cash" class="val cyan">—</div></div></div></section>
+
+
+<section class="card">
+<div class="title">PRESENTATION TALKING POINTS</div>
+<div class="three">
+<div class="stat"><div class="lab">Structural Gap</div><div id="talkgap" class="val red">23.51%</div><div class="sub">current shortfall relative to Chart C</div></div>
+<div class="stat"><div class="lab">20 Sep Movement</div><div id="talkforward" class="val gold">+$36.80</div><div class="sub">weekly Chart C/gap movement from announced rates</div></div>
+<div class="stat"><div class="lab">Employee LCI</div><div id="talklci" class="val purple">3.70%</div><div class="sub">official annual living-cost movement</div></div>
+</div>
+</section>
+
+<section class="card">
+<div class="title">REAL WAGE & COST PRESSURE</div>
+<div class="four">
+<div class="stat"><div class="lab">NMW Growth</div><div id="wagegrowth" class="val cyan">6.00%</div><div class="sub">current annual wage change</div></div>
+<div class="stat"><div class="lab">Employee LCI</div><div id="leciannual2" class="val purple">3.70%</div><div class="sub">annual</div></div>
+<div class="stat"><div class="lab">Monthly CPI</div><div id="cpi2" class="val orange">3.80%</div><div class="sub">latest annual rate</div></div>
+<div class="stat"><div class="lab">Structural Shortfall</div><div id="shortfall2" class="val red">23.51%</div><div class="sub">THE CONSTANT derived metric</div></div>
+</div>
+<div class="sub" style="margin-top:10px">Current-period wage growth and living-cost movements are shown separately from the long-run structural Chart C shortfall.</div>
+</section>
+
+<section class="card">
+<div class="title">CHART C — CURRENT & ANNOUNCED FORWARD</div>
+<div class="four">
+<div class="stat"><div class="lab">Current</div><div id="legacycurrentcc" class="val gold">$2,627.80</div><div class="sub">per fortnight</div></div>
+<div class="stat"><div class="lab">20 Sep Announced</div><div id="legacyforwardcc" class="val gold">$2,701.40</div><div class="sub">per fortnight</div></div>
+<div class="stat"><div class="lab">Gap Change</div><div id="legacygapchange" class="val red">+$36.80</div><div class="sub">per week</div></div>
+<div class="stat"><div class="lab">Ratio Movement</div><div class="val red"><span id="legacyratiofrom">76.49%</span> → <span id="legacyratioto">74.40%</span></div><div class="sub">current → announced forward</div></div>
+</div>
+</section>
+
+<section class="card">
+<div class="title">HOUSEHOLD LIVING-COST PRESSURE — ABS</div>
+<div class="three">
+<div class="stat"><div class="lab">Employee LCI</div><div id="houseemployee" class="val purple">3.70%</div><div class="sub">annual</div></div>
+<div class="stat"><div class="lab">Pensioner & Beneficiary LCI</div><div id="housepblci" class="val purple">4.60%</div><div class="sub">annual</div></div>
+<div class="stat"><div class="lab">Age Pensioner LCI</div><div id="houseage" class="val purple">4.70%</div><div class="sub">annual</div></div>
+</div>
+<div class="sub" style="margin-top:10px">Official ABS living-cost indexes replace the earlier unvalidated household-impact percentages.</div>
+</section>
+
+<section class="card">
+<div class="title">INDEXATION FRAMEWORK</div>
+<div class="three">
+<div class="stat"><div class="lab">CPI</div><div id="indexcpi" class="val orange">3.80%</div><div class="sub">official inflation measure</div></div>
+<div class="stat"><div class="lab">Pensioner LCI</div><div id="indexpblci" class="val purple">4.60%</div><div class="sub">living-cost safeguard where applicable</div></div>
+<div class="stat"><div class="lab">MTAWE Benchmark</div><div class="val cyan">Statutory</div><div class="sub">benchmarking rule — not a 60/40 weighted formula</div></div>
+</div>
+</section>
+
+<section class="card">
+<div class="title">UPCOMING OFFICIAL EVENTS</div>
+<div id="eventlist"></div>
+</section>
+
+<section class="card">
+<div class="title">LIVE TICKER</div>
+<div class="four">
+<div class="stat"><div class="lab">Chart C</div><div id="tickercc" class="val gold">$2,627.80</div></div>
+<div class="stat"><div class="lab">Weekly Gap</div><div id="tickergap" class="val red">$309.00</div></div>
+<div class="stat"><div class="lab">Employee LCI</div><div id="tickerlci" class="val purple">3.70%</div></div>
+<div class="stat"><div class="lab">RBA Cash Rate</div><div id="tickercash" class="val cyan">4.35%</div></div>
+</div>
+</section>
+<section class="card"><div class="title">LECI — EMPLOYEE LIVING COST INDEX</div>
+<div class="tc-explainer" data-explainer="LECI — EMPLOYEE LIVING COST INDEX">
+<strong>Official ABS measure.</strong>
+        Shows changes in living costs experienced by employee households.
+        It provides an observed cost-pressure measure and is kept separate
+        from THE CONSTANT's wage-counterfactual analysis.
+</div>
+<div class="four">
+<div class="stat"><div class="lab">Annual Employee LCI</div><div id="leciannual" class="val purple">3.70%</div><div class="sub">ABS official</div></div>
+<div class="stat"><div class="lab">Quarterly Employee LCI</div><div class="val purple">1.50%</div><div class="sub">June quarter 2026</div></div>
+<div class="stat"><div class="lab">Index Reference</div><div class="val cyan">100</div><div class="sub">September 2025 quarter</div></div>
+<div class="stat"><div class="lab">Mortgage Interest</div><div class="val orange">+8.20%</div><div class="sub">June quarter 2026</div></div>
+</div><div class="sub" style="margin-top:10px">THE CONSTANT will maintain the official ABS Employee LCI index and compare it with CPI, the National Minimum Wage and Chart C from a common reference period.</div></section>
+
+
+<section class="card">
+<div class="title">BOOK METHODOLOGY — ACTUAL vs CORRECTED WAGE</div>
+<div class="sub" style="margin-bottom:12px">All counterfactual panels below use the same THE CONSTANT book comparison. Official observations remain visually separate from modelled consequences.</div>
+<div class="three">
+<div class="stat"><div class="lab">Actual Minimum Wage</div><div id="bookactualwage" class="val cyan">—</div><div class="sub">official statutory wage</div></div>
+<div class="stat"><div class="lab">Corrected Wage</div><div id="bookcorrectedwage" class="val gold">—</div><div class="sub">current weekly Chart C alignment</div></div>
+<div class="stat"><div class="lab">Weekly Divergence</div><div id="bookwagegap" class="val red">—</div><div class="sub">corrected − actual</div></div>
+</div>
+</section>
+
+<section class="card">
+<div class="title">1. ABS OFFICIAL LIVING COST INDEXES</div>
+<div class="four">
+<div class="stat"><div class="lab">Employee LCI</div><div id="bookabsemp" class="val purple">—</div><div class="sub">annual official ABS</div></div>
+<div class="stat"><div class="lab">Employee LCI Quarter</div><div id="bookabsempq" class="val purple">—</div><div class="sub">quarterly official ABS</div></div>
+<div class="stat"><div class="lab">PBLCI</div><div id="bookabspblci" class="val purple">—</div><div class="sub">annual official ABS</div></div>
+<div class="stat"><div class="lab">Age Pensioner LCI</div><div id="bookabsage" class="val purple">—</div><div class="sub">annual official ABS</div></div>
+</div>
+<div class="sub" style="margin-top:10px">Official ABS observations only. These are not THE CONSTANT LECI/LECIB.</div>
+</section>
+
+<section class="card">
+<div class="title">2. THE CONSTANT LECI / LECIB — LOW-PAID CONSEQUENCE</div>
+<div class="four">
+<div class="stat"><div class="lab">Essential Cost Basket</div><div id="lecibbasket" class="val orange">—</div><div class="sub">book-calibrated weekly basket</div></div>
+<div class="stat"><div class="lab">Actual Wage Burden</div><div id="lecibactual" class="val red">—</div><div class="sub">essential costs / actual wage</div></div>
+<div class="stat"><div class="lab">Corrected Wage Burden</div><div id="lecibcorrected" class="val green">—</div><div class="sub">same costs / corrected wage</div></div>
+<div class="stat"><div class="lab">Burden Difference</div><div id="lecibrelief" class="val gold">—</div><div class="sub">percentage points</div></div>
+</div>
+<div class="sub" style="margin-top:10px">Counterfactual book measure: the living-cost environment is held constant while the wage base changes from actual to corrected.</div>
+</section>
+
+<section class="card">
+<div class="title">3. WORKERS' COMPENSATION — PREMIUMS & FEES</div>
+<div class="tc-explainer" data-explainer="WORKERS">
+Shows how a different wage base can flow through wage-linked workers'
+        compensation premiums and related calculations.
+        Counterfactual differences are model estimates and are
+        <strong>not observed accounting deficits.</strong>
+</div>
+
+<div class="four">
+<div class="stat"><div class="lab">Latest Standardised Rate</div><div id="wcprate" class="val cyan">—</div><div class="sub">Safe Work Australia</div></div>
+<div class="stat"><div class="lab">Actual Wage Premium</div><div id="wcpactual" class="val gold">—</div><div class="sub">annual illustration</div></div>
+<div class="stat"><div class="lab">Corrected Wage Premium</div><div id="wcpcorrected" class="val gold">—</div><div class="sub">annual illustration</div></div>
+<div class="stat"><div class="lab">Premium Difference</div><div id="wcpdiff" class="val red">—</div><div class="sub">annual counterfactual</div></div>
+</div>
+<div class="three" style="margin-top:12px">
+<div class="stat"><div class="lab">Book Conservative 2000–26</div><div id="wcbookcons" class="val red">—</div><div class="sub">cumulative premium difference</div></div>
+<div class="stat"><div class="lab">Book Central 2000–26</div><div id="wcbookcentral" class="val red">—</div><div class="sub">cumulative premium difference</div></div>
+<div class="stat"><div class="lab">Fees</div><div class="val cyan">Monitored</div><div class="sub">jurisdiction-specific scheme charges retained separately</div></div>
+</div>
+</section>
+
+<section class="card">
+<div class="title">4. PAYG, INCOME TAX & MEDICARE — BOOK COMPARISON</div>
+<div class="tc-explainer" data-explainer="PAYG, INCOME TAX & MEDICARE">
+Shows how the actual and corrected wage bases flow through PAYG,
+        annual income tax and the Medicare levy. PAYG is withholding toward
+        tax liability and is <strong>not an additional tax.</strong>
+</div>
+
+
+<div class="three" style="margin-bottom:12px">
+
+<div class="stat">
+<div class="lab">Actual Wage</div>
+<div id="taxactualwage" class="val cyan">—</div>
+<div class="sub">weekly</div>
+</div>
+
+<div class="stat">
+<div class="lab">Corrected Wage</div>
+<div id="taxcorrectedwage" class="val gold">—</div>
+<div class="sub">weekly</div>
+</div>
+
+<div class="stat">
+<div class="lab">Gross Correction</div>
+<div id="taxgrossgap" class="val red">—</div>
+<div class="sub">weekly</div>
+</div>
+
+</div>
+<div class="three" style="margin-bottom:12px">
+
+<div class="stat">
+<div class="lab">PAYG — Actual Wage</div>
+<div id="paygactualweekly" class="val cyan">—</div>
+<div class="sub">weekly withholding estimate</div>
+</div>
+
+<div class="stat">
+<div class="lab">PAYG — Corrected Wage</div>
+<div id="paygcorrectedweekly" class="val gold">—</div>
+<div class="sub">weekly withholding estimate</div>
+</div>
+
+<div class="stat">
+<div class="lab">PAYG Difference</div>
+<div id="paygdiffweekly" class="val red">—</div>
+<div class="sub">weekly withholding difference</div>
+</div>
+
+</div>
+
+<div class="four">
+<div class="stat"><div class="lab">Actual Tax</div><div id="taxactual" class="val orange">—</div><div class="sub">annual</div></div>
+<div class="stat"><div class="lab">Corrected Tax</div><div id="taxcorrected" class="val orange">—</div><div class="sub">annual</div></div>
+<div class="stat"><div class="lab">Actual Medicare</div><div id="medactual" class="val purple">—</div><div class="sub">annual levy</div></div>
+<div class="stat"><div class="lab">Corrected Medicare</div><div id="medcorrected" class="val purple">—</div><div class="sub">annual levy</div></div>
+</div>
+<div class="three" style="margin-top:12px">
+<div class="stat"><div class="lab">Tax + Medicare Difference</div><div id="taxmeddiff" class="val gold">—</div><div class="sub">annual</div></div>
+<div class="stat"><div class="lab">Net Income Correction</div><div id="netdiffannual" class="val green">—</div><div class="sub">annual after tax & Medicare</div></div>
+<div class="stat"><div class="lab">Net Weekly Correction</div><div id="netdiffweekly" class="val green">—</div><div class="sub">after tax & Medicare</div></div>
+</div>
+<div class="sub" style="margin-top:10px">Resident single-person comparison case using the current structured tax and Medicare rules in the model. Offsets, MLS and personal exemptions remain separate.<br><br><b>PAYG withholding is a prepayment toward income tax. It is not an additional tax and must not be added to annual income tax.</b> Current PAYG values are annualised withholding estimates pending direct implementation of the exact 2026–27 ATO weekly withholding coefficients.</div>
+</section>
+
+<section class="card">
+<div class="title">5. SUPERANNUATION — THE CONSTANT BOOK COMPARISON</div>
+<div class="tc-explainer" data-explainer="SUPERANNUATION">
+Shows compulsory superannuation generated by the actual minimum wage
+        compared with the corrected-wage benchmark, including the additional
+        retirement contribution associated with the wage correction.
+</div>
+
+<div class="four">
+<div class="stat"><div class="lab">Current SG Rate</div><div id="sgrate" class="val cyan">—</div><div class="sub">official current rule</div></div>
+<div class="stat"><div class="lab">Actual SG</div><div id="sgactual" class="val gold">—</div><div class="sub">annual contribution</div></div>
+<div class="stat"><div class="lab">Corrected SG</div><div id="sgcorrected" class="val gold">—</div><div class="sub">annual contribution</div></div>
+<div class="stat"><div class="lab">Annual SG Difference</div><div id="sgdiff" class="val red">—</div><div class="sub">counterfactual</div></div>
+</div>
+<div class="three" style="margin-top:12px">
+<div class="stat"><div class="lab">Projection Period</div><div id="sgyears" class="val cyan">—</div><div class="sub">years</div></div>
+<div class="stat"><div class="lab">Projection Return</div><div id="sgrtn" class="val cyan">—</div><div class="sub">explicit model assumption</div></div>
+<div class="stat"><div class="lab">Projected Difference</div><div id="sgprojected" class="val red">—</div><div class="sub">future-value illustration</div></div>
+</div>
+</section>
+
+<section class="card">
+<div class="title">6. INCOME SUPPORT — ACTUAL vs CORRECTED-WAGE COUNTERFACTUAL</div>
+<div class="tc-explainer" data-explainer="INCOME SUPPORT">
+Compares current income-support settings with THE CONSTANT
+        counterfactual wage system. Actual government payment parameters and
+        modelled counterfactual results are displayed separately.
+</div>
+
+<div class="sub" style="margin-bottom:12px">
+Official payment rates are shown in the Actual column. THE CONSTANT counterfactual preserves each payment's current percentage relationship to the actual National Minimum Wage, then applies that percentage to the corrected-wage benchmark. Counterfactual values are model outputs, not legislated payment rates.
+</div>
+<div class="three" style="margin-bottom:12px">
+<div class="stat"><div class="lab">Actual NMW</div><div id="isactualwage" class="val cyan">—</div><div class="sub">official weekly wage</div></div>
+<div class="stat"><div class="lab">Corrected Wage</div><div id="iscorrectedwage" class="val gold">—</div><div class="sub">weekly Chart C alignment</div></div>
+<div class="stat"><div class="lab">Counterfactual Rule</div><div class="val purple">Same %</div><div class="sub">preserve payment / actual-NMW relationship</div></div>
+</div>
+<div id="incomesupporttable"></div>
+<div class="sub" style="margin-top:10px">
+Age Pension and JobSeeker official rates are monitored from Services Australia. DSP adult single rates are retained from the current Australian Government payments guide and share the pension-rate structure for the displayed comparison period.
+</div>
+</section>
+<section class="card"><div class="title">INCOME & REMUNERATION COMPARISON</div>
+<div class="tc-explainer" data-explainer="INCOME & REMUNERATION COMPARISON">
+Compares movements affecting minimum-wage workers with remuneration
+        changes applying to higher-paid public office holders. Salary and
+        total-remuneration figures are labelled separately so unlike measures
+        are not presented as equivalent.
+</div>
+<div class="four">
+<div class="stat"><div class="lab">National Minimum Wage</div><div class="val cyan">$1,004.90</div><div class="sub">per week · 2026</div></div>
+<div class="stat"><div class="lab">Federal MP Base Salary</div><div class="val gold">$239,270</div><div class="sub">per year</div></div>
+<div class="stat"><div class="lab">MP Latest Actual Rise</div><div class="val gold">$5,610</div><div class="sub">2.4% · 1 Jul 2025</div></div>
+<div class="stat"><div class="lab">Tribunal 2026 General</div><div class="val green">0.0%</div><div class="sub">no general adjustment</div></div>
+</div><div class="three" style="margin-top:12px">
+<div class="stat"><div class="lab">PM&C Secretary</div><div class="val gold">$1,035,690</div><div class="sub">annual total remuneration</div></div>
+<div class="stat"><div class="lab">Treasury Secretary</div><div class="val gold">$1,009,790</div><div class="sub">annual total remuneration</div></div>
+<div class="stat"><div class="lab">Comparison Rule</div><div class="val cyan">Like-for-like</div><div class="sub">salary and total remuneration kept distinct</div></div>
+</div></section>
+
+<section class="card"><div class="title">RBA POLICY MONITOR</div>
+<div class="tc-explainer" data-explainer="RBA POLICY MONITOR">
+Tracks official monetary-policy decisions that can affect borrowing
+        costs, household expenditure and living-cost pressure. Official RBA
+        decisions are kept separate from THE CONSTANT's interpretation.
+</div>
+<div class="four">
+<div class="stat"><div class="lab">Cash Rate</div><div id="rbapolicycash" class="val cyan">4.35%</div></div>
+<div class="stat"><div class="lab">Latest Decision</div><div class="val green">UNCHANGED</div><div class="sub">11 Aug 2026</div></div>
+<div class="stat"><div class="lab">2026 Movement</div><div class="val red">+75 bp</div><div class="sub">three increases</div></div>
+<div class="stat"><div class="lab">Next Decision</div><div class="val gold">29 SEP</div><div class="sub">2:30 pm AEST</div></div>
+</div><div class="sub" style="margin-top:10px">Monitors official RBA monetary-policy decisions and cash-rate changes. Policy facts are kept separate from THE CONSTANT derived interpretations.</div></section>
+
+<section class="card">
+<div class="title">LOW-PAID & AWARD CLAIMS MONITOR</div>
+<div class="tc-explainer" data-explainer="LOW-PAID & AWARD CLAIMS">
+Tracks wage claims and award applications affecting low-paid and
+        award-reliant workers. Existing rates, claimed increases and final
+        outcomes are retained so the progression of each matter can be seen.
+</div>
+
+<div class="sub" style="margin-bottom:12px">Union claims and award applications stay on the main screen for 30 days, then move to the 18-month archive. Current rate, claimed rate and outcome are kept side by side.</div>
+<div id="unionactive"></div>
+<button class="archivebtn" onclick="toggleArchive()">VIEW 18-MONTH ARCHIVE</button>
+<div id="unionarchive" class="archivepanel"></div>
+</section>
+</main><aside>
+<section class="card"><div class="title">OFFICIAL SOURCE HEALTH</div>
+<div class="tc-explainer" data-explainer="OFFICIAL SOURCE HEALTH">
+Shows whether each official source was successfully checked.
+        A temporary warning means the source could not be reached during the
+        latest check and the <strong>last verified value is retained.</strong>
+        It does not mean the underlying data has been changed.
+</div>
+<div id="sources">Loading…</div></section>
+<section class="card">
+<div class="title">OFFICIAL ANNOUNCEMENTS — LAST 7 DAYS</div>
+<div class="tc-explainer" data-explainer="OFFICIAL ANNOUNCEMENTS">
+Relevant official announcements remain on the main dashboard for
+        seven days and then move automatically to the 18-month archive,
+        preserving a rolling public record of relevant developments.
+</div>
+
+<div class="sub" style="margin-bottom:10px">All official announcements remain on the main page for 7 days, then move automatically to the 18-month archive.</div>
+<div id="feed">Loading…</div>
+<button class="announcement-archive-btn" onclick="toggleAnnouncementArchive()">VIEW 18-MONTH ANNOUNCEMENT ARCHIVE</button>
+<div id="announcementarchive" class="announcement-archive"></div>
+</section>
+<section class="card"><div class="title">FOLLOW THE AUTHOR</div><a class="linkedin" href="https://www.linkedin.com/in/robert-paturzo-elliott-b878771a8" target="_blank" rel="noopener">LinkedIn — Robert Paturzo-Elliott</a></section>
+<section class="card"><div class="title">LIVE MONITOR STATUS</div>
+<div class="row"><span>Checks completed</span><strong id="checks">0</strong></div>
+<div class="row"><span>Official changes</span><strong id="changes">0</strong></div>
+<div class="row"><span>Last source check</span><strong id="lastcheck">—</strong></div>
+<div class="row"><span>Next official refresh</span><strong id="nextcheck">—</strong></div>
+<div class="sub" style="margin-top:8px">Scheduled daily at 10:00 AM and 10:00 PM Australia/Sydney (AEST/AEDT automatically).</div>
+</section>
+</aside></div>
+<footer class="footer">THE CONSTANT Live Official Monitor v5.0 · The clock is local to each viewer. Official-source data refreshes at 10:00 AM and 10:00 PM Australia/Sydney time.</footer>
+</div></div>
+<script>
+const money=v=>v==null?'—':'$'+Number(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+const pct=v=>v==null?'—':Number(v).toFixed(2)+'%';
+const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+function clock(){document.getElementById('clock').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'})}
+function draw(s){
+ const c=s.core||{},o=s.official||{},f=s.forward||{};
+ document.getElementById("mw").textContent=money(c.minimum_wage_weekly);document.getElementById("cc").textContent=money(c.chart_c_fortnightly);document.getElementById("ratio").textContent=pct(c.ratio_pct);document.getElementById("gap").textContent=money(c.weekly_gap);
+ document.getElementById("fcc").textContent=money(f.chart_c_fortnightly);document.getElementById("fcw").textContent=money(f.chart_c_weekly);document.getElementById("fgap").textContent=money(f.weekly_gap);document.getElementById("fratio").textContent=pct(f.ratio_pct);document.getElementById("fstatus").textContent=f.status||'';
+ document.getElementById("cpi").textContent=pct(o.cpi_annual_pct);document.getElementById("cpirp").textContent=o.cpi_reference_period||'';document.getElementById("lci").textContent=pct(o.employee_lci_annual_pct);document.getElementById("cash").textContent=pct(o.cash_rate_pct);document.getElementById("leciannual").textContent=pct(o.employee_lci_annual_pct);document.getElementById("rbapolicycash").textContent=pct((s.rba_policy||{}).cash_rate_pct);
+ document.getElementById("checks").textContent=s.checks_completed||0;document.getElementById("changes").textContent=s.source_changes_detected||0;document.getElementById("lastcheck").textContent=s.last_check||'—';document.getElementById("nextcheck").textContent=s.next_check||'—';
+
+ const bm=s.book_impact_model||{}, bc=bm.calculated||{}, bl=bm.lecib||{}, bw=bm.workers_comp||{}, bt=bm.tax_medicare||{}, bs=bm.superannuation||{};
+
+ document.getElementById("taxactualwage").textContent=
+     money(
+         c.minimum_wage_weekly
+     );
+
+ document.getElementById("taxcorrectedwage").textContent=
+     money(
+         c.chart_c_weekly
+     );
+
+ document.getElementById("taxgrossgap").textContent=
+     money(
+         c.weekly_gap
+     );
+ document.getElementById("bookactualwage").textContent=money(bm.actual_wage_weekly);
+ document.getElementById("bookcorrectedwage").textContent=money(bm.corrected_wage_weekly);
+ document.getElementById("bookwagegap").textContent=money(bc.wage_gap_weekly);
+
+ document.getElementById("bookabsemp").textContent=pct(o.employee_lci_annual_pct);
+ document.getElementById("bookabsempq").textContent=pct(o.employee_lci_quarterly_pct);
+ document.getElementById("bookabspblci").textContent=pct(o.pblci_annual_pct);
+ document.getElementById("bookabsage").textContent=pct(o.age_pensioner_lci_annual_pct);
+
+ document.getElementById("lecibbasket").textContent=money(bl.essential_cost_basket_weekly);
+ document.getElementById("lecibactual").textContent=pct(bc.lecib_actual_burden_pct);
+ document.getElementById("lecibcorrected").textContent=pct(bc.lecib_corrected_burden_pct);
+ document.getElementById("lecibrelief").textContent=pct(bc.lecib_burden_relief_pp).replace('%',' pp');
+
+ document.getElementById("wcprate").textContent=pct(bw.latest_standardised_average_premium_rate_pct);
+ document.getElementById("wcpactual").textContent=money(bc.workers_comp_actual_premium_annual);
+ document.getElementById("wcpcorrected").textContent=money(bc.workers_comp_corrected_premium_annual);
+ document.getElementById("wcpdiff").textContent=money(bc.workers_comp_difference_annual);
+ document.getElementById("wcbookcons").textContent='$'+Number(bw.book_cumulative_conservative_difference_billion||0).toFixed(2)+'b';
+ document.getElementById("wcbookcentral").textContent='$'+Number(bw.book_cumulative_central_difference_billion||0).toFixed(2)+'b';
+
+ document.getElementById("paygactualweekly").textContent=
+     money(
+         bc.payg_actual_weekly_estimate
+     );
+
+ document.getElementById("paygcorrectedweekly").textContent=
+     money(
+         bc.payg_corrected_weekly_estimate
+     );
+
+ document.getElementById("paygdiffweekly").textContent=
+     money(
+         bc.payg_difference_weekly_estimate
+     );
+
+ document.getElementById("taxactual").textContent=
+     money(
+         bc.tax_actual_annual
+     );
+
+ document.getElementById("taxcorrected").textContent=
+     money(
+         bc.tax_corrected_annual
+     );
+ document.getElementById("medactual").textContent=money(bc.medicare_actual_annual);
+ document.getElementById("medcorrected").textContent=money(bc.medicare_corrected_annual);
+ document.getElementById("taxmeddiff").textContent=money((bc.tax_difference_annual||0)+(bc.medicare_difference_annual||0));
+ document.getElementById("netdiffannual").textContent=money(bc.net_income_difference_annual);
+ document.getElementById("netdiffweekly").textContent=money(bc.net_income_difference_weekly);
+
+ document.getElementById("sgrate").textContent=pct(bs.sg_rate_pct);
+ document.getElementById("sgactual").textContent=money(bc.super_actual_annual);
+ document.getElementById("sgcorrected").textContent=money(bc.super_corrected_annual);
+ document.getElementById("sgdiff").textContent=money(bc.super_difference_annual);
+ document.getElementById("sgyears").textContent=String(bc.super_projection_years||'—');
+ document.getElementById("sgrtn").textContent=pct(bc.super_projection_return_pct);
+ document.getElementById("sgprojected").textContent=money(bc.super_projected_difference);
+
+
+ const ism=s.income_support_counterfactual||{};
+ document.getElementById("isactualwage").textContent=money(ism.actual_nmw_weekly);
+ document.getElementById("iscorrectedwage").textContent=money(ism.corrected_wage_weekly);
+ document.getElementById("incomesupporttable").innerHTML=incomeSupportTable(ism);
+
+ const ua=s.union_award_monitor||{};
+ document.getElementById("unionactive").innerHTML=claimTable(ua.active||[],'No union/award claim detected in the last 30 days.');
+ document.getElementById("unionarchive").innerHTML=claimTable(ua.archive||[],'No archived items within the last 18 months.');
+ let sh='';Object.entries(s.sources||{}).forEach(([n,i])=>{let cls='ok',lab='OK';if(i.error){
+    const e=String(i.error||'').toLowerCase();
+
+    const temporary=
+        e.includes('timed out') ||
+        e.includes('timeout') ||
+        e.includes('403') ||
+        e.includes('forbidden') ||
+        e.includes('connection') ||
+        e.includes('temporarily unavailable');
+
+    if(temporary){
+        cls='warn';
+        lab='TEMPORARY';
+    }else{
+        cls='err';
+        lab='ERROR';
+    }
+
+}else if(i.warning){
+    cls='warn';
+    lab='TEMPORARY';
+}sh+=`<div class="source"><div class="row"><span>${esc(n)}</span><span class="${cls}">${lab}</span></div>${i.warning?`<div class="sub">Temporary official-source access issue — last verified value retained.</div>`:''}${i.error?`<div class="sub">${
+    (
+      String(i.error).toLowerCase().includes('timed out') ||
+      String(i.error).toLowerCase().includes('timeout') ||
+      String(i.error).toLowerCase().includes('403') ||
+      String(i.error).toLowerCase().includes('forbidden') ||
+      String(i.error).toLowerCase().includes('connection')
+    )
+    ? 'Temporary official-source access issue — last verified value retained.'
+    : esc(i.error)
+}</div>`:''}</div>`});document.getElementById("sources").innerHTML=sh||'Waiting for first source check…';
+ document.getElementById("feed").innerHTML=announcementFeed(s.latest_announcements||[],'No official announcements in the last 7 days.');document.getElementById("announcementarchive").innerHTML=announcementFeed(s.announcement_archive||[],'No archived official announcements within the last 18 months.');
+}
+
+function incomeSupportTable(model){
+ const rows=((model||{}).calculated||{}).rows||[];
+ if(!rows.length)return '<div class="sub">Waiting for income-support calculation…</div>';
+ let body=rows.map(x=>`<tr>
+ <td><b>${esc(x.label)}</b><div class="sub">${esc(x.source_effective_period||'')}</div></td>
+ <td>${money(x.actual_fortnightly)}<div class="sub">${money(x.actual_weekly)}/wk</div></td>
+ <td>${pct(x.pct_of_actual_nmw)}</td>
+ <td>${money(x.counterfactual_fortnightly)}<div class="sub">${money(x.counterfactual_weekly)}/wk</div></td>
+ <td class="red">${money(x.difference_fortnightly)}<div class="sub">${money(x.difference_weekly)}/wk</div></td>
+ </tr>`).join('');
+ return `<div style="overflow-x:auto"><table class="claimtable">
+ <thead><tr><th>Payment</th><th>Actual official rate</th><th>% of actual NMW</th><th>Counterfactual rate</th><th>Difference</th></tr></thead>
+ <tbody>${body}</tbody></table></div>`;
+}
+
+function claimTable(items,emptyText){
+ if(!items||!items.length)return `<div class="sub">${esc(emptyText)}</div>`;
+ let rows=items.map(x=>{
+   const base=x.current_rate_weekly_at_claim==null?'—':money(x.current_rate_weekly_at_claim);
+   const cp=x.revised_claim_pct??x.initial_claim_pct;
+   const cr=x.revised_claim_weekly??x.initial_claim_weekly;
+   const outcome=x.final_nmw_weekly!=null?money(x.final_nmw_weekly):(x.final_general_award_pct!=null?pct(x.final_general_award_pct):'Pending');
+   return `<tr><td><span class="claimtag">${esc(x.organisation||'')}</span><div style="margin-top:4px">${esc(x.matter||'')}</div><div class="sub">${esc(x.status||'')}</div></td><td>${base}</td><td>${cp==null?'—':pct(cp)}${cr==null?'':`<div class="sub">${money(cr)}/wk</div>`}</td><td>${outcome}${x.lowest_award_rates_pct!=null?`<div class="sub">lowest award rates ${pct(x.lowest_award_rates_pct)}</div>`:''}</td><td>${esc(x.updated_date||x.opened_date||'')}</td></tr>`;
+ }).join('');
+ return `<div style="overflow-x:auto"><table class="claimtable"><thead><tr><th>Organisation / matter</th><th>Rate before</th><th>Claim / applied</th><th>Outcome</th><th>Date</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function toggleArchive(){document.getElementById('unionarchive').classList.toggle('open')}
+function toggleAnnouncementArchive(){document.getElementById('announcementarchive').classList.toggle('open')}
+function announcementFeed(items, emptyText){
+  if(!items||!items.length)return `<div class="sub">${esc(emptyText)}</div>`;
+  let seen=new Set(),out='';
+  items.forEach(x=>{
+    const key=(x.url||'')+'|'+(x.source||'')+'|'+(x.detail||'');
+    if(seen.has(key))return;
+    seen.add(key);
+    out+=`<div class="event"><b>${esc(x.source||'')}</b><div>${esc(x.detail||'')}</div><div class="sub">${esc(x.published||x.time||'')}</div></div>`;
+  });
+  return out||`<div class="sub">${esc(emptyText)}</div>`;
+}
+async function pull(){try{const r=await fetch('/api/state',{cache:'no-store'});if(r.ok)draw(await r.json())}catch(e){}}
+clock();setInterval(clock,1000);pull();setInterval(pull,15000);
+</script>
+</body></html>

@@ -1,0 +1,494 @@
+{
+  "version": "5.4.0",
+  "started_at": "2026-08-20T07:15:53+00:00",
+  "last_check": "2026-08-20T08:28:21+00:00",
+  "next_check": "2026-08-20T22:00:00+10:00",
+  "refresh_schedule": {
+    "timezone": "Australia/Sydney",
+    "times": [
+      "10:00",
+      "22:00"
+    ],
+    "description": "Official-source refresh at 10:00 AM and 10:00 PM Australia/Sydney time"
+  },
+  "checks_completed": 5,
+  "source_changes_detected": 2,
+  "errors": [],
+  "core": {
+    "minimum_wage_weekly": 1004.9,
+    "chart_c_fortnightly": 2627.8,
+    "chart_c_weekly": 1313.9,
+    "ratio_pct": 76.4822,
+    "weekly_gap": 309.0,
+    "income_free_area_fortnightly": 226.0,
+    "taper": 0.5
+  },
+  "official": {
+    "cpi_reference_period": "June 2026",
+    "cpi_annual_pct": 3.8,
+    "employee_lci_annual_pct": 3.7,
+    "employee_lci_quarterly_pct": 1.5,
+    "pblci_annual_pct": 4.6,
+    "age_pensioner_lci_annual_pct": 4.7,
+    "lci_reference_base": "September 2025 quarter = 100",
+    "cash_rate_pct": 4.35
+  },
+  "forward": {
+    "status": "Officially announced — administrative table pending",
+    "effective_date": "2026-09-20",
+    "chart_c_fortnightly": 2701.4,
+    "chart_c_weekly": 1350.7,
+    "weekly_gap": 345.8,
+    "ratio_pct": 74.3985
+  },
+  "book_impact_model": {
+    "methodology": "THE CONSTANT book methodology — actual statutory minimum wage versus Chart-C-aligned corrected wage counterfactual",
+    "actual_wage_weekly": 1004.9,
+    "corrected_wage_weekly": 1313.9,
+    "annual_weeks": 52,
+    "lecib": {
+      "name": "Low-Paid Essential Cost Income Burden",
+      "essential_cost_basket_weekly": 793.06708,
+      "actual_burden_pct": 78.92,
+      "corrected_burden_pct": 60.3598,
+      "last_cost_update_period": "June 2026",
+      "cost_update_source": "Book-calibrated essential-cost basket; future movement indexed from verified official cost inputs",
+      "burden_relief_pp": 18.5602
+    },
+    "workers_comp": {
+      "latest_standardised_average_premium_rate_pct": 1.59,
+      "latest_rate_period": "2023-24",
+      "book_conservative_coverage_pct": 75.0,
+      "book_conservative_rate_discount_pct": 10.0,
+      "book_cumulative_conservative_difference_billion": 9.51,
+      "book_cumulative_central_difference_billion": 11.98,
+      "note": "Current standardised premium comparison is illustrative; book historical model retains jurisdiction/rate assumptions and labels results as counterfactual premium differences."
+    },
+    "tax_medicare": {
+      "income_year": "2026-27",
+      "resident_tax_free_threshold": 18200.0,
+      "tax_brackets": [
+        {
+          "lower": 18200.0,
+          "upper": 45000.0,
+          "rate": 0.15
+        },
+        {
+          "lower": 45000.0,
+          "upper": 135000.0,
+          "rate": 0.3
+        },
+        {
+          "lower": 135000.0,
+          "upper": 190000.0,
+          "rate": 0.37
+        },
+        {
+          "lower": 190000.0,
+          "upper": null,
+          "rate": 0.45
+        }
+      ],
+      "medicare_levy_rate_pct": 2.0,
+      "medicare_single_lower_threshold": 27222.0,
+      "medicare_single_upper_threshold": 34027.0,
+      "medicare_phase_in_rate": 0.1,
+      "note": "Single resident, no dependants, no exemptions/surcharges; dashboard identifies this as the book comparison case."
+    },
+    "superannuation": {
+      "sg_rate_pct": 12.0,
+      "rule": "From 1 July 2026, Payday Super — 12% of qualifying earnings",
+      "projection_return_pct": 5.0,
+      "projection_years": 30,
+      "projection_note": "Projection assumption is explicit and separate from observed compulsory contributions."
+    },
+    "calculated": {
+      "actual_wage_annual": 52254.8,
+      "corrected_wage_annual": 68322.8,
+      "wage_gap_weekly": 309.0,
+      "wage_gap_annual": 16068.0,
+      "lecib_actual_burden_pct": 78.92,
+      "lecib_corrected_burden_pct": 60.3598,
+      "lecib_burden_relief_pp": 18.5602,
+      "workers_comp_actual_premium_annual": 830.85,
+      "workers_comp_corrected_premium_annual": 1086.33,
+      "workers_comp_difference_annual": 255.48,
+      "workers_comp_conservative_current_difference_annual": 172.45,
+      "payg_actual_weekly_estimate": 139.26,
+      "payg_corrected_weekly_estimate": 238.14,
+      "payg_difference_weekly_estimate": 98.88,
+      "tax_actual_annual": 6196.44,
+      "tax_corrected_annual": 11016.84,
+      "tax_difference_annual": 4820.4,
+      "medicare_actual_annual": 1045.1,
+      "medicare_corrected_annual": 1366.46,
+      "medicare_difference_annual": 321.36,
+      "net_income_actual_annual": 45013.26,
+      "net_income_corrected_annual": 55939.5,
+      "net_income_difference_annual": 10926.24,
+      "net_income_difference_weekly": 210.12,
+      "super_actual_annual": 6270.58,
+      "super_corrected_annual": 8198.74,
+      "super_difference_annual": 1928.16,
+      "super_projected_difference": 128104.73,
+      "super_projection_years": 30,
+      "super_projection_return_pct": 5.0
+    }
+  },
+  "income_support_counterfactual": {
+    "methodology": "Preserve each payment's current percentage relationship to the actual National Minimum Wage, then apply that same percentage to THE CONSTANT corrected-wage counterfactual.",
+    "actual_nmw_weekly": 1004.9,
+    "corrected_wage_weekly": 1313.9,
+    "payments": {
+      "age_pension_single_basic": {
+        "label": "Age Pension — single basic rate",
+        "actual_fortnightly": 1100.3,
+        "source": "Services Australia",
+        "source_effective_period": "20 March–19 September 2026",
+        "official": true
+      },
+      "age_pension_single_total": {
+        "label": "Age Pension — single total",
+        "actual_fortnightly": 1200.9,
+        "source": "Services Australia",
+        "source_effective_period": "20 March–19 September 2026",
+        "official": true
+      },
+      "dsp_single_basic": {
+        "label": "DSP — adult single basic rate",
+        "actual_fortnightly": 1100.3,
+        "source": "Services Australia — Guide to Australian Government payments",
+        "source_effective_period": "1 July–19 September 2026",
+        "official": true
+      },
+      "dsp_single_typical_total": {
+        "label": "DSP — adult single typical total",
+        "actual_fortnightly": 1200.9,
+        "source": "Services Australia — Guide to Australian Government payments",
+        "source_effective_period": "1 July–19 September 2026",
+        "official": true
+      },
+      "jobseeker_single_no_children": {
+        "label": "JobSeeker — single, no children",
+        "actual_fortnightly": 808.7,
+        "source": "Services Australia",
+        "source_effective_period": "from 20 March 2026",
+        "official": true
+      }
+    },
+    "calculated": {
+      "rows": [
+        {
+          "id": "age_pension_single_basic",
+          "label": "Age Pension — single basic rate",
+          "actual_fortnightly": 1100.3,
+          "actual_weekly": 550.15,
+          "pct_of_actual_nmw": 54.7467,
+          "counterfactual_weekly": 719.32,
+          "counterfactual_fortnightly": 1438.63,
+          "difference_weekly": 169.17,
+          "difference_fortnightly": 338.33,
+          "source": "Services Australia",
+          "source_effective_period": "20 March–19 September 2026",
+          "official_actual_rate": true
+        },
+        {
+          "id": "age_pension_single_total",
+          "label": "Age Pension — single total",
+          "actual_fortnightly": 1200.9,
+          "actual_weekly": 600.45,
+          "pct_of_actual_nmw": 59.7522,
+          "counterfactual_weekly": 785.08,
+          "counterfactual_fortnightly": 1570.17,
+          "difference_weekly": 184.63,
+          "difference_fortnightly": 369.27,
+          "source": "Services Australia",
+          "source_effective_period": "20 March–19 September 2026",
+          "official_actual_rate": true
+        },
+        {
+          "id": "dsp_single_basic",
+          "label": "DSP — adult single basic rate",
+          "actual_fortnightly": 1100.3,
+          "actual_weekly": 550.15,
+          "pct_of_actual_nmw": 54.7467,
+          "counterfactual_weekly": 719.32,
+          "counterfactual_fortnightly": 1438.63,
+          "difference_weekly": 169.17,
+          "difference_fortnightly": 338.33,
+          "source": "Services Australia — Guide to Australian Government payments",
+          "source_effective_period": "1 July–19 September 2026",
+          "official_actual_rate": true
+        },
+        {
+          "id": "dsp_single_typical_total",
+          "label": "DSP — adult single typical total",
+          "actual_fortnightly": 1200.9,
+          "actual_weekly": 600.45,
+          "pct_of_actual_nmw": 59.7522,
+          "counterfactual_weekly": 785.08,
+          "counterfactual_fortnightly": 1570.17,
+          "difference_weekly": 184.63,
+          "difference_fortnightly": 369.27,
+          "source": "Services Australia — Guide to Australian Government payments",
+          "source_effective_period": "1 July–19 September 2026",
+          "official_actual_rate": true
+        },
+        {
+          "id": "jobseeker_single_no_children",
+          "label": "JobSeeker — single, no children",
+          "actual_fortnightly": 808.7,
+          "actual_weekly": 404.35,
+          "pct_of_actual_nmw": 40.2378,
+          "counterfactual_weekly": 528.68,
+          "counterfactual_fortnightly": 1057.37,
+          "difference_weekly": 124.33,
+          "difference_fortnightly": 248.67,
+          "source": "Services Australia",
+          "source_effective_period": "from 20 March 2026",
+          "official_actual_rate": true
+        }
+      ],
+      "updated_at": "2026-08-20T08:28:21+00:00"
+    }
+  },
+  "dashboard_metrics": {
+    "minimum_wage_annual_growth_pct": 6.0021,
+    "employee_lci_minus_wage_growth_pp": -2.3021,
+    "current_structural_shortfall_pct": 23.5178,
+    "forward_structural_shortfall_pct": 25.6015,
+    "forward_chart_c_change_fortnightly": 73.6,
+    "forward_weekly_gap_change": 36.8,
+    "model_note": "Derived THE CONSTANT metrics are displayed separately from official observations."
+  },
+  "upcoming_events": [
+    {
+      "date": "2026-08-26",
+      "label": "ABS Monthly CPI — July 2026",
+      "source": "ABS"
+    },
+    {
+      "date": "2026-09-20",
+      "label": "Social-security indexation effective",
+      "source": "Australian Government"
+    },
+    {
+      "date": "2026-09-24",
+      "label": "ABS Labour Force — August 2026",
+      "source": "ABS"
+    },
+    {
+      "date": "2026-09-29",
+      "label": "RBA Monetary Policy Decision",
+      "source": "RBA"
+    },
+    {
+      "date": "2026-11-18",
+      "label": "ABS Wage Price Index — September quarter 2026",
+      "source": "ABS"
+    }
+  ],
+  "remuneration": {
+    "review_2026_general_adjustment_pct": 0.0,
+    "parliamentary_base_salary_annual": 239270.0,
+    "parliamentary_previous_base_salary_annual": 233660.0,
+    "parliamentary_last_dollar_increase_annual": 5610.0,
+    "parliamentary_last_increase_pct": 2.4,
+    "pmc_secretary_total_remuneration_annual": 1035690.0,
+    "treasury_secretary_total_remuneration_annual": 1009790.0,
+    "note": "Senior-office figures may be total remuneration; compare with minimum wage only when labels identify the remuneration basis."
+  },
+  "rba_policy": {
+    "cash_rate_pct": 4.35,
+    "effective_date": "2026-08-12",
+    "last_decision_date": "2026-08-11",
+    "last_decision": "Unchanged",
+    "change_basis_points": 0,
+    "next_decision": "2026-09-29 14:30 AEST",
+    "year_to_date_change_basis_points": 75
+  },
+  "union_award_monitor": {
+    "active_days": 30,
+    "archive_months": 18,
+    "active": [],
+    "archive": [
+      {
+        "id": "awr-2026-actu",
+        "organisation": "Australian Council of Trade Unions",
+        "matter": "Annual Wage Review 2026",
+        "category": "National Minimum Wage and modern awards",
+        "opened_date": "2026-03-24",
+        "updated_date": "2026-06-02",
+        "current_rate_weekly_at_claim": 948.0,
+        "initial_claim_pct": 5.0,
+        "initial_claim_weekly": 995.4,
+        "revised_claim_pct": 6.0,
+        "revised_claim_weekly": 1004.88,
+        "final_general_award_pct": 4.75,
+        "final_nmw_weekly": 1004.9,
+        "lowest_award_rates_pct": 6.0,
+        "status": "Decided",
+        "source": "ACTU / Fair Work Commission",
+        "summary": "ACTU raised its 2026 claim from 5% to 6%; the FWC awarded 4.75% generally and 6% for around 100,000 workers on the lowest modern-award rates."
+      },
+      {
+        "id": "awr-2026-cfmeu",
+        "organisation": "CFMEU Construction & General Division",
+        "matter": "Annual Wage Review 2026",
+        "category": "Award relativities / apprentices / trainees",
+        "opened_date": "2026-03-27",
+        "updated_date": "2026-06-02",
+        "current_rate_weekly_at_claim": 948.0,
+        "initial_claim_pct": null,
+        "initial_claim_weekly": null,
+        "revised_claim_pct": null,
+        "revised_claim_weekly": null,
+        "final_general_award_pct": 4.75,
+        "final_nmw_weekly": 1004.9,
+        "lowest_award_rates_pct": 6.0,
+        "status": "Decided / broader relativities claim noted",
+        "source": "CFMEU submission / Fair Work Commission",
+        "summary": "CFMEU supported the ACTU wage claim and also sought restoration of skills-based relativities plus apprentice and trainee adjustments."
+      }
+    ]
+  },
+  "announcement_policy": {
+    "main_page_days": 7,
+    "archive_months": 18
+  },
+  "latest_announcements": [
+    {
+      "source": "Social Services Minister — official RSS",
+      "detail": "September indexation to deliver more cost-of-living relief",
+      "published": "Thu, 20 Aug 2026 08:16:37 +1000",
+      "url": "https://ministers.dss.gov.au/media-releases/19221"
+    },
+    {
+      "source": "Social Services Minister — official RSS",
+      "detail": "Minister Plibersek interview on News24",
+      "published": "Thu, 20 Aug 2026 11:25:51 +1000",
+      "url": "https://ministers.dss.gov.au/transcripts/19226"
+    }
+  ],
+  "announcement_archive": [],
+  "sources": {
+    "ABS CPI": {
+      "last_checked": "2026-08-20T08:23:15+00:00",
+      "http_status": 200,
+      "etag": "W/\"1787190007\"",
+      "last_modified": "Thu, 20 Aug 2026 01:40:07 GMT",
+      "changed": true,
+      "sha256": "92fa1a69b3fec62188cdc9edfadc01133630a9c91e38c02faa806d09d1406f0f",
+      "last_success": "2026-08-20T08:23:15+00:00",
+      "error": null
+    },
+    "ABS Living Cost Indexes": {
+      "last_checked": "2026-08-20T08:23:16+00:00",
+      "http_status": 304,
+      "etag": "W/\"1787190064\"",
+      "last_modified": "Thu, 20 Aug 2026 01:41:04 GMT",
+      "changed": true,
+      "sha256": "538c7a202bd664b636da8b0455de3584623a644c6d2ceb90bdda12ea7c317167",
+      "last_success": "2026-08-20T07:15:53+00:00",
+      "error": null
+    },
+    "RBA Cash Rate": {
+      "last_checked": "2026-08-20T08:23:16+00:00",
+      "http_status": 200,
+      "changed": false,
+      "sha256": "ee5539fe4636043a4570077a77c000f12a739d39103d391f2c02286a003d9674",
+      "last_success": "2026-08-20T08:23:16+00:00",
+      "error": null
+    },
+    "FWC National Minimum Wage": {
+      "last_checked": "2026-08-20T08:23:16+00:00",
+      "http_status": 304,
+      "etag": "\"1787191226-gzip\"",
+      "last_modified": "Thu, 20 Aug 2026 02:00:26 GMT",
+      "changed": true,
+      "sha256": "b330fcc79b4cfa46fa1bc67baf88dff3a6604619da97678125ad20ac76ca0dc9",
+      "last_success": "2026-08-20T07:15:54+00:00",
+      "error": null
+    },
+    "Services Australia DSP Income Test": {
+      "warning": "Temporary official-site timeout; last verified value retained",
+      "error": null
+    },
+    "Social Services Minister — Media Releases": {
+      "last_checked": "2026-08-20T08:23:59+00:00",
+      "http_status": 304,
+      "etag": "W/\"1787190066\"",
+      "last_modified": "Thu, 20 Aug 2026 01:41:06 GMT",
+      "changed": true,
+      "sha256": "5b389a28271b276b0d4338846d6a360916544345b2462d3b095a3a0a3645c14c",
+      "last_success": "2026-08-20T07:16:38+00:00",
+      "error": null,
+      "seen_relevant_links": [
+        "https://ministers.dss.gov.au/transcripts/19226",
+        "https://ministers.dss.gov.au/media-releases/19221"
+      ]
+    },
+    "Remuneration Tribunal — Document Library": {
+      "error": "HTTPSConnectionPool(host='www.remtribunal.gov.au', port=443): Read timed out. (read timeout=12)"
+    },
+    "RBA — Monetary Policy Decisions": {
+      "last_checked": "2026-08-20T08:24:42+00:00",
+      "http_status": 200,
+      "changed": false,
+      "sha256": "604d9ed61d0b494e5705309e901e2b5292174f77eeadbaaad54413d2bd4ebb50",
+      "last_success": "2026-08-20T08:24:42+00:00",
+      "error": null
+    },
+    "FWC — Annual Wage Review Submissions": {
+      "last_checked": "2026-08-20T08:24:42+00:00",
+      "http_status": 304,
+      "etag": "\"1787207363-gzip\"",
+      "last_modified": "Thu, 20 Aug 2026 06:29:23 GMT",
+      "changed": true,
+      "sha256": "4ed9e9c3bd6d64a2cb4dc1f268e31c1f7f403cc37398f955f12b3029cb2a658b",
+      "last_success": "2026-08-20T07:17:24+00:00",
+      "error": null
+    },
+    "FWC — Annual Wage Review Determinations": {
+      "last_checked": "2026-08-20T08:24:42+00:00",
+      "http_status": 304,
+      "etag": "\"1787124820-gzip\"",
+      "last_modified": "Wed, 19 Aug 2026 07:33:40 GMT",
+      "changed": true,
+      "sha256": "6274eccf4fc46b064b56475abda652ba68dd57bc518461535186e0777c745db0",
+      "last_success": "2026-08-20T07:17:24+00:00",
+      "error": null
+    },
+    "ACTU — Media Releases": {
+      "last_checked": "2026-08-20T08:24:42+00:00",
+      "http_status": 200,
+      "last_modified": "Thu, 20 Aug 2026 08:19:58 GMT",
+      "changed": true,
+      "sha256": "c6e9912cbe84e6fbdfb0d4caae6486b365c4ff3be19963754fcf96886a270ce1",
+      "last_success": "2026-08-20T08:24:42+00:00",
+      "error": null
+    },
+    "ATO — 2026 PAYG Tax Tables": {
+      "error": "HTTPSConnectionPool(host='softwaredevelopers.ato.gov.au', port=443): Read timed out. (read timeout=12)"
+    },
+    "ATO — Medicare Levy": {
+      "last_checked": "2026-08-20T08:25:30+00:00",
+      "http_status": 403,
+      "error": "403 Client Error: Forbidden for url: https://www.ato.gov.au/myTax25MedicareLevy"
+    },
+    "ATO — Payday Super": {
+      "error": "HTTPSConnectionPool(host='softwaredevelopers.ato.gov.au', port=443): Read timed out. (read timeout=12)"
+    },
+    "Safe Work Australia — Premiums": {
+      "error": "HTTPSConnectionPool(host='www.safeworkaustralia.gov.au', port=443): Read timed out. (read timeout=12)"
+    },
+    "Services Australia — Age Pension Rates": {
+      "warning": "Temporary official-site timeout; last verified value retained",
+      "error": null
+    },
+    "Services Australia — JobSeeker Rates": {
+      "warning": "Temporary official-site timeout; last verified value retained",
+      "error": null
+    }
+  }
+}

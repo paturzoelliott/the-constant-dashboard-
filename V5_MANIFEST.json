@@ -1,0 +1,40 @@
+{
+  "version": "5.3.0",
+  "refresh_timezone": "Australia/Sydney",
+  "refresh_times": [
+    "10:00",
+    "22:00"
+  ],
+  "viewer_clock": "browser local time",
+  "announcement_main_page_days": 7,
+  "announcement_archive_months": 18,
+  "union_claim_active_days": 30,
+  "union_claim_archive_months": 18,
+  "linkedin_profile": "https://www.linkedin.com/in/robert-paturzo-elliott-b878771a8",
+  "files": [
+    "Procfile",
+    "README.txt",
+    "app.py",
+    "index.html",
+    "requirements.txt"
+  ],
+  "presentation_restored": [
+    "Presentation Talking Points",
+    "Real Wage & Cost Pressure",
+    "Chart C current/forward",
+    "Household Living-Cost Pressure",
+    "Indexation Framework",
+    "Upcoming Official Events",
+    "Live Ticker"
+  ],
+  "book_impact_modules": [
+    "ABS Official Living Cost Indexes",
+    "THE CONSTANT LECI / LECIB",
+    "Workers Compensation Premiums & Fees",
+    "Tax & Medicare",
+    "Superannuation Actual & Projected"
+  ],
+  "automatic_recalculation": true,
+  "section_6": "Income Support \u2014 Actual vs Corrected-Wage Counterfactual",
+  "income_support_method": "Preserve current payment percentage of actual NMW and apply same percentage to corrected wage."
+}
