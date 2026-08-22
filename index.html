@@ -182,6 +182,37 @@ body,
 
 </style>
 
+
+<style id="tc-live-research-report-style">
+.tc-definition-card {
+    border:1px solid rgba(0,200,255,.25)!important;
+    background:linear-gradient(135deg,rgba(0,200,255,.08),rgba(9,29,56,.96))!important;
+}
+.tc-definition-title {
+    font-size:19px;font-weight:950;color:#00c8ff;margin-bottom:12px;
+}
+.tc-definition-text,.tc-live-report-copy {
+    font-size:12px;line-height:1.72;color:rgba(255,255,255,.78);
+}
+.tc-live-report {
+    border:1px solid rgba(255,212,59,.22)!important;
+}
+.tc-live-report-title {
+    font-size:20px;font-weight:950;color:#ffd43b;
+}
+.tc-status-line {
+    margin:14px 0;padding:11px 13px;border-radius:10px;
+    background:#07182f;border-left:3px solid #ffd43b;
+    font-size:11px;line-height:1.6;color:rgba(255,255,255,.72);
+}
+.tc-report-table {
+    width:100%;border-collapse:collapse;margin:16px 0;font-size:11px;
+}
+.tc-report-table th,.tc-report-table td {
+    padding:10px 9px;border-bottom:1px solid rgba(255,255,255,.06);text-align:left;
+}
+</style>
+
 </head>
 <body><div class="tc-shell">
 
@@ -200,6 +231,63 @@ body,
 <div class="wrap">
 <header class="header"><div><div class="logo">THE CONSTANT</div><span class="badge">● LIVE OFFICIAL SOURCE MONITOR</span></div><div><div id="clock" class="clock">--:--:--</div><div class="clocklabel">Viewer local time</div></div>
 </header>
+
+
+<section class="card tc-definition-card" id="what-is-chart-c">
+<div class="tc-definition-title">WHAT IS CHART C?</div>
+<div class="tc-definition-text">
+
+<p><strong>THE CONSTANT uses “Chart C” as shorthand for the single-person pension income-test cessation point.</strong>
+It is the level of assessable fortnightly income at which entitlement under the standard pension income test reaches zero.
+It is not a poverty line or minimum-income guarantee.</p>
+
+<p>Under the current standard rules, the first <strong>$226 per fortnight</strong> is income-free and pension entitlement is then reduced by <strong>50 cents per additional dollar</strong>.
+Services Australia currently publishes the standard single-person cut-off at <strong>$2,627.80 per fortnight</strong>.</p>
+
+<p>THE CONSTANT converts that fortnightly cut-off to a weekly equivalent and compares it with the National Minimum Wage.
+The comparison does not assume the two measures were legislated to be equal. The research question is how their historical relationship behaved over time and why it changed sharply around 2000.</p>
+
+<p>Chart C can move because of changes in pension rates, the income free area, taper rules and pension structure.
+THE CONSTANT therefore reconstructs the underlying policy parameters rather than treating Chart C as a simple price index.</p>
+
+</div>
+</section>
+
+<section class="card tc-live-report" id="live-report-2026-08-22">
+
+<div class="tc-live-report-title">THE CONSTANT LIVE — MATERIAL UPDATE</div>
+<div class="sub">22 August 2026 · September pension indexation</div>
+
+<div class="tc-live-report-copy">
+
+<p>The Australian Government announced on <strong>20 August 2026</strong> that the maximum single pension rate will increase by <strong>$36.80 per fortnight</strong> to <strong>$1,237.70 per fortnight</strong> from 20 September.</p>
+
+<div class="tc-status-line">
+<strong>Current official cut-off:</strong> $2,627.80 per fortnight.<br><br>
+<strong>20 September derived cut-off:</strong> using the announced $1,237.70 pension rate, the current $226 free area and the 50-cent taper gives <strong>$2,701.40 per fortnight</strong>.
+</div>
+
+<table class="tc-report-table">
+<thead>
+<tr><th>Measure</th><th>Current</th><th>20 Sep 2026</th></tr>
+</thead>
+<tbody>
+<tr><td>Single Chart C</td><td>$2,627.80/fn</td><td>$2,701.40/fn</td></tr>
+<tr><td>Weekly Chart C</td><td>$1,313.90</td><td>$1,350.70</td></tr>
+<tr><td>National Minimum Wage</td><td>$1,004.90/wk</td><td>$1,004.90/wk</td></tr>
+<tr><td>Weekly gap</td><td>$309.00</td><td>$345.80</td></tr>
+<tr><td>Wage / Chart C</td><td>76.48%</td><td>74.40%</td></tr>
+</tbody>
+</table>
+
+<p>The ABS reported that the Pensioner and Beneficiary Living Cost Index rose <strong>3.2%</strong> over the six months from December 2025 to June 2026, compared with <strong>2.0%</strong> for CPI. PBLCI rose <strong>0.6%</strong> in the June quarter and <strong>4.6%</strong> through the year.</p>
+
+<p>The September figure is therefore no longer simply a forecast based on an assumed inflation rate. It is a derived cessation point using the Government-announced pension rate and the current standard income-test parameters, pending the updated Services Australia operational table.</p>
+
+<p>The live monitor deliberately separates <strong>official observations, derived policy arithmetic and THE CONSTANT counterfactual analysis</strong>.</p>
+
+</div>
+</section>
 
 <section class="card" id="current-verified">
     <div class="title">CURRENT VERIFIED — 2026 Q3</div>
@@ -233,7 +321,7 @@ body,
     </div>
 </section>
 
-<section class="card"><div class="title">OFFICIALLY ANNOUNCED — 20 SEPTEMBER 2026</div><div class="four">
+<section class="card"><div class="title">20 SEPTEMBER 2026 — ANNOUNCED RATE / DERIVED CHART C</div><div class="four">
 <div class="stat"><div class="lab">Forward Chart C</div><div id="fcc" class="val gold">—</div></div>
 <div class="stat"><div class="lab">Weekly Chart C</div><div id="fcw" class="val gold">—</div></div>
 <div class="stat"><div class="lab">Forward Gap</div><div id="fgap" class="val red">—</div></div>
@@ -952,7 +1040,7 @@ svg.innerHTML = out;
 <div class="sub" style="margin-top:8px">Scheduled daily at 10:00 AM and 10:00 PM Australia/Sydney (AEST/AEDT automatically).</div>
 </section>
 </aside></div>
-<footer class="footer">THE CONSTANT Live Official Monitor v5.0 · The clock is local to each viewer. Official-source data refreshes at 10:00 AM and 10:00 PM Australia/Sydney time.</footer>
+<footer class="footer">THE CONSTANT Live Official Monitor v5.5 · The clock is local to each viewer. Official-source data refreshes at 10:00 AM and 10:00 PM Australia/Sydney time.</footer>
 </div></div>
 <script>
 const money=v=>v==null?'—':'$'+Number(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});

@@ -1,5 +1,5 @@
 {
-  "version": "5.4.0",
+  "version": "5.5.0",
   "started_at": "2026-08-20T07:15:53+00:00",
   "last_check": "2026-08-20T08:28:21+00:00",
   "next_check": "2026-08-20T22:00:00+10:00",
@@ -34,7 +34,7 @@
     "cash_rate_pct": 4.35
   },
   "forward": {
-    "status": "Officially announced — administrative table pending",
+    "status": "Derived from Government-announced pension rate — Services Australia cut-off table pending",
     "effective_date": "2026-09-20",
     "chart_c_fortnightly": 2701.4,
     "chart_c_weekly": 1350.7,
@@ -490,5 +490,18 @@
       "warning": "Temporary official-site timeout; last verified value retained",
       "error": null
     }
+  },
+  "constant_live_update": {
+    "published_date": "2026-08-22",
+    "title": "September pension indexation — material update",
+    "current_chart_c_fortnightly": 2627.8,
+    "september_maximum_single_pension_fortnightly": 1237.7,
+    "september_pension_increase_fortnightly": 36.8,
+    "september_chart_c_fortnightly": 2701.4,
+    "pblci_six_month_pct": 3.2,
+    "cpi_six_month_pct": 2.0,
+    "pblci_quarterly_pct": 0.6,
+    "pblci_annual_pct": 4.6,
+    "method": "226 + (1237.70 / 0.50) = 2701.40"
   }
 }

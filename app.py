@@ -21,7 +21,7 @@ DATA_DIR.mkdir(parents=True, exist_ok=True)
 STATE_FILE = DATA_DIR / "state.json"
 
 DEFAULT = {
-    "version": "5.4.0",
+    "version": "5.5.0",
     "started_at": None,
     "last_check": None,
     "next_check": None,
@@ -37,7 +37,7 @@ DEFAULT = {
         "minimum_wage_weekly": 1004.90,
         "chart_c_fortnightly": 2627.80,
         "chart_c_weekly": 1313.90,
-        "ratio_pct": 76.4939,
+        "ratio_pct": 76.4822,
         "weekly_gap": 309.00,
         "income_free_area_fortnightly": 226.00,
         "taper": 0.50
@@ -53,7 +53,7 @@ DEFAULT = {
         "cash_rate_pct": 4.35
     },
     "forward": {
-        "status": "Officially announced — administrative table pending",
+        "status": "Derived from Government-announced pension rate — Services Australia cut-off table pending",
         "effective_date": "2026-09-20",
         "chart_c_fortnightly": 2701.40,
         "chart_c_weekly": 1350.70,
@@ -1138,7 +1138,7 @@ def check_now():
 # Rebuild all derived values from current official/base state.
 # ------------------------------------------------------------
 
-state["version"] = "5.4.0"
+state["version"] = "5.5.0"
 
 recalc()
 recalc_book_impact_model()
