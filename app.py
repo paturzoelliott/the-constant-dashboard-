@@ -21,7 +21,7 @@ DATA_DIR.mkdir(parents=True, exist_ok=True)
 STATE_FILE = DATA_DIR / "state.json"
 
 DEFAULT = {
-    "version": "5.5.0",
+    "version": "5.6.3",
     "started_at": None,
     "last_check": None,
     "next_check": None,
@@ -244,6 +244,24 @@ DEFAULT = {
 }
 
 SOURCES = {
+
+    "ABS Labour Force": (
+        "https://www.abs.gov.au/statistics/labour/employment-and-unemployment/labour-force-australia/latest-release",
+        "abs_labour"
+    ),
+
+    "Productivity Commission — GST Distribution Reforms": (
+        "https://www.pc.gov.au/inquiries-and-research/gst-reforms/",
+        "pc_watch"
+    ),
+    "Productivity Commission — Business Dynamism": (
+        "https://www.pc.gov.au/inquiries-and-research/business-dynamism/",
+        "pc_watch"
+    ),
+    "Productivity Commission — Productivity Bulletins": (
+        "https://www.pc.gov.au/ongoing/productivity-insights/bulletins/",
+        "pc_watch"
+    ),
     "ABS CPI": ("https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/consumer-price-index-australia/latest-release","abs_cpi"),
     "ABS Living Cost Indexes": ("https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/selected-living-cost-indexes-australia/latest-release","abs_lci"),
     "RBA Cash Rate": ("https://www.rba.gov.au/cash-rate-target-overview.html","rba"),
@@ -603,6 +621,43 @@ def recalc_income_support_counterfactual():
 def mark_change():
     state["source_changes_detected"]+=1
 
+def parse_abs_labour(t):
+    """
+    ABS Labour Force source-health watcher.
+
+    Verified labour-market values are retained in structured state.
+    Automatic extraction from the public ABS page is deliberately disabled
+    until the parser is separately execution-validated against the exact
+    ABS release structure.
+
+    The fetch layer still records:
+      - last check
+      - HTTP status
+      - content hash
+      - source change
+      - last successful access
+
+    This prevents an ambiguous webpage percentage from silently replacing
+    verified labour-market observations.
+    """
+
+    lm = state.setdefault(
+        "labour_market",
+        {
+            "source":
+                "Australian Bureau of Statistics — Labour Force, Australia"
+        }
+    )
+
+    lm["source_last_seen"] = now_iso()
+    lm["automatic_parser_status"] = (
+        "Source monitored; automatic value extraction disabled "
+        "pending separate execution validation."
+    )
+
+    return False
+
+
 def parse_abs_cpi(t):
     changed=False
     m=re.search(r"Reference period\s+([A-Za-z]+\s+20\d{2})",t,re.I)
@@ -669,6 +724,29 @@ def parse_rss(html):
         mark_change(); changed=True
     m["seen_relevant_links"]=current[:100]
     return changed
+
+
+
+def parse_pc_watch(t):
+    """
+    Productivity Commission source watcher.
+    Content hashes are already tracked by fetch(); this parser records
+    that a monitored PC page has materially refreshed without trying
+    to infer new policy conclusions automatically.
+    """
+    rm = state.setdefault(
+        "review_monitor",
+        {
+            "live_retention_days": 30,
+            "archive_years": 7,
+            "active": [],
+            "archive": []
+        }
+    )
+
+    rm["last_productivity_commission_check"] = now_iso()
+
+    return False
 
 
 
@@ -842,7 +920,7 @@ def _parse_date_ymd(s):
 def maintain_union_archive():
     """Keep new activity on-screen for 30 days; retain archive for ~18 months."""
     from datetime import date, timedelta
-    ua = state.setdefault("union_award_monitor", {"active_days":30,"archive_months":18,"active":[],"archive":[]})
+    ua = state.setdefault("union_award_monitor", {"active_days":30,"archive_years":7,"active":[],"archive":[]})
     today = date.today()
     active_keep=[]
     for item in ua.get("active", []):
@@ -854,14 +932,14 @@ def maintain_union_archive():
             active_keep.append(item)
     ua["active"]=active_keep
 
-    cutoff=today-timedelta(days=548)  # ~18 months
+    cutoff=today-timedelta(days=2557)  # ~7 years
     ua["archive"]=[
         item for item in ua.get("archive",[])
         if (_parse_date_ymd(item.get("updated_date") or item.get("opened_date")) or today) >= cutoff
     ][:300]
 
 def upsert_union_item(item):
-    ua=state.setdefault("union_award_monitor", {"active_days":30,"archive_months":18,"active":[],"archive":[]})
+    ua=state.setdefault("union_award_monitor", {"active_days":30,"archive_years":7,"active":[],"archive":[]})
     for bucket in ("active","archive"):
         for i,old in enumerate(ua.get(bucket,[])):
             if old.get("id")==item.get("id"):
@@ -930,16 +1008,16 @@ def parse_union_fwc(t):
 
 def maintain_announcement_archive():
     """
-    Keep all official announcements on the main page for 7 days,
-    then move them into an 18-month archive.
+    Keep all official announcements on the main page for 30 days,
+    then move them into a seven-year archive.
     """
     from datetime import date, datetime, timedelta
     policy = state.setdefault(
         "announcement_policy",
-        {"main_page_days": 7, "archive_months": 18}
+        {"main_page_days": 30, "archive_years": 7}
     )
-    main_days = int(policy.get("main_page_days", 7))
-    cutoff_days = 548  # ~18 months
+    main_days = int(policy.get("main_page_days", 30))
+    cutoff_days = 2557  # ~7 years
 
     today = date.today()
     active = []
@@ -1012,7 +1090,7 @@ def maintain_announcement_archive():
 
     state["latest_announcements"] = active[:100]
 
-    # Keep only 18 months in archive.
+    # Keep seven years in archive.
     kept = []
     for item in archive:
         d = item_date(item)
@@ -1030,7 +1108,8 @@ def check_all():
         try:
             if kind=="minister_rss": parse_rss(html); continue
             t=textify(html); changed=False
-            if kind=="abs_cpi": changed=parse_abs_cpi(t)
+            if kind=="abs_labour": changed=parse_abs_labour(t)
+            elif kind=="abs_cpi": changed=parse_abs_cpi(t)
             elif kind=="abs_lci": changed=parse_lci(t)
             elif kind=="rba": changed=parse_rba(t)
             elif kind=="fwc": changed=parse_fwc(t)
@@ -1039,6 +1118,8 @@ def check_all():
             elif kind=="rba_policy": changed=parse_rba_policy(t)
             elif kind=="union_actu": changed=parse_union_actu(t)
             elif kind=="union_fwc": changed=parse_union_fwc(t)
+            elif kind=="pc_watch": changed=parse_pc_watch(t)
+
             elif kind=="workers_comp": changed=parse_workers_comp(t)
             elif kind=="ato_super": changed=parse_ato_super(t)
             elif kind=="ato_medicare": changed=parse_ato_medicare(t)
@@ -1138,7 +1219,7 @@ def check_now():
 # Rebuild all derived values from current official/base state.
 # ------------------------------------------------------------
 
-state["version"] = "5.5.0"
+state["version"] = "5.6.3"
 
 recalc()
 recalc_book_impact_model()

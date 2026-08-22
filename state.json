@@ -1,5 +1,5 @@
 {
-  "version": "5.5.0",
+  "version": "5.6.3",
   "started_at": "2026-08-20T07:15:53+00:00",
   "last_check": "2026-08-20T08:28:21+00:00",
   "next_check": "2026-08-20T22:00:00+10:00",
@@ -264,28 +264,101 @@
   "upcoming_events": [
     {
       "date": "2026-08-26",
-      "label": "ABS Monthly CPI — July 2026",
-      "source": "ABS"
+      "display_date": "26 Aug 2026 · 11:30am AEST",
+      "label": "Consumer Price Index, Australia — July 2026",
+      "source": "ABS",
+      "why_it_matters": "Updates inflation and real-wage context and provides new information for household-cost analysis."
+    },
+    {
+      "date": "2026-08-27",
+      "display_date": "27 Aug 2026",
+      "label": "Monthly Household Spending Indicator — July 2026",
+      "source": "ABS",
+      "why_it_matters": "Shows how household spending is responding to prices, income and interest-rate pressure."
+    },
+    {
+      "date": "2026-09-14",
+      "display_date": "14–18 Sep 2026",
+      "label": "GST distribution reforms — public hearings",
+      "source": "Productivity Commission",
+      "why_it_matters": "Examines GST distribution reform, fiscal sustainability and Commonwealth-state transfer arrangements."
     },
     {
       "date": "2026-09-20",
-      "label": "Social-security indexation effective",
-      "source": "Australian Government"
+      "display_date": "20 Sep 2026",
+      "label": "Social-security pension indexation effective",
+      "source": "Australian Government / Services Australia",
+      "why_it_matters": "Updates pension rates and the operational single-person Chart C cessation point."
     },
     {
       "date": "2026-09-24",
-      "label": "ABS Labour Force — August 2026",
-      "source": "ABS"
+      "display_date": "24 Sep 2026 · 11:30am AEST",
+      "label": "Labour Force, Australia — August 2026",
+      "source": "ABS",
+      "why_it_matters": "Updates unemployment, employment, participation, underemployment and hours worked."
     },
     {
       "date": "2026-09-29",
-      "label": "RBA Monetary Policy Decision",
-      "source": "RBA"
+      "display_date": "29 Sep 2026 · 2:30pm AEST",
+      "label": "Monetary Policy Decision",
+      "source": "Reserve Bank of Australia",
+      "why_it_matters": "Interest-rate decisions affect borrowing costs, household expenditure and living-cost pressure."
+    },
+    {
+      "date": "2026-09-30",
+      "display_date": "30 Sep 2026 · 11:30am AEST",
+      "label": "Consumer Price Index, Australia — August 2026",
+      "source": "ABS",
+      "why_it_matters": "Updates inflation affecting real wages and household-cost comparisons."
+    },
+    {
+      "date": "2026-09-30",
+      "display_date": "30 Sep 2026",
+      "label": "GST distribution reforms — final submissions due",
+      "source": "Productivity Commission",
+      "why_it_matters": "Final consultation milestone before the Commission prepares its final report."
+    },
+    {
+      "date": "2026-11-01",
+      "display_date": "Nov 2026 · exact date pending",
+      "label": "Business dynamism — interim report",
+      "source": "Productivity Commission",
+      "why_it_matters": "Relevant to productivity, regulation, business costs and the economic environment for employers."
     },
     {
       "date": "2026-11-18",
-      "label": "ABS Wage Price Index — September quarter 2026",
-      "source": "ABS"
+      "display_date": "18 Nov 2026 · 11:30am AEDT",
+      "label": "Wage Price Index — September quarter 2026",
+      "source": "ABS",
+      "why_it_matters": "Measures underlying wage-price movement independently of the statutory National Minimum Wage."
+    },
+    {
+      "date": "2026-12-31",
+      "display_date": "By 31 Dec 2026",
+      "label": "GST distribution reforms — final report to Government",
+      "source": "Productivity Commission",
+      "why_it_matters": "Final Productivity Commission findings on GST distribution reforms."
+    },
+    {
+      "date": "2027-03-01",
+      "display_date": "Mar–Jun 2027 · timetable pending",
+      "label": "Annual Wage Review 2027",
+      "source": "Fair Work Commission",
+      "why_it_matters": "Annual statutory process reviewing the National Minimum Wage and modern-award minimum wages."
+    },
+    {
+      "date": "2027-03-20",
+      "display_date": "20 Mar 2027",
+      "label": "March pension indexation",
+      "source": "Australian Government / Services Australia",
+      "why_it_matters": "Potentially changes pension payment rates and therefore the Chart C benchmark."
+    },
+    {
+      "date": "2027-07-01",
+      "display_date": "1 Jul 2027",
+      "label": "National Minimum Wage / award rates commence",
+      "source": "Fair Work Commission",
+      "why_it_matters": "Updates the wage side of THE CONSTANT comparison."
     }
   ],
   "remuneration": {
@@ -309,7 +382,6 @@
   },
   "union_award_monitor": {
     "active_days": 30,
-    "archive_months": 18,
     "active": [],
     "archive": [
       {
@@ -350,11 +422,12 @@
         "source": "CFMEU submission / Fair Work Commission",
         "summary": "CFMEU supported the ACTU wage claim and also sought restoration of skills-based relativities plus apprentice and trainee adjustments."
       }
-    ]
+    ],
+    "archive_years": 7
   },
   "announcement_policy": {
-    "main_page_days": 7,
-    "archive_months": 18
+    "main_page_days": 30,
+    "archive_years": 7
   },
   "latest_announcements": [
     {
@@ -503,5 +576,99 @@
     "pblci_quarterly_pct": 0.6,
     "pblci_annual_pct": 4.6,
     "method": "226 + (1237.70 / 0.50) = 2701.40"
+  },
+  "labour_market": {
+    "source": "Australian Bureau of Statistics — Labour Force, Australia",
+    "reference_period": "July 2026",
+    "release_date": "2026-08-20",
+    "unemployment_rate_pct": 4.5,
+    "participation_rate_pct": 66.9,
+    "underemployment_rate_pct": 6.4,
+    "employment_persons": null,
+    "employment_change_persons": -15800,
+    "full_time_employment_change_persons": 16300,
+    "hours_worked_change_pct": -0.6,
+    "employment_population_ratio_pct": null,
+    "status": "Verified July 2026 seasonally adjusted headline measures",
+    "automatic_parser_status": "Source monitored; automatic value extraction disabled pending separate execution validation."
+  },
+  "review_monitor": {
+    "live_retention_days": 30,
+    "archive_years": 7,
+    "lifecycle": [
+      "Commenced",
+      "Submissions open",
+      "Consultation / hearings",
+      "Interim findings",
+      "Final report",
+      "Government response",
+      "Implementation outcome"
+    ],
+    "active": [
+      {
+        "id": "pc-gst-distribution-reforms-2026",
+        "title": "GST distribution reforms",
+        "agency": "Productivity Commission",
+        "status": "Interim report open for consultation",
+        "commenced": "2025-09-24",
+        "interim_report": "2026-08-14",
+        "next_milestone": "Public hearings 14, 15, 16 and 18 September 2026; final submissions due 30 September 2026.",
+        "final_report_due": "2026-12-31",
+        "relevance": "Directly relevant to GST architecture, Commonwealth-state fiscal transfers and the broader tax-reform context examined by THE CONSTANT.",
+        "source": "Productivity Commission",
+        "official": true
+      },
+      {
+        "id": "pc-business-dynamism-2026",
+        "title": "Reducing barriers to business dynamism",
+        "agency": "Productivity Commission",
+        "status": "Interim report being prepared",
+        "commenced": "2026-05-12",
+        "initial_submissions_due": "2026-07-03",
+        "next_milestone": "Interim report due November 2026; final submissions due December 2026; public hearings February 2027.",
+        "final_report_due": "2027-05-01",
+        "relevance": "Relevant to productivity, regulation, business costs, investment and the business-side effects of wage and tax reform.",
+        "source": "Productivity Commission",
+        "official": true
+      }
+    ],
+    "archive": [],
+    "categories": [
+      "Productivity Commission reports and inquiries",
+      "Productivity and competition reform",
+      "Treasury reviews",
+      "Department of Employment and Workplace Relations reviews",
+      "Department of Social Services reviews",
+      "Parliamentary committee inquiries",
+      "Fair Work Commission major cases",
+      "Annual Wage Review",
+      "Tax and transfer reform",
+      "GST reviews",
+      "Workplace relations",
+      "Closing Loopholes and successor reviews",
+      "Minimum wages",
+      "Pensions and income support",
+      "Superannuation",
+      "Workers compensation",
+      "Employment policy",
+      "Household living costs"
+    ]
+  },
+  "archive_policy_v56": {
+    "main_page_days": 30,
+    "archive_years": 7,
+    "purpose": "Preserve a contemporaneous institutional record of economic releases, wage-setting developments, productivity reports, government reviews and policy announcements."
+  },
+  "productivity_monitor": {
+    "source": "Productivity Commission — Quarterly productivity bulletin",
+    "reference_period": "March quarter 2026",
+    "release_date": "2026-06-11",
+    "labour_productivity_quarterly_pct": -0.6,
+    "labour_productivity_annual_pct": 0.3,
+    "market_sector_quarterly_pct": -0.7,
+    "market_sector_annual_pct": 0.4,
+    "hours_worked_quarterly_pct": 0.9,
+    "hours_worked_annual_pct": 2.2,
+    "status": "Official Productivity Commission bulletin based on ABS productivity statistics"
   }
 }
