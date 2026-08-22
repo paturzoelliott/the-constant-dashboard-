@@ -921,7 +921,7 @@ Shows whether each official source was successfully checked.
 </div>
 <div id="sources">Loading…</div></section>
 <section class="card">
-<div class="title">OFFICIAL ANNOUNCEMENTS — LAST 7 DAYS</div>
+<div class="title">OFFICIAL ANNOUNCEMENTS — LAST 30 DAYS</div>
 <div class="tc-explainer" data-explainer="OFFICIAL ANNOUNCEMENTS">
 Relevant official announcements remain on the main dashboard for
         seven days and then move automatically to the 18-month archive,
@@ -1594,7 +1594,7 @@ It provides the data needed to test it.
 <div class="sub" style="margin-top:8px">Scheduled daily at 10:00 AM and 10:00 PM Australia/Sydney (AEST/AEDT automatically).</div>
 </section>
 </aside></div>
-<footer class="footer">THE CONSTANT Live Official Monitor v5.6.3 · The clock is local to each viewer. Official-source data refreshes at 10:00 AM and 10:00 PM Australia/Sydney time.</footer>
+<footer class="footer">THE CONSTANT Live Official Monitor v5.6.4 · The clock is local to each viewer. Official-source data refreshes at 10:00 AM and 10:00 PM Australia/Sydney time.</footer>
 </div></div>
 <script>
 const money=v=>v==null?'—':'$'+Number(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -1771,17 +1771,50 @@ document.getElementById("correctedremaining").textContent=
 }else if(i.warning){
     cls='warn';
     lab='TEMPORARY';
-}sh+=`<div class="source"><div class="row"><span>${esc(n)}</span><span class="${cls}">${lab}</span></div>${i.warning?`<div class="sub">Temporary official-source access issue — last verified value retained.</div>`:''}${i.error?`<div class="sub">${
-    (
-      String(i.error).toLowerCase().includes('timed out') ||
-      String(i.error).toLowerCase().includes('timeout') ||
-      String(i.error).toLowerCase().includes('403') ||
-      String(i.error).toLowerCase().includes('forbidden') ||
-      String(i.error).toLowerCase().includes('connection')
-    )
-    ? 'Temporary official-source access issue — last verified value retained.'
-    : esc(i.error)
-}</div>`:''}</div>`});document.getElementById("sources").innerHTML=sh||'Waiting for first source check…';
+}const retained=retainedSourceSummary(n,s);
+
+sh+=`
+<div class="source">
+
+<div class="row">
+<span>${esc(n)}</span>
+<span class="${cls}">${lab}</span>
+</div>
+
+${
+    (i.warning || (i.error && cls==="warn"))
+    ? `<div class="sub">
+       Temporary official-source access issue — last verified value retained.
+       </div>`
+    : ''
+}
+
+${
+    retained && cls==="warn"
+    ? `<div class="sub" style="margin-top:3px;color:rgba(255,255,255,.52)">
+       ${retained}
+       </div>`
+    : ''
+}
+
+${
+    i.last_success
+    ? `<div class="sub">
+       Last successful source access: ${esc(i.last_success)}
+       </div>`
+    : ''
+}
+
+${
+    i.error && cls==="err"
+    ? `<div class="sub">${esc(i.error)}</div>`
+    : ''
+}
+
+</div>
+`;
+
+});document.getElementById("sources").innerHTML=sh||'Waiting for first source check…';
  document.getElementById("feed").innerHTML=announcementFeed(s.latest_announcements||[],'No official announcements in the last 7 days.');document.getElementById("announcementarchive").innerHTML=announcementFeed(s.announcement_archive||[],'No archived official announcements within the last seven years.');
 }
 
@@ -1906,6 +1939,85 @@ function reviewTracker(model){
 
         </div>
     `).join('');
+}
+
+
+
+function retainedSourceSummary(name, s){
+
+    const c=s.core||{};
+    const bm=s.book_impact_model||{};
+    const wc=bm.workers_comp||{};
+    const tx=bm.tax_medicare||{};
+    const sg=bm.superannuation||{};
+    const ism=s.income_support_counterfactual||{};
+    const payments=ism.payments||{};
+    const rem=s.remuneration||{};
+
+    if(name==="Services Australia DSP Income Test"){
+        return "Last verified retained: Chart C "
+            + money(c.chart_c_fortnightly)
+            + "/fn · free area "
+            + money(c.income_free_area_fortnightly)
+            + "/fn · taper "
+            + Math.round((c.taper||0)*100)
+            + "c per $1.";
+    }
+
+    if(name==="Services Australia — Age Pension Rates"){
+        const basic=payments.age_pension_single_basic||{};
+        const total=payments.age_pension_single_total||{};
+
+        return "Last verified retained: single basic "
+            + money(basic.actual_fortnightly)
+            + "/fn · single total "
+            + money(total.actual_fortnightly)
+            + "/fn.";
+    }
+
+    if(name==="Services Australia — JobSeeker Rates"){
+        const js=payments.jobseeker_single_no_children||{};
+
+        return "Last verified retained: single, no children "
+            + money(js.actual_fortnightly)
+            + "/fn.";
+    }
+
+    if(name==="Safe Work Australia — Premiums"){
+        return "Last verified retained: standardised average premium rate "
+            + pct(wc.latest_standardised_average_premium_rate_pct)
+            + " · "
+            + esc(wc.latest_rate_period||"reference period retained")
+            + ".";
+    }
+
+    if(name==="ATO — Medicare Levy"){
+        return "Last verified retained in model: Medicare levy "
+            + pct(tx.medicare_levy_rate_pct)
+            + ".";
+    }
+
+    if(name==="ATO — Payday Super"){
+        return "Last verified retained in model: SG rate "
+            + pct(sg.sg_rate_pct)
+            + ".";
+    }
+
+    if(name==="ATO — 2026 PAYG Tax Tables"){
+        return "Current retained model: 2026–27 resident tax settings. "
+            + "Exact weekly PAYG coefficients remain separately identified "
+            + "as pending direct implementation.";
+    }
+
+    if(name==="Remuneration Tribunal — Document Library"){
+        return "Last verified retained: federal MP base salary "
+            + money(rem.parliamentary_base_salary_annual)
+            + "/year · 2026 general adjustment "
+            + pct(rem.review_2026_general_adjustment_pct)
+            + ".";
+    }
+
+    return "";
 }
 
 
