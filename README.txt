@@ -169,3 +169,37 @@ Automatic monitoring:
 - Services Australia JobSeeker rate page.
 - Recalculation whenever the actual NMW, corrected wage, or monitored payment
   rate changes.
+
+
+v5.6.5 — CPI MONTH COMPARISON + THREE-INCOME LECI
+=================================================
+
+Adds:
+
+- ABS monthly CPI automatic monitoring
+- previous/current CPI tables side by side
+- exact reference month under each CPI table
+- 84-month / seven-year CPI archive
+
+July 2026:
+
+- annual CPI 3.5%
+- monthly original +1.0%
+- monthly seasonally adjusted +0.6%
+- Housing +5.0%
+- Food and non-alcoholic beverages +3.2%
+- Transport +1.6%
+- Trimmed mean inflation 3.6%
+
+THE CONSTANT LECI:
+
+- essential weekly basket $1,150.77
+- housing and utilities shown separately
+- National Minimum Wage $1,004.90/week
+- THE CONSTANT proposed wage $1,313.90/week
+- Average Weekly Ordinary-Time Earnings $2,083.70/week
+- burden percentages shown before income tax and Medicare levy
+
+Official ABS observations remain separately identified from
+THE CONSTANT derived measures.
+

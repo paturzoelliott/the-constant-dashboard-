@@ -24,14 +24,77 @@
     "taper": 0.5
   },
   "official": {
-    "cpi_reference_period": "June 2026",
-    "cpi_annual_pct": 3.8,
+    "cpi_reference_period": "July 2026",
+    "cpi_annual_pct": 3.5,
     "employee_lci_annual_pct": 3.7,
     "employee_lci_quarterly_pct": 1.5,
     "pblci_annual_pct": 4.6,
     "age_pensioner_lci_annual_pct": 4.7,
     "lci_reference_base": "September 2025 quarter = 100",
-    "cash_rate_pct": 4.35
+    "cash_rate_pct": 4.35,
+    "cpi_monthly": {
+      "previous": {
+        "month": "2026-06",
+        "reference_period": "June 2026",
+        "release_date": null,
+        "annual_cpi_pct": 3.8,
+        "monthly_original_pct": null,
+        "monthly_sa_pct": null,
+        "housing_annual_pct": 6.8,
+        "food_annual_pct": 3.3,
+        "transport_annual_pct": null,
+        "trimmed_mean_annual_pct": null,
+        "source": "ABS Consumer Price Index, Australia",
+        "official": true
+      },
+      "current": {
+        "month": "2026-07",
+        "reference_period": "July 2026",
+        "release_date": "26 August 2026",
+        "annual_cpi_pct": 3.5,
+        "monthly_original_pct": 1.0,
+        "monthly_sa_pct": 0.6,
+        "housing_annual_pct": 5.0,
+        "food_annual_pct": 3.2,
+        "transport_annual_pct": 1.6,
+        "trimmed_mean_annual_pct": 3.6,
+        "source": "ABS Consumer Price Index, Australia",
+        "official": true
+      },
+      "archive": [
+        {
+          "month": "2026-06",
+          "reference_period": "June 2026",
+          "release_date": null,
+          "annual_cpi_pct": 3.8,
+          "monthly_original_pct": null,
+          "monthly_sa_pct": null,
+          "housing_annual_pct": 6.8,
+          "food_annual_pct": 3.3,
+          "transport_annual_pct": null,
+          "trimmed_mean_annual_pct": null,
+          "source": "ABS Consumer Price Index, Australia",
+          "official": true
+        },
+        {
+          "month": "2026-07",
+          "reference_period": "July 2026",
+          "release_date": "26 August 2026",
+          "annual_cpi_pct": 3.5,
+          "monthly_original_pct": 1.0,
+          "monthly_sa_pct": 0.6,
+          "housing_annual_pct": 5.0,
+          "food_annual_pct": 3.2,
+          "transport_annual_pct": 1.6,
+          "trimmed_mean_annual_pct": 3.6,
+          "source": "ABS Consumer Price Index, Australia",
+          "official": true
+        }
+      ],
+      "archive_months": 84,
+      "archive_years": 7,
+      "methodology": "Official ABS monthly CPI observations. Each new release becomes Current Month. The former current observation becomes Previous Month. Up to 84 monthly observations are retained."
+    }
   },
   "forward": {
     "status": "Derived from Government-announced pension rate — Services Australia cut-off table pending",
@@ -249,7 +312,7 @@
           "official_actual_rate": true
         }
       ],
-      "updated_at": "2026-08-20T08:28:21+00:00"
+      "updated_at": "2026-08-26T16:00:27+00:00"
     }
   },
   "dashboard_metrics": {
@@ -382,6 +445,7 @@
   },
   "union_award_monitor": {
     "active_days": 30,
+    "archive_months": 18,
     "active": [],
     "archive": [
       {
@@ -427,6 +491,7 @@
   },
   "announcement_policy": {
     "main_page_days": 30,
+    "archive_months": 18,
     "archive_years": 7
   },
   "latest_announcements": [
@@ -670,5 +735,111 @@
     "hours_worked_quarterly_pct": 0.9,
     "hours_worked_annual_pct": 2.2,
     "status": "Official Productivity Commission bulletin based on ABS productivity statistics"
+  },
+  "the_constant_derived": {
+    "leci_income_burden": {
+      "reference_period": "2026",
+      "before_tax": true,
+      "weekly_costs": {
+        "rent": 650.0,
+        "electricity": 46.15,
+        "gas": 17.31,
+        "water_sewerage": 17.31,
+        "food": 180.0,
+        "transport": 100.0,
+        "health_medicines": 30.0,
+        "insurance": 25.0,
+        "household_necessities": 40.0,
+        "phone_internet": 25.0,
+        "clothing_personal_care": 20.0
+      },
+      "basket_total_weekly": 1150.77,
+      "incomes": {
+        "minimum_wage": {
+          "label": "National Minimum Wage",
+          "weekly": 1004.9,
+          "item_burden_pct": {
+            "rent": 64.68,
+            "electricity": 4.59,
+            "gas": 1.72,
+            "water_sewerage": 1.72,
+            "food": 17.91,
+            "transport": 9.95,
+            "health_medicines": 2.99,
+            "insurance": 2.49,
+            "household_necessities": 3.98,
+            "phone_internet": 2.49,
+            "clothing_personal_care": 1.99
+          },
+          "total_burden_pct": 114.52,
+          "gross_remaining": -145.87
+        },
+        "proposed_wage": {
+          "label": "THE CONSTANT Proposed Wage",
+          "weekly": 1313.9,
+          "item_burden_pct": {
+            "rent": 49.47,
+            "electricity": 3.51,
+            "gas": 1.32,
+            "water_sewerage": 1.32,
+            "food": 13.7,
+            "transport": 7.61,
+            "health_medicines": 2.28,
+            "insurance": 1.9,
+            "household_necessities": 3.04,
+            "phone_internet": 1.9,
+            "clothing_personal_care": 1.52
+          },
+          "total_burden_pct": 87.58,
+          "gross_remaining": 163.13
+        },
+        "average_wage": {
+          "label": "Average Weekly Ordinary-Time Earnings",
+          "weekly": 2083.7,
+          "item_burden_pct": {
+            "rent": 31.19,
+            "electricity": 2.21,
+            "gas": 0.83,
+            "water_sewerage": 0.83,
+            "food": 8.64,
+            "transport": 4.8,
+            "health_medicines": 1.44,
+            "insurance": 1.2,
+            "household_necessities": 1.92,
+            "phone_internet": 1.2,
+            "clothing_personal_care": 0.96
+          },
+          "total_burden_pct": 55.23,
+          "gross_remaining": 932.93
+        }
+      },
+      "methodology": "THE CONSTANT essential weekly cash-cost basket divided by gross weekly income. All burden percentages are before income tax and Medicare levy."
+    },
+    "leci_income_burden_archive": [
+      {
+        "month": "2026-07",
+        "basket_total_weekly": 1150.77,
+        "weekly_costs": {
+          "rent": 650.0,
+          "electricity": 46.15,
+          "gas": 17.31,
+          "water_sewerage": 17.31,
+          "food": 180.0,
+          "transport": 100.0,
+          "health_medicines": 30.0,
+          "insurance": 25.0,
+          "household_necessities": 40.0,
+          "phone_internet": 25.0,
+          "clothing_personal_care": 20.0
+        },
+        "minimum_wage_weekly": 1004.9,
+        "proposed_wage_weekly": 1313.9,
+        "average_wage_weekly": 2083.7,
+        "minimum_wage_burden_pct": 114.52,
+        "proposed_wage_burden_pct": 87.58,
+        "average_wage_burden_pct": 55.23,
+        "before_tax": true
+      }
+    ]
   }
 }

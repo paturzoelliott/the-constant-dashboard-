@@ -5,6 +5,126 @@
 <title>THE CONSTANT — Live</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;padding:0;background:#07111f!important}.tc-shell{min-height:100vh;padding:1px 0;color:#fff;background:radial-gradient(circle at 18% 18%,rgba(0,200,255,.16),transparent 30%),radial-gradient(circle at 82% 12%,rgba(123,97,255,.14),transparent 28%),linear-gradient(180deg,#081423 0%,#0b1830 45%,#07111f 100%);background-attachment:fixed;}body{color:#fff;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#07111f!important;}font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{max-width:1450px;margin:auto;padding:20px}.header{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;padding:20px 0 26px;border-bottom:1px solid rgba(255,255,255,.08)}.logo{font-size:34px;font-weight:950;color:#00c8ff}.badge{display:inline-block;margin-top:7px;padding:6px 11px;border-radius:999px;color:#51cf66;background:rgba(81,207,102,.1);border:1px solid rgba(81,207,102,.25);font-size:11px;font-weight:800}.clock{font:900 28px ui-monospace,monospace;color:#00c8ff;text-align:right}.clocklabel{font-size:10px;color:rgba(255,255,255,.35);text-align:right}.grid{display:grid;grid-template-columns:2fr 1fr;gap:22px;margin-top:22px}.card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.065);border-radius:19px;padding:22px;margin-bottom:22px}.title{font-size:15px;font-weight:850;color:rgba(255,255,255,.65);margin-bottom:15px}.four{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.stat{text-align:center;padding:15px 9px;border-radius:13px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.045)}.lab{font-size:10px;text-transform:uppercase;color:rgba(255,255,255,.37);font-weight:800}.val{font-size:22px;font-weight:900;margin-top:4px}.cyan{color:#00c8ff}.gold{color:#ffd43b}.red{color:#ff6b6b}.purple{color:#b197fc}.orange{color:#ffa94d}.source,.event,.upcoming-event{padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:11px}.row{display:flex;justify-content:space-between;gap:12px}.ok{color:#51cf66;font-weight:800}.warn{color:#ffd43b;font-weight:800}.err{color:#ff6b6b;font-weight:800}.sub{font-size:10px;color:rgba(255,255,255,.3);margin-top:4px}.claimtable{width:100%;border-collapse:collapse;font-size:11px}.claimtable th,.claimtable td{padding:9px 8px;border-bottom:1px solid rgba(255,255,255,.06);text-align:left}.claimtable th{color:rgba(255,255,255,.42);font-size:9px;text-transform:uppercase}.claimtag{display:inline-block;padding:3px 7px;border-radius:999px;background:rgba(0,200,255,.1);color:#7ee5ff;font-weight:800;font-size:9px}.archivebtn{border:0;background:rgba(255,255,255,.08);color:white;padding:9px 12px;border-radius:9px;font-weight:800;cursor:pointer}.archivepanel{display:none;margin-top:14px}.archivepanel.open{display:block}.announcement-archive-btn{border:0;background:rgba(255,255,255,.08);color:white;padding:9px 12px;border-radius:9px;font-weight:800;cursor:pointer;margin-top:12px}.announcement-archive{display:none;margin-top:12px}.announcement-archive.open{display:block}.linkedin{display:inline-block;text-decoration:none;color:white;background:#0a66c2;padding:11px 16px;border-radius:10px;font-weight:800;font-size:12px}.footer{border-top:1px solid rgba(255,255,255,.06);padding:18px 0;color:rgba(255,255,255,.28);font-size:11px}@media(max-width:1000px){.grid{grid-template-columns:1fr}.four{grid-template-columns:repeat(2,1fr)}}@media(max-width:620px){.four,.three{grid-template-columns:1fr}.header{justify-content:center;text-align:center}.clock,.clocklabel{text-align:center}}
+
+
+/* ========================================================================
+   THE CONSTANT LIVE v5.6.5
+   CPI MONTH COMPARISON + THREE-INCOME LECI
+   ======================================================================== */
+
+.tc-cpi-compare-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(2,minmax(0,1fr));
+    gap:16px;
+    align-items:stretch;
+    margin-top:14px;
+}
+
+.tc-cpi-month-card{
+    border:
+        1px solid
+        rgba(125,190,255,.28);
+    border-radius:16px;
+    padding:16px;
+    background:
+        rgba(6,28,56,.66);
+}
+
+.tc-cpi-month-card.current{
+    border-color:
+        rgba(0,215,255,.58);
+}
+
+.tc-cpi-month-heading{
+    font-size:.82rem;
+    font-weight:800;
+    letter-spacing:.09em;
+    margin-bottom:10px;
+    opacity:.9;
+}
+
+.tc-cpi-detail-table,
+.tc-leci-full-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.tc-cpi-detail-table td,
+.tc-leci-full-table td,
+.tc-leci-full-table th{
+    padding:9px 7px;
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.08);
+}
+
+.tc-cpi-detail-table td:last-child,
+.tc-leci-full-table td:not(:first-child),
+.tc-leci-full-table th:not(:first-child){
+    text-align:right;
+    font-variant-numeric:
+        tabular-nums;
+}
+
+.tc-cpi-reference{
+    margin-top:12px;
+    padding-top:10px;
+    text-align:center;
+    border-top:
+        1px solid
+        rgba(255,255,255,.08);
+    font-size:.88rem;
+    line-height:1.45;
+}
+
+.tc-leci-scroll{
+    overflow-x:auto;
+}
+
+.tc-leci-full-table{
+    min-width:850px;
+}
+
+.tc-leci-total td{
+    font-weight:800;
+}
+
+.tc-leci-negative{
+    color:#ff7373;
+    font-weight:800;
+}
+
+.tc-leci-positive{
+    color:#77efb2;
+    font-weight:800;
+}
+
+.tc-method-note{
+    margin-top:12px;
+    font-size:.88rem;
+    opacity:.83;
+    line-height:1.5;
+}
+
+.tc-cpi-archive-table{
+    display:none;
+    margin-top:14px;
+    overflow-x:auto;
+}
+
+.tc-cpi-archive-table.open{
+    display:block;
+}
+
+@media(max-width:760px){
+
+    .tc-cpi-compare-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+
 </style>
 
 <style id="the-constant-dark-blue-fix">
@@ -623,6 +743,167 @@ to amendment by the issuing institution.
 <div class="stat"><div class="lab">RBA Cash Rate</div><div id="tickercash" class="val cyan">4.35%</div></div>
 </div>
 </section>
+
+
+<section
+    class="card"
+    id="tc-cpi-monthly-comparison"
+>
+
+<div class="title">
+ABS MONTHLY CPI — PREVIOUS MONTH vs CURRENT MONTH
+</div>
+
+<div class="tc-cpi-compare-grid">
+
+<div class="tc-cpi-month-card previous">
+
+<div class="tc-cpi-month-heading">
+PREVIOUS MONTH
+</div>
+
+<table class="tc-cpi-detail-table">
+<tbody>
+
+<tr>
+<td>Annual CPI</td>
+<td id="cpiprevannual">—</td>
+</tr>
+
+<tr>
+<td>Monthly CPI — original</td>
+<td id="cpiprevmonthly">—</td>
+</tr>
+
+<tr>
+<td>Monthly CPI — seasonally adjusted</td>
+<td id="cpiprevsa">—</td>
+</tr>
+
+<tr>
+<td>Housing — annual</td>
+<td id="cpiprevhousing">—</td>
+</tr>
+
+<tr>
+<td>Food & non-alcoholic beverages — annual</td>
+<td id="cpiprevfood">—</td>
+</tr>
+
+<tr>
+<td>Transport — annual</td>
+<td id="cpiprevtransport">—</td>
+</tr>
+
+<tr>
+<td>Trimmed mean inflation — annual</td>
+<td id="cpiprevtrimmed">—</td>
+</tr>
+
+</tbody>
+</table>
+
+<div class="tc-cpi-reference">
+
+<strong id="cpiprevreference">
+Reference month: —
+</strong>
+
+<div id="cpiprevrelease"></div>
+
+</div>
+
+</div>
+
+
+<div class="tc-cpi-month-card current">
+
+<div class="tc-cpi-month-heading">
+CURRENT MONTH
+</div>
+
+<table class="tc-cpi-detail-table">
+<tbody>
+
+<tr>
+<td>Annual CPI</td>
+<td id="cpicurrentannual">—</td>
+</tr>
+
+<tr>
+<td>Monthly CPI — original</td>
+<td id="cpicurrentmonthly">—</td>
+</tr>
+
+<tr>
+<td>Monthly CPI — seasonally adjusted</td>
+<td id="cpicurrentsa">—</td>
+</tr>
+
+<tr>
+<td>Housing — annual</td>
+<td id="cpicurrenthousing">—</td>
+</tr>
+
+<tr>
+<td>Food & non-alcoholic beverages — annual</td>
+<td id="cpicurrentfood">—</td>
+</tr>
+
+<tr>
+<td>Transport — annual</td>
+<td id="cpicurrenttransport">—</td>
+</tr>
+
+<tr>
+<td>Trimmed mean inflation — annual</td>
+<td id="cpicurrenttrimmed">—</td>
+</tr>
+
+</tbody>
+</table>
+
+<div class="tc-cpi-reference">
+
+<strong id="cpicurrentreference">
+Reference month: —
+</strong>
+
+<div id="cpicurrentrelease"></div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="tc-method-note">
+
+Official ABS observations. When a new monthly CPI
+release is detected, the current observation moves
+to Previous Month and the new observation becomes
+Current Month.
+
+Up to seven years / 84 months are retained.
+
+</div>
+
+<button
+    class="archivebtn"
+    style="margin-top:12px"
+    onclick="toggleCPIArchive()"
+>
+VIEW 7-YEAR CPI ARCHIVE
+</button>
+
+<div
+    id="cpiarchive"
+    class="tc-cpi-archive-table"
+></div>
+
+</section>
+
+
 <section class="card"><div class="title">LECI — EMPLOYEE LIVING COST INDEX</div>
 <div class="tc-explainer" data-explainer="LECI — EMPLOYEE LIVING COST INDEX">
 <strong>Official ABS measure.</strong>
@@ -708,6 +989,146 @@ validated against its underlying source and methodology.
 
 <div class="sub" style="margin-top:10px">Counterfactual book measure: the living-cost environment is held constant while the wage base changes from actual to corrected.</div>
 </section>
+
+
+
+<section
+    class="card"
+    id="tc-leci-income-burden-full"
+>
+
+<div class="title">
+THE CONSTANT — ESSENTIAL COST BURDEN BY INCOME
+</div>
+
+<div
+    class="sub"
+    style="margin-bottom:12px"
+>
+
+The same weekly essential cash basket is measured
+against three income levels.
+
+<strong>
+All burden percentages are before income tax and Medicare levy.
+</strong>
+
+</div>
+
+<div class="tc-leci-scroll">
+
+<table class="tc-leci-full-table">
+
+<thead>
+
+<tr>
+
+<th>
+Essential weekly cost
+</th>
+
+<th>
+Cash cost
+</th>
+
+<th>
+National Minimum Wage
+<br>
+<span id="leciminwagehead">
+$1,004.90/wk
+</span>
+</th>
+
+<th>
+THE CONSTANT Proposed Wage
+<br>
+<span id="leciproposedhead">
+$1,313.90/wk
+</span>
+</th>
+
+<th>
+Average Wage
+<br>
+<span id="leciaveragehead">
+$2,083.70/wk
+</span>
+</th>
+
+</tr>
+
+</thead>
+
+<tbody id="lecifullbody">
+</tbody>
+
+<tfoot>
+
+<tr class="tc-leci-total">
+
+<td>
+Total essential basket
+</td>
+
+<td id="lecifulltotal">
+$1,150.77
+</td>
+
+<td id="leciminburden">
+114.5%
+</td>
+
+<td id="lecipropburden">
+87.6%
+</td>
+
+<td id="leciavgburden">
+55.2%
+</td>
+
+</tr>
+
+<tr class="tc-leci-total">
+
+<td>
+Gross income remaining
+</td>
+
+<td>—</td>
+
+<td id="leciminremaining">
+−$145.87
+</td>
+
+<td id="lecipropremaining">
+$163.13
+</td>
+
+<td id="leciavgremaining">
+$932.93
+</td>
+
+</tr>
+
+</tfoot>
+
+</table>
+
+</div>
+
+<div class="tc-method-note">
+
+THE CONSTANT derived adequacy/stress measure.
+The essential basket is held constant across all
+three income cases.
+
+Official ABS measures and THE CONSTANT derived
+measures remain separately identified.
+
+</div>
+
+</section>
+
 
 <section class="card">
 <div class="title">3. WORKERS' COMPENSATION — PREMIUMS & FEES</div>
@@ -1594,7 +2015,7 @@ It provides the data needed to test it.
 <div class="sub" style="margin-top:8px">Scheduled daily at 10:00 AM and 10:00 PM Australia/Sydney (AEST/AEDT automatically).</div>
 </section>
 </aside></div>
-<footer class="footer">THE CONSTANT Live Official Monitor v5.6.4 · The clock is local to each viewer. Official-source data refreshes at 10:00 AM and 10:00 PM Australia/Sydney time.</footer>
+<footer class="footer">THE CONSTANT Live Official Monitor v5.6.5 · The clock is local to each viewer. Official-source data refreshes at 10:00 AM and 10:00 PM Australia/Sydney time.</footer>
 </div></div>
 <script>
 const money=v=>v==null?'—':'$'+Number(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -1605,7 +2026,7 @@ function draw(s){
  const c=s.core||{},o=s.official||{},f=s.forward||{};
  document.getElementById("mw").textContent=money(c.minimum_wage_weekly);document.getElementById("cc").textContent=money(c.chart_c_fortnightly);document.getElementById("ratio").textContent=pct(c.ratio_pct);document.getElementById("gap").textContent=money(c.weekly_gap);
  document.getElementById("fcc").textContent=money(f.chart_c_fortnightly);document.getElementById("fcw").textContent=money(f.chart_c_weekly);document.getElementById("fgap").textContent=money(f.weekly_gap);document.getElementById("fratio").textContent=pct(f.ratio_pct);document.getElementById("fstatus").textContent=f.status||'';
- document.getElementById("cpi").textContent=pct(o.cpi_annual_pct);document.getElementById("cpirp").textContent=o.cpi_reference_period||'';document.getElementById("lci").textContent=pct(o.employee_lci_annual_pct);document.getElementById("cash").textContent=pct(o.cash_rate_pct);document.getElementById("leciannual").textContent=pct(o.employee_lci_annual_pct);document.getElementById("rbapolicycash").textContent=pct((s.rba_policy||{}).cash_rate_pct);
+ renderCPIMonthComparison(s);renderFullLECI(s);document.getElementById("cpi").textContent=pct(o.cpi_annual_pct);document.getElementById("cpirp").textContent=o.cpi_reference_period||'';document.getElementById("lci").textContent=pct(o.employee_lci_annual_pct);document.getElementById("cash").textContent=pct(o.cash_rate_pct);document.getElementById("leciannual").textContent=pct(o.employee_lci_annual_pct);document.getElementById("rbapolicycash").textContent=pct((s.rba_policy||{}).cash_rate_pct);
  
 document.getElementById("checks").textContent=s.checks_completed||0;
 document.getElementById("changes").textContent=s.source_changes_detected||0;
@@ -1844,6 +2265,559 @@ function claimTable(items,emptyText){
  }).join('');
  return `<div style="overflow-x:auto"><table class="claimtable"><thead><tr><th>Organisation / matter</th><th>Rate before</th><th>Claim / applied</th><th>Outcome</th><th>Date</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
+
+
+function tcPct(v){
+
+    return (
+        v===null
+        || v===undefined
+        || Number.isNaN(Number(v))
+    )
+
+    ? '—'
+
+    : Number(v).toFixed(1)+'%';
+}
+
+
+function tcMoney(v){
+
+    if(
+        v===null
+        || v===undefined
+        || Number.isNaN(Number(v))
+    ){
+
+        return '—';
+    }
+
+    const n=Number(v);
+
+    const sign=
+        n<0
+        ? '−'
+        : '';
+
+    return (
+        sign
+        +'$'
+        +Math.abs(n).toLocaleString(
+            undefined,
+            {
+                minimumFractionDigits:2,
+                maximumFractionDigits:2
+            }
+        )
+    );
+}
+
+
+function tcSet(id,value){
+
+    const el=
+        document.getElementById(id);
+
+    if(el){
+
+        el.textContent=value;
+    }
+}
+
+
+function renderCPIMonthComparison(state){
+
+    const model=
+        ((state.official||{}).cpi_monthly)
+        || {};
+
+    const prev=
+        model.previous
+        || {};
+
+    const cur=
+        model.current
+        || {};
+
+    tcSet(
+        'cpiprevannual',
+        tcPct(
+            prev.annual_cpi_pct
+        )
+    );
+
+    tcSet(
+        'cpiprevmonthly',
+        tcPct(
+            prev.monthly_original_pct
+        )
+    );
+
+    tcSet(
+        'cpiprevsa',
+        tcPct(
+            prev.monthly_sa_pct
+        )
+    );
+
+    tcSet(
+        'cpiprevhousing',
+        tcPct(
+            prev.housing_annual_pct
+        )
+    );
+
+    tcSet(
+        'cpiprevfood',
+        tcPct(
+            prev.food_annual_pct
+        )
+    );
+
+    tcSet(
+        'cpiprevtransport',
+        tcPct(
+            prev.transport_annual_pct
+        )
+    );
+
+    tcSet(
+        'cpiprevtrimmed',
+        tcPct(
+            prev.trimmed_mean_annual_pct
+        )
+    );
+
+    tcSet(
+        'cpiprevreference',
+        'Reference month: '
+        +(prev.reference_period||'—')
+    );
+
+    tcSet(
+        'cpiprevrelease',
+
+        prev.release_date
+
+        ? 'ABS release date: '
+          +prev.release_date
+
+        : ''
+    );
+
+
+    tcSet(
+        'cpicurrentannual',
+        tcPct(
+            cur.annual_cpi_pct
+        )
+    );
+
+    tcSet(
+        'cpicurrentmonthly',
+        tcPct(
+            cur.monthly_original_pct
+        )
+    );
+
+    tcSet(
+        'cpicurrentsa',
+        tcPct(
+            cur.monthly_sa_pct
+        )
+    );
+
+    tcSet(
+        'cpicurrenthousing',
+        tcPct(
+            cur.housing_annual_pct
+        )
+    );
+
+    tcSet(
+        'cpicurrentfood',
+        tcPct(
+            cur.food_annual_pct
+        )
+    );
+
+    tcSet(
+        'cpicurrenttransport',
+        tcPct(
+            cur.transport_annual_pct
+        )
+    );
+
+    tcSet(
+        'cpicurrenttrimmed',
+        tcPct(
+            cur.trimmed_mean_annual_pct
+        )
+    );
+
+    tcSet(
+        'cpicurrentreference',
+        'Reference month: '
+        +(cur.reference_period||'—')
+    );
+
+    tcSet(
+        'cpicurrentrelease',
+
+        cur.release_date
+
+        ? 'ABS release date: '
+          +cur.release_date
+
+        : ''
+    );
+
+
+    const archive=
+        (model.archive||[])
+        .slice()
+        .reverse();
+
+    const rows=
+        archive
+        .map(
+            x=>`
+
+<tr>
+
+<td>
+${x.reference_period||'—'}
+</td>
+
+<td>
+${tcPct(x.annual_cpi_pct)}
+</td>
+
+<td>
+${tcPct(x.monthly_original_pct)}
+</td>
+
+<td>
+${tcPct(x.monthly_sa_pct)}
+</td>
+
+<td>
+${tcPct(x.housing_annual_pct)}
+</td>
+
+<td>
+${tcPct(x.food_annual_pct)}
+</td>
+
+<td>
+${tcPct(x.transport_annual_pct)}
+</td>
+
+<td>
+${tcPct(x.trimmed_mean_annual_pct)}
+</td>
+
+</tr>
+
+`
+        )
+        .join('');
+
+
+    const box=
+        document.getElementById(
+            'cpiarchive'
+        );
+
+    if(box){
+
+        box.innerHTML=`
+
+<table class="tc-leci-full-table">
+
+<thead>
+
+<tr>
+
+<th>Month</th>
+<th>Annual CPI</th>
+<th>Monthly original</th>
+<th>Monthly SA</th>
+<th>Housing</th>
+<th>Food</th>
+<th>Transport</th>
+<th>Trimmed mean</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+${rows}
+
+</tbody>
+
+</table>
+
+`;
+    }
+}
+
+
+function toggleCPIArchive(){
+
+    const el=
+        document.getElementById(
+            'cpiarchive'
+        );
+
+    if(el){
+
+        el.classList.toggle(
+            'open'
+        );
+    }
+}
+
+
+function renderFullLECI(state){
+
+    const model=
+        (
+            (
+                state
+                .the_constant_derived
+                || {}
+            )
+            .leci_income_burden
+        )
+        || {};
+
+    const costs=
+        model.weekly_costs
+        || {};
+
+    const incomes=
+        model.incomes
+        || {};
+
+    const minimum=
+        incomes.minimum_wage
+        || {};
+
+    const proposed=
+        incomes.proposed_wage
+        || {};
+
+    const average=
+        incomes.average_wage
+        || {};
+
+
+    tcSet(
+        'leciminwagehead',
+        tcMoney(minimum.weekly)
+        +'/wk'
+    );
+
+    tcSet(
+        'leciproposedhead',
+        tcMoney(proposed.weekly)
+        +'/wk'
+    );
+
+    tcSet(
+        'leciaveragehead',
+        tcMoney(average.weekly)
+        +'/wk'
+    );
+
+
+    const labels={
+
+        rent:
+            'Rent',
+
+        electricity:
+            'Electricity',
+
+        gas:
+            'Gas',
+
+        water_sewerage:
+            'Water / sewerage',
+
+        food:
+            'Food',
+
+        transport:
+            'Transport',
+
+        health_medicines:
+            'Health / medicines',
+
+        insurance:
+            'Insurance',
+
+        household_necessities:
+            'Household necessities',
+
+        phone_internet:
+            'Phone / internet',
+
+        clothing_personal_care:
+            'Clothing / personal care'
+    };
+
+
+    const order=[
+
+        'rent',
+
+        'electricity',
+
+        'gas',
+
+        'water_sewerage',
+
+        'food',
+
+        'transport',
+
+        'health_medicines',
+
+        'insurance',
+
+        'household_necessities',
+
+        'phone_internet',
+
+        'clothing_personal_care'
+    ];
+
+
+    const rows=
+        order
+        .map(
+            key=>`
+
+<tr>
+
+<td>
+${labels[key]}
+</td>
+
+<td>
+${tcMoney(costs[key])}
+</td>
+
+<td>
+${tcPct(
+    (minimum.item_burden_pct||{})[key]
+)}
+</td>
+
+<td>
+${tcPct(
+    (proposed.item_burden_pct||{})[key]
+)}
+</td>
+
+<td>
+${tcPct(
+    (average.item_burden_pct||{})[key]
+)}
+</td>
+
+</tr>
+
+`
+        )
+        .join('');
+
+
+    const body=
+        document.getElementById(
+            'lecifullbody'
+        );
+
+    if(body){
+
+        body.innerHTML=rows;
+    }
+
+
+    tcSet(
+        'lecifulltotal',
+        tcMoney(
+            model.basket_total_weekly
+        )
+    );
+
+    tcSet(
+        'leciminburden',
+        tcPct(
+            minimum.total_burden_pct
+        )
+    );
+
+    tcSet(
+        'lecipropburden',
+        tcPct(
+            proposed.total_burden_pct
+        )
+    );
+
+    tcSet(
+        'leciavgburden',
+        tcPct(
+            average.total_burden_pct
+        )
+    );
+
+    tcSet(
+        'leciminremaining',
+        tcMoney(
+            minimum.gross_remaining
+        )
+    );
+
+    tcSet(
+        'lecipropremaining',
+        tcMoney(
+            proposed.gross_remaining
+        )
+    );
+
+    tcSet(
+        'leciavgremaining',
+        tcMoney(
+            average.gross_remaining
+        )
+    );
+
+
+    const minRemain=
+        document.getElementById(
+            'leciminremaining'
+        );
+
+    if(minRemain){
+
+        minRemain.className=
+
+            Number(
+                minimum.gross_remaining
+            ) < 0
+
+            ? 'tc-leci-negative'
+
+            : 'tc-leci-positive';
+    }
+}
+
+
 function toggleArchive(){document.getElementById('unionarchive').classList.toggle('open')}
 function toggleAnnouncementArchive(){document.getElementById('announcementarchive').classList.toggle('open')}
 function announcementFeed(items, emptyText){
