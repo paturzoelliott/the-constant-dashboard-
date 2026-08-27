@@ -19,6 +19,7 @@ APP_DIR = Path(__file__).resolve().parent
 DATA_DIR = Path(os.getenv("DATA_DIR", APP_DIR))
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 STATE_FILE = DATA_DIR / "state.json"
+RUNTIME_STATE_FILE = DATA_DIR / "runtime_state.json"
 
 DEFAULT = {
     "version": "5.6.6",
@@ -296,12 +297,155 @@ def merge(a,b):
         if isinstance(v,dict) and isinstance(a.get(k),dict): merge(a[k],v)
         else: a[k]=v
 
-def load_state():
-    d=json.loads(json.dumps(DEFAULT))
+# -------------------------------------------------------------------------
+# v5.6.7 state architecture
+#
+# state.json
+#     Persistent verified/substantive dashboard state.
+#
+# runtime_state.json
+#     Volatile operational metadata: timestamps, source-health responses,
+#     HTTP status, ETags, counters and other runtime-only observations.
+#
+# runtime_state.json is deliberately excluded from Git.
+# -------------------------------------------------------------------------
 
+RUNTIME_TOP_LEVEL_KEYS = {
+    "started_at",
+    "last_check",
+    "next_check",
+    "checks_completed",
+    "source_changes_detected",
+    "errors",
+    "sources",
+}
+
+
+def _deep_copy(value):
+    return json.loads(
+        json.dumps(value)
+    )
+
+
+def _remove_nested(d, path):
+    current = d
+
+    for key in path[:-1]:
+        if not isinstance(current, dict):
+            return
+
+        current = current.get(key)
+
+        if not isinstance(current, dict):
+            return
+
+    if isinstance(current, dict):
+        current.pop(path[-1], None)
+
+
+def persistent_state_snapshot():
+    """
+    Return only stable/substantive state suitable for tracked state.json.
+
+    Routine source-health metadata and execution timestamps are deliberately
+    excluded so a normal monitoring cycle does not dirty the Git repository.
+    """
+    stable = _deep_copy(state)
+
+    for key in RUNTIME_TOP_LEVEL_KEYS:
+        stable.pop(key, None)
+
+    # Recalculation timestamp is operational, not an analytical input/result.
+    _remove_nested(
+        stable,
+        (
+            "income_support_counterfactual",
+            "calculated",
+            "updated_at",
+        )
+    )
+
+    # ABS source watcher timestamp is runtime-only.
+    _remove_nested(
+        stable,
+        (
+            "labour_market",
+            "source_last_seen",
+        )
+    )
+
+    return stable
+
+
+def runtime_state_snapshot():
+    """
+    Return volatile operational state.
+
+    This file may change on every source check and is intentionally not
+    version-controlled.
+    """
+    runtime = {}
+
+    for key in RUNTIME_TOP_LEVEL_KEYS:
+        if key in state:
+            runtime[key] = _deep_copy(
+                state[key]
+            )
+
+    # Preserve selected nested runtime fields between process restarts.
+    income_model = (
+        state
+        .get("income_support_counterfactual", {})
+        .get("calculated", {})
+    )
+
+    if "updated_at" in income_model:
+        runtime.setdefault(
+            "income_support_counterfactual",
+            {}
+        ).setdefault(
+            "calculated",
+            {}
+        )["updated_at"] = income_model["updated_at"]
+
+    labour = state.get(
+        "labour_market",
+        {}
+    )
+
+    if "source_last_seen" in labour:
+        runtime.setdefault(
+            "labour_market",
+            {}
+        )["source_last_seen"] = labour["source_last_seen"]
+
+    return runtime
+
+
+def _atomic_json_write(path, payload):
+    tmp = path.with_suffix(
+        path.suffix + ".tmp"
+    )
+
+    tmp.write_text(
+        json.dumps(
+            payload,
+            indent=2,
+            ensure_ascii=False
+        ),
+        encoding="utf-8"
+    )
+
+    tmp.replace(path)
+
+
+def load_state():
+    d = _deep_copy(DEFAULT)
+
+    # Persistent verified/substantive state.
     if STATE_FILE.exists():
         try:
-            saved=json.loads(
+            saved = json.loads(
                 STATE_FILE.read_text(
                     encoding="utf-8"
                 )
@@ -312,22 +456,52 @@ def load_state():
         except Exception:
             pass
 
+    # Volatile runtime/source-health state.
+    if RUNTIME_STATE_FILE.exists():
+        try:
+            runtime_saved = json.loads(
+                RUNTIME_STATE_FILE.read_text(
+                    encoding="utf-8"
+                )
+            )
+
+            merge(d, runtime_saved)
+
+        except Exception:
+            pass
+
     # Running program version always wins over stale saved state.
     d["version"] = DEFAULT["version"]
 
     if not d.get("started_at"):
-        d["started_at"]=now_iso()
+        d["started_at"] = now_iso()
 
     return d
 
-state=load_state()
+
+state = load_state()
+
 
 def save_state():
-    tmp=STATE_FILE.with_suffix(".tmp")
-    tmp.write_text(json.dumps(state,indent=2,ensure_ascii=False),encoding="utf-8")
-    tmp.replace(STATE_FILE)
+    """
+    Persist stable state and volatile runtime state separately.
+    """
+    _atomic_json_write(
+        STATE_FILE,
+        persistent_state_snapshot()
+    )
 
-def meta(name): return state["sources"].setdefault(name,{})
+    _atomic_json_write(
+        RUNTIME_STATE_FILE,
+        runtime_state_snapshot()
+    )
+
+
+def meta(name):
+    return state["sources"].setdefault(
+        name,
+        {}
+    )
 
 def fetch(name,url):
     m=meta(name); headers={}
@@ -1826,7 +2000,11 @@ recalc_income_support_counterfactual()
 
 save_state()
 
-threading.Thread(target=loop,daemon=True).start()
+if os.getenv("TC_DISABLE_SCHEDULER", "0") != "1":
+    threading.Thread(
+        target=loop,
+        daemon=True
+    ).start()
 
 if __name__=="__main__":
     app.run(

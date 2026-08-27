@@ -8,3 +8,5 @@ source_health_test.js
 final_dark_blue_test.js
 app_before_*.py
 index_before_*.html
+runtime_state.json
+runtime_state.json.tmp

@@ -1,8 +1,5 @@
 {
   "version": "5.6.6",
-  "started_at": "2026-08-20T07:15:53+00:00",
-  "last_check": "2026-08-27T02:11:42+00:00",
-  "next_check": "2026-08-27T22:00:00+10:00",
   "refresh_schedule": {
     "timezone": "Australia/Sydney",
     "times": [
@@ -11,9 +8,6 @@
     ],
     "description": "Official-source refresh at 10:00 AM and 10:00 PM Australia/Sydney time"
   },
-  "checks_completed": 6,
-  "source_changes_detected": 3,
-  "errors": [],
   "core": {
     "minimum_wage_weekly": 1004.9,
     "chart_c_fortnightly": 2627.8,
@@ -295,8 +289,7 @@
           "source_effective_period": "from 20 March 2026",
           "official_actual_rate": true
         }
-      ],
-      "updated_at": "2026-08-27T02:23:04+00:00"
+      ]
     }
   },
   "dashboard_metrics": {
@@ -507,163 +500,6 @@
     }
   ],
   "announcement_archive": [],
-  "sources": {
-    "ABS CPI": {
-      "last_checked": "2026-08-27T02:06:28+00:00",
-      "http_status": 200,
-      "etag": "W/\"1787737229\"",
-      "last_modified": "Wed, 26 Aug 2026 09:40:29 GMT",
-      "changed": true,
-      "sha256": "632356920be6ef1c7a73f6ccd6bf1beee53247a159174360eb439ffb7e262c88",
-      "last_success": "2026-08-27T02:06:28+00:00",
-      "error": null
-    },
-    "ABS Living Cost Indexes": {
-      "last_checked": "2026-08-27T02:06:28+00:00",
-      "http_status": 200,
-      "etag": "W/\"1787725221\"",
-      "last_modified": "Wed, 26 Aug 2026 06:20:21 GMT",
-      "changed": true,
-      "sha256": "f0a1bdb8b59c1e7f418f72dc4d922658589fe0b19149a5c90a37500281cb4eb2",
-      "last_success": "2026-08-27T02:06:28+00:00",
-      "error": null
-    },
-    "RBA Cash Rate": {
-      "last_checked": "2026-08-27T02:06:29+00:00",
-      "http_status": 200,
-      "changed": true,
-      "sha256": "92a6c7279b4b9fcbe3fdb8eea428e0096c7865ed22ca01df3e1d893b2a76ac45",
-      "last_success": "2026-08-27T02:06:29+00:00",
-      "error": null
-    },
-    "FWC National Minimum Wage": {
-      "last_checked": "2026-08-27T02:06:30+00:00",
-      "http_status": 200,
-      "etag": "\"1787792992-gzip\"",
-      "last_modified": "Thu, 27 Aug 2026 01:09:52 GMT",
-      "changed": true,
-      "sha256": "1229a48ac70f85df19403a8be66915a3ab9f9375a2c811b4ad37bc5b24440e31",
-      "last_success": "2026-08-27T02:06:30+00:00",
-      "error": null
-    },
-    "Services Australia DSP Income Test": {
-      "warning": "Temporary official-site timeout; last verified value retained",
-      "error": null
-    },
-    "Social Services Minister — Media Releases": {
-      "last_checked": "2026-08-27T02:07:20+00:00",
-      "http_status": 403,
-      "etag": "W/\"1787190066\"",
-      "last_modified": "Thu, 20 Aug 2026 01:41:06 GMT",
-      "changed": true,
-      "sha256": "5b389a28271b276b0d4338846d6a360916544345b2462d3b095a3a0a3645c14c",
-      "last_success": "2026-08-20T07:16:38+00:00",
-      "error": "403 Client Error: Forbidden for url: https://ministers.dss.gov.au/feeds/tanya-plibersek/rss.xml",
-      "seen_relevant_links": [
-        "https://ministers.dss.gov.au/transcripts/19226",
-        "https://ministers.dss.gov.au/media-releases/19221"
-      ]
-    },
-    "Remuneration Tribunal — Document Library": {
-      "error": "HTTPSConnectionPool(host='www.remtribunal.gov.au', port=443): Read timed out. (read timeout=12)"
-    },
-    "RBA — Monetary Policy Decisions": {
-      "last_checked": "2026-08-27T02:08:02+00:00",
-      "http_status": 200,
-      "changed": true,
-      "sha256": "0b96c5f8fa303eae3e2365a9746ed4253e56e6c7c19bff080a881a25f1f79ef7",
-      "last_success": "2026-08-27T02:08:02+00:00",
-      "error": null
-    },
-    "FWC — Annual Wage Review Submissions": {
-      "last_checked": "2026-08-27T02:08:03+00:00",
-      "http_status": 200,
-      "etag": "\"1787729241-gzip\"",
-      "last_modified": "Wed, 26 Aug 2026 07:27:21 GMT",
-      "changed": true,
-      "sha256": "4c13864ffe771cce0bde7c49ccf922ec56c31c0fcd493b242b71cf3d307d680c",
-      "last_success": "2026-08-27T02:08:03+00:00",
-      "error": null
-    },
-    "FWC — Annual Wage Review Determinations": {
-      "last_checked": "2026-08-27T02:08:03+00:00",
-      "http_status": 200,
-      "etag": "\"1787647763-gzip\"",
-      "last_modified": "Tue, 25 Aug 2026 08:49:23 GMT",
-      "changed": true,
-      "sha256": "adb568ae366ab9b373e17870bcd0d9e443ff4170561ff35cfaeb71b81d9493a4",
-      "last_success": "2026-08-27T02:08:03+00:00",
-      "error": null
-    },
-    "ACTU — Media Releases": {
-      "last_checked": "2026-08-27T02:08:03+00:00",
-      "http_status": 200,
-      "last_modified": "Thu, 27 Aug 2026 02:08:03 GMT",
-      "changed": true,
-      "sha256": "c907e421e0f0f3dd7d7d5ad97d65bae182daaf02e2732f589064588acd62cda6",
-      "last_success": "2026-08-27T02:08:03+00:00",
-      "error": null
-    },
-    "ATO — 2026 PAYG Tax Tables": {
-      "error": "HTTPSConnectionPool(host='softwaredevelopers.ato.gov.au', port=443): Read timed out. (read timeout=12)"
-    },
-    "ATO — Medicare Levy": {
-      "last_checked": "2026-08-27T02:08:52+00:00",
-      "http_status": 403,
-      "error": "403 Client Error: Forbidden for url: https://www.ato.gov.au/myTax25MedicareLevy"
-    },
-    "ATO — Payday Super": {
-      "error": "HTTPSConnectionPool(host='softwaredevelopers.ato.gov.au', port=443): Read timed out. (read timeout=12)"
-    },
-    "Safe Work Australia — Premiums": {
-      "error": "HTTPSConnectionPool(host='www.safeworkaustralia.gov.au', port=443): Read timed out. (read timeout=12)"
-    },
-    "Services Australia — Age Pension Rates": {
-      "warning": "Temporary official-site timeout; last verified value retained",
-      "error": null
-    },
-    "Services Australia — JobSeeker Rates": {
-      "warning": "Temporary official-site timeout; last verified value retained",
-      "error": null
-    },
-    "ABS Labour Force": {
-      "last_checked": "2026-08-27T02:06:26+00:00",
-      "http_status": 200,
-      "etag": "W/\"1787725206\"",
-      "last_modified": "Wed, 26 Aug 2026 06:20:06 GMT",
-      "changed": true,
-      "sha256": "144e3fcd8914be8aec348269667600b29f429c56db67038da9b90aa99cb999c4",
-      "last_success": "2026-08-27T02:06:26+00:00",
-      "error": null
-    },
-    "Productivity Commission — GST Distribution Reforms": {
-      "last_checked": "2026-08-27T02:06:27+00:00",
-      "http_status": 200,
-      "etag": "W/\"11s77jqoux9325w\"",
-      "changed": true,
-      "sha256": "f51eab8c0cad53286269f27fe11fcd30259773a34915e02ad14d9a3573377de3",
-      "last_success": "2026-08-27T02:06:27+00:00",
-      "error": null
-    },
-    "Productivity Commission — Business Dynamism": {
-      "last_checked": "2026-08-27T02:06:27+00:00",
-      "http_status": 200,
-      "etag": "W/\"d7z4tg4y7p2rvd\"",
-      "changed": true,
-      "sha256": "9b12134da5cefc8677df35d1d48f00f9f903ce59b4fd9f2d7b085b89329c19c1",
-      "last_success": "2026-08-27T02:06:27+00:00",
-      "error": null
-    },
-    "Productivity Commission — Productivity Bulletins": {
-      "last_checked": "2026-08-27T02:06:28+00:00",
-      "http_status": 200,
-      "etag": "W/\"9doo0m73i33s2i\"",
-      "changed": true,
-      "sha256": "40ca4681bc1b5e37f40f9038ae5b2851fe5d207bd0346cccb32f0fd2d8dc6ea7",
-      "last_success": "2026-08-27T02:06:28+00:00",
-      "error": null
-    }
-  },
   "constant_live_update": {
     "published_date": "2026-08-22",
     "title": "September pension indexation — material update",
@@ -690,8 +526,7 @@
     "hours_worked_change_pct": -0.6,
     "employment_population_ratio_pct": null,
     "status": "Verified July 2026 seasonally adjusted headline measures",
-    "automatic_parser_status": "Source monitored; automatic value extraction disabled pending separate execution validation.",
-    "source_last_seen": "2026-08-27T02:06:27+00:00"
+    "automatic_parser_status": "Source monitored; automatic value extraction disabled pending separate execution validation."
   },
   "review_monitor": {
     "live_retention_days": 30,
