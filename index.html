@@ -125,6 +125,60 @@
 }
 
 
+
+/* =======================================================================================
+   THE CONSTANT LIVE v5.6.8 — SIX-MONTH INFLATION RESPONSIVE PRESENTATION
+   ======================================================================================= */
+
+.tc-inflation-table-wrap{
+    width:100%;
+    display:flex;
+    justify-content:center;
+    margin-top:14px;
+}
+
+.tc-inflation-table{
+    width:100%;
+    max-width:900px;
+    margin-left:auto;
+    margin-right:auto;
+    table-layout:fixed;
+}
+
+.tc-inflation-table th,
+.tc-inflation-table td{
+    text-align:center;
+    vertical-align:middle;
+    overflow-wrap:anywhere;
+}
+
+@media (max-width:1024px){
+    .tc-inflation-table{
+        max-width:100%;
+        font-size:.92em;
+    }
+
+    .tc-inflation-table th,
+    .tc-inflation-table td{
+        padding-left:6px;
+        padding-right:6px;
+    }
+}
+
+@media (max-width:620px){
+    .tc-inflation-table-wrap{
+        display:block;
+        overflow-x:auto;
+        -webkit-overflow-scrolling:touch;
+    }
+
+    .tc-inflation-table{
+        width:680px;
+        max-width:none;
+        table-layout:auto;
+    }
+}
+
 </style>
 
 <style id="the-constant-dark-blue-fix">
@@ -521,118 +575,6 @@ body,
 
 
 
-<section class="card tc-live-report" id="live-report-2026-08-22">
-
-<div class="tc-live-report-title">THE CONSTANT LIVE — MATERIAL UPDATE</div>
-<div class="sub">22 August 2026 · September pension indexation</div>
-
-<div class="tc-live-report-copy">
-
-<p>The Australian Government announced on <strong>20 August 2026</strong> that the maximum single pension rate will increase by <strong>$36.80 per fortnight</strong> to <strong>$1,237.70 per fortnight</strong> from 20 September.</p>
-
-<div class="tc-status-line">
-<strong>Current official cut-off:</strong> $2,627.80 per fortnight.<br><br>
-<strong>20 September derived cut-off:</strong> using the announced $1,237.70 pension rate, the current $226 free area and the 50-cent taper gives <strong>$2,701.40 per fortnight</strong>.
-</div>
-
-<table class="tc-report-table">
-<thead>
-<tr><th>Measure</th><th>Current</th><th>20 Sep 2026</th></tr>
-</thead>
-<tbody>
-<tr><td>Single Chart C</td><td>$2,627.80/fn</td><td>$2,701.40/fn</td></tr>
-<tr><td>Weekly Chart C</td><td>$1,313.90</td><td>$1,350.70</td></tr>
-<tr><td>National Minimum Wage</td><td>$1,004.90/wk</td><td>$1,004.90/wk</td></tr>
-<tr><td>Weekly gap</td><td>$309.00</td><td>$345.80</td></tr>
-<tr><td>Wage / Chart C</td><td>76.48%</td><td>74.40%</td></tr>
-</tbody>
-</table>
-
-<p>The ABS reported that the Pensioner and Beneficiary Living Cost Index rose <strong>3.2%</strong> over the six months from December 2025 to June 2026, compared with <strong>2.0%</strong> for CPI. PBLCI rose <strong>0.6%</strong> in the June quarter and <strong>4.6%</strong> through the year.</p>
-
-<p>The September figure is therefore no longer simply a forecast based on an assumed inflation rate. It is a derived cessation point using the Government-announced pension rate and the current standard income-test parameters, pending the updated Services Australia operational table.</p>
-
-<p>The live monitor deliberately separates <strong>official observations, derived policy arithmetic and THE CONSTANT counterfactual analysis</strong>.</p>
-
-</div>
-</section>
-
-<section class="card"><div class="title">CURRENT ECONOMIC INFORMATION SET</div><div class="three">
-<div class="stat"><div class="lab">Monthly CPI</div><div id="cpi" class="val orange">—</div><div id="cpirp" class="sub"></div></div>
-<div class="stat"><div class="lab">Employee LCI</div><div id="lci" class="val purple">—</div></div>
-<div class="stat"><div class="lab">RBA Cash Rate</div><div id="cash" class="val cyan">—</div></div></div></section>
-
-<section class="card" id="labour-market-pulse">
-
-<div class="title">LABOUR MARKET PULSE — ABS</div>
-
-<div class="tc-explainer">
-<strong>Official ABS labour-market indicators.</strong>
-Unemployment is displayed with participation, underemployment,
-employment and hours worked so minimum-wage and income-support
-developments are not interpreted without the broader labour-market context.
-</div>
-
-<div class="four">
-
-<div class="stat">
-<div class="lab">Unemployment Rate</div>
-<div id="unemployment" class="val orange">—</div>
-<div id="unemploymentref" class="sub">
-Awaiting verified ABS source update
-</div>
-</div>
-
-<div class="stat">
-<div class="lab">Participation Rate</div>
-<div id="participation" class="val cyan">—</div>
-<div class="sub">seasonally adjusted</div>
-</div>
-
-<div class="stat">
-<div class="lab">Underemployment</div>
-<div id="underemployment" class="val purple">—</div>
-<div class="sub">seasonally adjusted</div>
-</div>
-
-<div class="stat">
-<div class="lab">Employment Change</div>
-<div id="employmentchange" class="val gold">—</div>
-<div class="sub">monthly persons</div>
-</div>
-
-</div>
-
-<div class="three" style="margin-top:12px">
-
-<div class="stat">
-<div class="lab">Employment</div>
-<div id="employmentlevel" class="val cyan">—</div>
-<div class="sub">persons</div>
-</div>
-
-<div class="stat">
-<div class="lab">Hours Worked Change</div>
-<div id="hourschange" class="val purple">—</div>
-<div class="sub">monthly</div>
-</div>
-
-<div class="stat">
-<div class="lab">Employment / Population</div>
-<div id="emppop" class="val cyan">—</div>
-<div class="sub">seasonally adjusted</div>
-</div>
-
-</div>
-
-<div class="tc-archive-note">
-Labour-market observations are official ABS data. THE CONSTANT does not
-infer unemployment effects from the wage/Chart C relationship without
-separate empirical testing.
-</div>
-
-</section>
-
 <section class="card" id="current-verified">
     <div class="title">CURRENT VERIFIED — 2026 Q3</div>
 
@@ -691,7 +633,6 @@ THE CONSTANT therefore reconstructs the underlying policy parameters rather than
 <div class="stat"><div class="lab">Forward Gap</div><div id="fgap" class="val red">—</div></div>
 <div class="stat"><div class="lab">Forward Ratio</div><div id="fratio" class="val red">—</div></div></div><div id="fstatus" class="sub" style="margin-top:10px"></div></section>
 
-
 <section class="card" id="tc-inflation-six-month">
 <div class="title">INFLATION INDICATOR — SIX-MONTH MOVEMENT</div>
 
@@ -701,8 +642,8 @@ Headline CPI, seasonally adjusted monthly CPI, CPI excluding volatile items,
 trimmed mean inflation and automotive fuel are kept separate.
 </div>
 
-<div style="overflow-x:auto;margin-top:14px">
-<table class="tc-table" style="min-width:920px;width:100%">
+<div class="tc-inflation-table-wrap">
+<table class="tc-table tc-inflation-table">
 <thead>
 <tr>
 <th>Measure</th>
@@ -786,7 +727,6 @@ Fuel is shown separately so major volatile movements remain visible.
 </div>
 </section>
 
-
 <section class="card" id="tc-what-changed">
 <div class="title">WHAT CHANGED THIS MONTH?</div>
 
@@ -826,7 +766,6 @@ movement and underlying-inflation measures.
 
 </section>
 
-
 <section class="card" id="tc-rba-policy">
 <div class="title">RBA POLICY MONITOR</div>
 
@@ -865,7 +804,6 @@ for an RBA policy decision.
 </div>
 
 </section>
-
 
 <section class="card" id="tc-low-essential-cost-index">
 <div class="title">THE CONSTANT — LOW ESSENTIAL COST INDEX (LECI)</div>
@@ -912,103 +850,6 @@ Essential-cost basket: <strong>$1,150.77 per week</strong> — before tax.
 </div>
 
 </section>
-
-
-<section class="card" id="tc-material-developments">
-<div class="title">MATERIAL DEVELOPMENTS — RELEVANT TO THE CONSTANT</div>
-
-<div class="tc-explainer">
-Official developments are included when they can materially affect
-THE CONSTANT's benchmarks, calculations or economic interpretation.
-</div>
-
-<div class="tc-archive-note" style="margin-top:14px">
-<strong>26 August 2026 — July CPI released</strong><br>
-<span class="sub">Australian Bureau of Statistics · OFFICIAL</span>
-<div style="margin-top:7px">
-Annual CPI eased from 3.8% in June to 3.5% in July.
-Automotive fuel rose 7.5% in July.
-</div>
-</div>
-
-<div class="tc-archive-note" style="margin-top:12px">
-<strong>20 August 2026 — 20 September pension indexation announced</strong><br>
-<span class="sub">Australian Government · ANNOUNCED / PENDING</span>
-<div style="margin-top:7px">
-The announced pension increase affects the derived Chart C benchmark,
-weekly Chart C, wage/Chart C ratio and weekly gap.
-</div>
-</div>
-
-</section>
-
-
-<section class="card">
-<div class="title">PRESENTATION TALKING POINTS</div>
-<div class="three">
-<div class="stat"><div class="lab">Structural Gap</div><div id="talkgap" class="val red">23.51%</div><div class="sub">current shortfall relative to Chart C</div></div>
-<div class="stat"><div class="lab">20 Sep Movement</div><div id="talkforward" class="val gold">+$36.80</div><div class="sub">weekly Chart C/gap movement from announced rates</div></div>
-<div class="stat"><div class="lab">Employee LCI</div><div id="talklci" class="val purple">3.70%</div><div class="sub">official annual living-cost movement</div></div>
-</div>
-</section>
-
-<section class="card">
-<div class="title">REAL WAGE & COST PRESSURE</div>
-<div class="four">
-<div class="stat"><div class="lab">NMW Growth</div><div id="wagegrowth" class="val cyan">6.00%</div><div class="sub">current annual wage change</div></div>
-<div class="stat"><div class="lab">Employee LCI</div><div id="leciannual2" class="val purple">3.70%</div><div class="sub">annual</div></div>
-<div class="stat"><div class="lab">Monthly CPI</div><div id="cpi2" class="val orange">3.80%</div><div class="sub">latest annual rate</div></div>
-<div class="stat"><div class="lab">Structural Shortfall</div><div id="shortfall2" class="val red">23.51%</div><div class="sub">THE CONSTANT derived metric</div></div>
-</div>
-<div class="sub" style="margin-top:10px">Current-period wage growth and living-cost movements are shown separately from the long-run structural Chart C shortfall.</div>
-</section>
-
-<section class="card">
-<div class="title">CHART C — CURRENT & ANNOUNCED FORWARD</div>
-<div class="four">
-<div class="stat"><div class="lab">Current</div><div id="legacycurrentcc" class="val gold">$2,627.80</div><div class="sub">per fortnight</div></div>
-<div class="stat"><div class="lab">20 Sep Announced</div><div id="legacyforwardcc" class="val gold">$2,701.40</div><div class="sub">per fortnight</div></div>
-<div class="stat"><div class="lab">Gap Change</div><div id="legacygapchange" class="val red">+$36.80</div><div class="sub">per week</div></div>
-<div class="stat"><div class="lab">Ratio Movement</div><div class="val red"><span id="legacyratiofrom">76.49%</span> → <span id="legacyratioto">74.40%</span></div><div class="sub">current → announced forward</div></div>
-</div>
-</section>
-
-<section class="card">
-<div class="title">HOUSEHOLD LIVING-COST PRESSURE — ABS</div>
-<div class="three">
-<div class="stat"><div class="lab">Employee LCI</div><div id="houseemployee" class="val purple">3.70%</div><div class="sub">annual</div></div>
-<div class="stat"><div class="lab">Pensioner & Beneficiary LCI</div><div id="housepblci" class="val purple">4.60%</div><div class="sub">annual</div></div>
-<div class="stat"><div class="lab">Age Pensioner LCI</div><div id="houseage" class="val purple">4.70%</div><div class="sub">annual</div></div>
-</div>
-<div class="sub" style="margin-top:10px">Official ABS living-cost indexes replace the earlier unvalidated household-impact percentages.</div>
-</section>
-
-<section class="card">
-<div class="title">INDEXATION FRAMEWORK</div>
-<div class="three">
-<div class="stat"><div class="lab">CPI</div><div id="indexcpi" class="val orange">3.80%</div><div class="sub">official inflation measure</div></div>
-<div class="stat"><div class="lab">Pensioner LCI</div><div id="indexpblci" class="val purple">4.60%</div><div class="sub">living-cost safeguard where applicable</div></div>
-<div class="stat"><div class="lab">MTAWE Benchmark</div><div class="val cyan">Statutory</div><div class="sub">benchmarking rule — not a 60/40 weighted formula</div></div>
-</div>
-</section>
-
-<section class="card">
-<div class="title">THE CONSTANT — ECONOMIC & POLICY CALENDAR</div>
-
-<div class="tc-explainer">
-<strong>Forward-looking official calendar.</strong>
-Tracks scheduled ABS releases, labour-market data, wage-setting milestones,
-pension indexation, productivity publications, monetary-policy decisions
-and relevant government or parliamentary reviews. Dates remain subject
-to amendment by the issuing institution.
-</div>
-
-<div id="eventlist"></div>
-</section>
-
-
-
-
 
 <section
     class="card"
@@ -1167,6 +1008,235 @@ VIEW 7-YEAR CPI ARCHIVE
 ></div>
 
 </section>
+
+<section class="card tc-live-report" id="live-report-2026-08-22">
+
+<div class="tc-live-report-title">THE CONSTANT LIVE — MATERIAL UPDATE</div>
+<div class="sub">22 August 2026 · September pension indexation</div>
+
+<div class="tc-live-report-copy">
+
+<p>The Australian Government announced on <strong>20 August 2026</strong> that the maximum single pension rate will increase by <strong>$36.80 per fortnight</strong> to <strong>$1,237.70 per fortnight</strong> from 20 September.</p>
+
+<div class="tc-status-line">
+<strong>Current official cut-off:</strong> $2,627.80 per fortnight.<br><br>
+<strong>20 September derived cut-off:</strong> using the announced $1,237.70 pension rate, the current $226 free area and the 50-cent taper gives <strong>$2,701.40 per fortnight</strong>.
+</div>
+
+<table class="tc-report-table">
+<thead>
+<tr><th>Measure</th><th>Current</th><th>20 Sep 2026</th></tr>
+</thead>
+<tbody>
+<tr><td>Single Chart C</td><td>$2,627.80/fn</td><td>$2,701.40/fn</td></tr>
+<tr><td>Weekly Chart C</td><td>$1,313.90</td><td>$1,350.70</td></tr>
+<tr><td>National Minimum Wage</td><td>$1,004.90/wk</td><td>$1,004.90/wk</td></tr>
+<tr><td>Weekly gap</td><td>$309.00</td><td>$345.80</td></tr>
+<tr><td>Wage / Chart C</td><td>76.48%</td><td>74.40%</td></tr>
+</tbody>
+</table>
+
+<p>The ABS reported that the Pensioner and Beneficiary Living Cost Index rose <strong>3.2%</strong> over the six months from December 2025 to June 2026, compared with <strong>2.0%</strong> for CPI. PBLCI rose <strong>0.6%</strong> in the June quarter and <strong>4.6%</strong> through the year.</p>
+
+<p>The September figure is therefore no longer simply a forecast based on an assumed inflation rate. It is a derived cessation point using the Government-announced pension rate and the current standard income-test parameters, pending the updated Services Australia operational table.</p>
+
+<p>The live monitor deliberately separates <strong>official observations, derived policy arithmetic and THE CONSTANT counterfactual analysis</strong>.</p>
+
+</div>
+</section>
+
+<section class="card"><div class="title">CURRENT ECONOMIC INFORMATION SET</div><div class="three">
+<div class="stat"><div class="lab">Monthly CPI</div><div id="cpi" class="val orange">—</div><div id="cpirp" class="sub"></div></div>
+<div class="stat"><div class="lab">Employee LCI</div><div id="lci" class="val purple">—</div></div>
+<div class="stat"><div class="lab">RBA Cash Rate</div><div id="cash" class="val cyan">—</div></div></div></section>
+
+<section class="card" id="labour-market-pulse">
+
+<div class="title">LABOUR MARKET PULSE — ABS</div>
+
+<div class="tc-explainer">
+<strong>Official ABS labour-market indicators.</strong>
+Unemployment is displayed with participation, underemployment,
+employment and hours worked so minimum-wage and income-support
+developments are not interpreted without the broader labour-market context.
+</div>
+
+<div class="four">
+
+<div class="stat">
+<div class="lab">Unemployment Rate</div>
+<div id="unemployment" class="val orange">—</div>
+<div id="unemploymentref" class="sub">
+Awaiting verified ABS source update
+</div>
+</div>
+
+<div class="stat">
+<div class="lab">Participation Rate</div>
+<div id="participation" class="val cyan">—</div>
+<div class="sub">seasonally adjusted</div>
+</div>
+
+<div class="stat">
+<div class="lab">Underemployment</div>
+<div id="underemployment" class="val purple">—</div>
+<div class="sub">seasonally adjusted</div>
+</div>
+
+<div class="stat">
+<div class="lab">Employment Change</div>
+<div id="employmentchange" class="val gold">—</div>
+<div class="sub">monthly persons</div>
+</div>
+
+</div>
+
+<div class="three" style="margin-top:12px">
+
+<div class="stat">
+<div class="lab">Employment</div>
+<div id="employmentlevel" class="val cyan">—</div>
+<div class="sub">persons</div>
+</div>
+
+<div class="stat">
+<div class="lab">Hours Worked Change</div>
+<div id="hourschange" class="val purple">—</div>
+<div class="sub">monthly</div>
+</div>
+
+<div class="stat">
+<div class="lab">Employment / Population</div>
+<div id="emppop" class="val cyan">—</div>
+<div class="sub">seasonally adjusted</div>
+</div>
+
+</div>
+
+<div class="tc-archive-note">
+Labour-market observations are official ABS data. THE CONSTANT does not
+infer unemployment effects from the wage/Chart C relationship without
+separate empirical testing.
+</div>
+
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="card" id="tc-material-developments">
+<div class="title">MATERIAL DEVELOPMENTS — RELEVANT TO THE CONSTANT</div>
+
+<div class="tc-explainer">
+Official developments are included when they can materially affect
+THE CONSTANT's benchmarks, calculations or economic interpretation.
+</div>
+
+<div class="tc-archive-note" style="margin-top:14px">
+<strong>26 August 2026 — July CPI released</strong><br>
+<span class="sub">Australian Bureau of Statistics · OFFICIAL</span>
+<div style="margin-top:7px">
+Annual CPI eased from 3.8% in June to 3.5% in July.
+Automotive fuel rose 7.5% in July.
+</div>
+</div>
+
+<div class="tc-archive-note" style="margin-top:12px">
+<strong>20 August 2026 — 20 September pension indexation announced</strong><br>
+<span class="sub">Australian Government · ANNOUNCED / PENDING</span>
+<div style="margin-top:7px">
+The announced pension increase affects the derived Chart C benchmark,
+weekly Chart C, wage/Chart C ratio and weekly gap.
+</div>
+</div>
+
+</section>
+
+
+<section class="card">
+<div class="title">PRESENTATION TALKING POINTS</div>
+<div class="three">
+<div class="stat"><div class="lab">Structural Gap</div><div id="talkgap" class="val red">23.51%</div><div class="sub">current shortfall relative to Chart C</div></div>
+<div class="stat"><div class="lab">20 Sep Movement</div><div id="talkforward" class="val gold">+$36.80</div><div class="sub">weekly Chart C/gap movement from announced rates</div></div>
+<div class="stat"><div class="lab">Employee LCI</div><div id="talklci" class="val purple">3.70%</div><div class="sub">official annual living-cost movement</div></div>
+</div>
+</section>
+
+<section class="card">
+<div class="title">REAL WAGE & COST PRESSURE</div>
+<div class="four">
+<div class="stat"><div class="lab">NMW Growth</div><div id="wagegrowth" class="val cyan">6.00%</div><div class="sub">current annual wage change</div></div>
+<div class="stat"><div class="lab">Employee LCI</div><div id="leciannual2" class="val purple">3.70%</div><div class="sub">annual</div></div>
+<div class="stat"><div class="lab">Monthly CPI</div><div id="cpi2" class="val orange">3.80%</div><div class="sub">latest annual rate</div></div>
+<div class="stat"><div class="lab">Structural Shortfall</div><div id="shortfall2" class="val red">23.51%</div><div class="sub">THE CONSTANT derived metric</div></div>
+</div>
+<div class="sub" style="margin-top:10px">Current-period wage growth and living-cost movements are shown separately from the long-run structural Chart C shortfall.</div>
+</section>
+
+<section class="card">
+<div class="title">CHART C — CURRENT & ANNOUNCED FORWARD</div>
+<div class="four">
+<div class="stat"><div class="lab">Current</div><div id="legacycurrentcc" class="val gold">$2,627.80</div><div class="sub">per fortnight</div></div>
+<div class="stat"><div class="lab">20 Sep Announced</div><div id="legacyforwardcc" class="val gold">$2,701.40</div><div class="sub">per fortnight</div></div>
+<div class="stat"><div class="lab">Gap Change</div><div id="legacygapchange" class="val red">+$36.80</div><div class="sub">per week</div></div>
+<div class="stat"><div class="lab">Ratio Movement</div><div class="val red"><span id="legacyratiofrom">76.49%</span> → <span id="legacyratioto">74.40%</span></div><div class="sub">current → announced forward</div></div>
+</div>
+</section>
+
+<section class="card">
+<div class="title">HOUSEHOLD LIVING-COST PRESSURE — ABS</div>
+<div class="three">
+<div class="stat"><div class="lab">Employee LCI</div><div id="houseemployee" class="val purple">3.70%</div><div class="sub">annual</div></div>
+<div class="stat"><div class="lab">Pensioner & Beneficiary LCI</div><div id="housepblci" class="val purple">4.60%</div><div class="sub">annual</div></div>
+<div class="stat"><div class="lab">Age Pensioner LCI</div><div id="houseage" class="val purple">4.70%</div><div class="sub">annual</div></div>
+</div>
+<div class="sub" style="margin-top:10px">Official ABS living-cost indexes replace the earlier unvalidated household-impact percentages.</div>
+</section>
+
+<section class="card">
+<div class="title">INDEXATION FRAMEWORK</div>
+<div class="three">
+<div class="stat"><div class="lab">CPI</div><div id="indexcpi" class="val orange">3.80%</div><div class="sub">official inflation measure</div></div>
+<div class="stat"><div class="lab">Pensioner LCI</div><div id="indexpblci" class="val purple">4.60%</div><div class="sub">living-cost safeguard where applicable</div></div>
+<div class="stat"><div class="lab">MTAWE Benchmark</div><div class="val cyan">Statutory</div><div class="sub">benchmarking rule — not a 60/40 weighted formula</div></div>
+</div>
+</section>
+
+<section class="card">
+<div class="title">THE CONSTANT — ECONOMIC & POLICY CALENDAR</div>
+
+<div class="tc-explainer">
+<strong>Forward-looking official calendar.</strong>
+Tracks scheduled ABS releases, labour-market data, wage-setting milestones,
+pension indexation, productivity publications, monetary-policy decisions
+and relevant government or parliamentary reviews. Dates remain subject
+to amendment by the issuing institution.
+</div>
+
+<div id="eventlist"></div>
+</section>
+
+
+
+
+
+
 
 
 <section class="card"><div class="title">ABS EMPLOYEE LIVING COST INDEX</div>
@@ -3206,4 +3276,20 @@ function retainedSourceSummary(name, s){
 async function pull(){try{const r=await fetch('/api/state',{cache:'no-store'});if(r.ok)draw(await r.json())}catch(e){}}
 clock();setInterval(clock,1000);pull();setInterval(pull,15000);
 </script>
+
+<!-- ======================================================================================
+     THE CONSTANT LIVE v5.6.8 — DISPLAY-BINDING COMPATIBILITY LAYER
+     These nodes preserve draw() DOM integrity without creating duplicate visible panels.
+     ====================================================================================== -->
+<div id="tc-v568-binding-compatibility" style="display:none" aria-hidden="true">
+    <span id="rbapolicycash"></span>
+    <span id="lecibbasket"></span>
+    <span id="lecibactual"></span>
+    <span id="lecibcorrected"></span>
+    <span id="lecibrelief"></span>
+    <span id="costbasket2"></span>
+    <span id="actualremaining"></span>
+    <span id="correctedremaining"></span>
+</div>
+
 </body></html>
