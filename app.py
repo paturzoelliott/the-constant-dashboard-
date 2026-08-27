@@ -22,7 +22,7 @@ STATE_FILE = DATA_DIR / "state.json"
 RUNTIME_STATE_FILE = DATA_DIR / "runtime_state.json"
 
 DEFAULT = {
-    "version": "5.6.6",
+    "version": "5.6.7",
     "started_at": None,
     "last_check": None,
     "next_check": None,
@@ -2943,7 +2943,7 @@ def check_now():
 # Rebuild all derived values from current official/base state.
 # ------------------------------------------------------------
 
-state["version"] = "5.6.6"
+state["version"] = "5.6.7"
 
 recalc()
 recalc_book_impact_model()

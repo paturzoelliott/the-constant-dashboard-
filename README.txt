@@ -205,7 +205,7 @@ THE CONSTANT derived measures.
 
 
 
-THE CONSTANT LIVE v5.6.6
+THE CONSTANT LIVE v5.6.7
 ========================
 
 Adds:
