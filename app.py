@@ -236,8 +236,8 @@ DEFAULT = {
         ]
     },
     "announcement_policy": {
-        "main_page_days": 7,
-        "archive_months": 18
+        "main_page_days": 30,
+        "archive_years": 7
     },
     "latest_announcements": [],
     "announcement_archive": [],
@@ -472,6 +472,19 @@ def load_state():
 
     # Running program version always wins over stale saved state.
     d["version"] = DEFAULT["version"]
+
+    # v5.6.7 policy migration:
+    # archive_months was superseded by seven-year archive_years.
+    announcement_policy = d.setdefault(
+        "announcement_policy",
+        {}
+    )
+    announcement_policy["main_page_days"] = 30
+    announcement_policy["archive_years"] = 7
+    announcement_policy.pop(
+        "archive_months",
+        None
+    )
 
     if not d.get("started_at"):
         d["started_at"] = now_iso()
@@ -1594,6 +1607,488 @@ def parse_union_fwc(t):
     return True
 
 
+
+# =============================================================================
+# THE CONSTANT LIVE v5.6.7
+# UPCOMING EVENT -> OFFICIAL ANNOUNCEMENT LIFECYCLE
+# =============================================================================
+
+def _event_date(value):
+    """
+    Return YYYY-MM-DD/date-like input as a date where possible.
+    """
+    if not value:
+        return None
+
+    if isinstance(value, datetime):
+        return value.date()
+
+    if hasattr(value, "year") and hasattr(value, "month") and hasattr(value, "day"):
+        try:
+            return value
+        except Exception:
+            pass
+
+    text = str(value).strip()
+
+    # ISO timestamp.
+    try:
+        return datetime.fromisoformat(
+            text.replace("Z", "+00:00")
+        ).date()
+    except Exception:
+        pass
+
+    # ISO date.
+    try:
+        return datetime.strptime(
+            text[:10],
+            "%Y-%m-%d"
+        ).date()
+    except Exception:
+        pass
+
+    # RSS.
+    for fmt in (
+        "%a, %d %b %Y %H:%M:%S %z",
+        "%d %b %Y",
+    ):
+        try:
+            return datetime.strptime(
+                text,
+                fmt
+            ).date()
+        except Exception:
+            pass
+
+    return None
+
+
+def _announcement_date(item):
+    for key in (
+        "date",
+        "time",
+        "published",
+    ):
+        d = _event_date(
+            item.get(key)
+        )
+
+        if d:
+            return d
+
+    return None
+
+
+def _announcement_text(item):
+    parts = [
+        item.get("title"),
+        item.get("label"),
+        item.get("detail"),
+        item.get("summary"),
+        item.get("source"),
+        item.get("category"),
+    ]
+
+    return " ".join(
+        str(x)
+        for x in parts
+        if x
+    ).lower()
+
+
+def _normalise_event_text(text):
+    text = str(text or "").lower()
+
+    text = re.sub(
+        r"[^a-z0-9]+",
+        " ",
+        text
+    )
+
+    return " ".join(
+        text.split()
+    )
+
+
+def _event_category(event):
+    """
+    Conservative event classifier.
+
+    Only recognised categories are eligible for automatic completion.
+    """
+    text = _normalise_event_text(
+        (
+            str(event.get("label", ""))
+            + " "
+            + str(event.get("title", ""))
+            + " "
+            + str(event.get("source", ""))
+        )
+    )
+
+    if (
+        "consumer price index" in text
+        or " monthly cpi " in f" {text} "
+        or text.startswith("cpi ")
+    ):
+        return "cpi"
+
+    if "labour force" in text:
+        return "labour_force"
+
+    if (
+        "monetary policy decision" in text
+        or "cash rate" in text
+    ):
+        return "rba_policy"
+
+    if "wage price index" in text:
+        return "wpi"
+
+    if (
+        "pension indexation" in text
+        or "social security indexation" in text
+        or "social-security indexation" in text
+    ):
+        return "pension_indexation"
+
+    if (
+        "national minimum wage" in text
+        or "award rates commence" in text
+    ):
+        return "minimum_wage"
+
+    if "annual wage review" in text:
+        return "annual_wage_review"
+
+    if "gst distribution reforms" in text:
+        return "gst_reforms"
+
+    if "business dynamism" in text:
+        return "business_dynamism"
+
+    if "household spending" in text:
+        return "household_spending"
+
+    return None
+
+
+def _announcement_matches_event(event, announcement):
+    """
+    Conservative official-release matcher.
+
+    A release must:
+      * be dated on/after the event date;
+      * match the relevant subject category;
+      * be recognisably official rather than THE CONSTANT analysis.
+    """
+    event_date = _event_date(
+        event.get("date")
+    )
+
+    announcement_date = _announcement_date(
+        announcement
+    )
+
+    if not event_date or not announcement_date:
+        return False
+
+    # Critical lifecycle rule:
+    # an advance announcement does not complete a future effective event.
+    if announcement_date < event_date:
+        return False
+
+    status = str(
+        announcement.get("status", "")
+    ).upper()
+
+    # Never use internal analysis as evidence that an official event completed.
+    if "THE CONSTANT ANALYSIS" in status:
+        return False
+
+    text = _announcement_text(
+        announcement
+    )
+
+    category = _event_category(
+        event
+    )
+
+    if not category:
+        return False
+
+    tests = {
+        "cpi":
+            (
+                "consumer price index" in text
+                or "cpi" in text
+            ),
+
+        "labour_force":
+            "labour force" in text,
+
+        "rba_policy":
+            (
+                "monetary policy" in text
+                or "cash rate" in text
+                or "reserve bank" in text
+            ),
+
+        "wpi":
+            (
+                "wage price index" in text
+                or "wpi" in text
+            ),
+
+        "pension_indexation":
+            (
+                "pension" in text
+                and (
+                    "indexation" in text
+                    or "rate" in text
+                )
+            ),
+
+        "minimum_wage":
+            (
+                "minimum wage" in text
+                or "award rate" in text
+            ),
+
+        "annual_wage_review":
+            "annual wage review" in text,
+
+        "gst_reforms":
+            (
+                "gst" in text
+                and (
+                    "distribution" in text
+                    or "reform" in text
+                )
+            ),
+
+        "business_dynamism":
+            "business dynamism" in text,
+
+        "household_spending":
+            (
+                "household spending" in text
+                or "monthly household spending indicator" in text
+            ),
+    }
+
+    return bool(
+        tests.get(
+            category,
+            False
+        )
+    )
+
+
+def _announcement_key(item):
+    return (
+        item.get("id")
+        or item.get("url")
+        or (
+            str(item.get("source", ""))
+            + "|"
+            + str(
+                item.get(
+                    "title",
+                    item.get(
+                        "detail",
+                        ""
+                    )
+                )
+            )
+            + "|"
+            + str(
+                item.get(
+                    "date",
+                    item.get(
+                        "published",
+                        item.get(
+                            "time",
+                            ""
+                        )
+                    )
+                )
+            )
+        )
+    )
+
+
+def promote_completed_upcoming_events():
+    """
+    Move an Upcoming Event out of the calendar only after a matching
+    official release has actually been detected.
+
+    IMPORTANT:
+    A past event with no detected official release remains in Upcoming Events
+    and is marked AWAITING OFFICIAL RELEASE.
+    """
+    upcoming = state.setdefault(
+        "upcoming_events",
+        []
+    )
+
+    announcements = state.setdefault(
+        "latest_announcements",
+        []
+    )
+
+    today = datetime.now(
+        SYDNEY_TZ
+    ).date()
+
+    retained = []
+    promoted = []
+
+    for event in upcoming:
+
+        if not isinstance(event, dict):
+            retained.append(event)
+            continue
+
+        event_date = _event_date(
+            event.get("date")
+        )
+
+        matched = None
+
+        for announcement in announcements:
+            if not isinstance(
+                announcement,
+                dict
+            ):
+                continue
+
+            if _announcement_matches_event(
+                event,
+                announcement
+            ):
+                matched = announcement
+                break
+
+        if matched is None:
+            preserved = dict(event)
+
+            if (
+                event_date
+                and event_date < today
+            ):
+                preserved[
+                    "lifecycle_status"
+                ] = "AWAITING OFFICIAL RELEASE"
+            else:
+                preserved[
+                    "lifecycle_status"
+                ] = "UPCOMING"
+
+            retained.append(
+                preserved
+            )
+
+            continue
+
+        # A real matching release has been found.
+        enriched = dict(
+            matched
+        )
+
+        enriched.setdefault(
+            "status",
+            "OFFICIAL"
+        )
+
+        if not str(
+            enriched.get(
+                "status",
+                ""
+            )
+        ).strip():
+            enriched[
+                "status"
+            ] = "OFFICIAL"
+
+        enriched[
+            "matched_upcoming_event"
+        ] = (
+            event.get("label")
+            or event.get("title")
+        )
+
+        enriched[
+            "matched_event_date"
+        ] = event.get(
+            "date"
+        )
+
+        enriched[
+            "event_lifecycle"
+        ] = "COMPLETED — OFFICIAL RELEASE DETECTED"
+
+        # Replace the existing announcement in place.
+        matched_key = _announcement_key(
+            matched
+        )
+
+        for i, current in enumerate(
+            announcements
+        ):
+            if (
+                isinstance(
+                    current,
+                    dict
+                )
+                and _announcement_key(
+                    current
+                ) == matched_key
+            ):
+                announcements[i] = enriched
+                break
+
+        promoted.append(
+            {
+                "event":
+                    event.get("label")
+                    or event.get("title"),
+
+                "event_date":
+                    event.get("date"),
+
+                "announcement":
+                    enriched.get("title")
+                    or enriched.get("detail"),
+
+                "announcement_date":
+                    str(
+                        _announcement_date(
+                            enriched
+                        )
+                    ),
+
+                "status":
+                    enriched.get(
+                        "status",
+                        "OFFICIAL"
+                    ),
+            }
+        )
+
+    state[
+        "upcoming_events"
+    ] = retained
+
+    state[
+        "latest_announcements"
+    ] = announcements
+
+    return promoted
+
+
+
 def maintain_announcement_archive():
     """
     Keep all official announcements on the main page for 30 days,
@@ -1604,6 +2099,10 @@ def maintain_announcement_archive():
         "announcement_policy",
         {"main_page_days": 30, "archive_years": 7}
     )
+    policy["main_page_days"] = 30
+    policy["archive_years"] = 7
+    policy.pop("archive_months", None)
+
     main_days = int(policy.get("main_page_days", 30))
     cutoff_days = 2557  # ~7 years
 
@@ -1736,6 +2235,11 @@ def check_all():
             if changed: mark_change()
         except Exception as e: errors.append(f"{name}: {e}")
     maintain_union_archive()
+
+    # v5.6.7 lifecycle:
+    # do not remove a dated event until an official matching release exists.
+    promote_completed_upcoming_events()
+
     maintain_announcement_archive()
     recalculate_leci_income_burden()
     recalc_book_impact_model()

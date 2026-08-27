@@ -303,102 +303,108 @@
   },
   "upcoming_events": [
     {
-      "date": "2026-08-26",
-      "display_date": "26 Aug 2026 · 11:30am AEST",
-      "label": "Consumer Price Index, Australia — July 2026",
-      "source": "ABS",
-      "why_it_matters": "Updates inflation and real-wage context and provides new information for household-cost analysis."
-    },
-    {
       "date": "2026-08-27",
       "display_date": "27 Aug 2026",
       "label": "Monthly Household Spending Indicator — July 2026",
       "source": "ABS",
-      "why_it_matters": "Shows how household spending is responding to prices, income and interest-rate pressure."
+      "why_it_matters": "Shows how household spending is responding to prices, income and interest-rate pressure.",
+      "lifecycle_status": "UPCOMING"
     },
     {
       "date": "2026-09-14",
       "display_date": "14–18 Sep 2026",
       "label": "GST distribution reforms — public hearings",
       "source": "Productivity Commission",
-      "why_it_matters": "Examines GST distribution reform, fiscal sustainability and Commonwealth-state transfer arrangements."
+      "why_it_matters": "Examines GST distribution reform, fiscal sustainability and Commonwealth-state transfer arrangements.",
+      "lifecycle_status": "UPCOMING"
     },
     {
       "date": "2026-09-20",
       "display_date": "20 Sep 2026",
       "label": "Social-security pension indexation effective",
       "source": "Australian Government / Services Australia",
-      "why_it_matters": "Updates pension rates and the operational single-person Chart C cessation point."
+      "why_it_matters": "Updates pension rates and the operational single-person Chart C cessation point.",
+      "lifecycle_status": "UPCOMING"
     },
     {
       "date": "2026-09-24",
       "display_date": "24 Sep 2026 · 11:30am AEST",
       "label": "Labour Force, Australia — August 2026",
       "source": "ABS",
-      "why_it_matters": "Updates unemployment, employment, participation, underemployment and hours worked."
+      "why_it_matters": "Updates unemployment, employment, participation, underemployment and hours worked.",
+      "lifecycle_status": "UPCOMING"
     },
     {
       "date": "2026-09-29",
       "display_date": "29 Sep 2026 · 2:30pm AEST",
       "label": "Monetary Policy Decision",
       "source": "Reserve Bank of Australia",
-      "why_it_matters": "Interest-rate decisions affect borrowing costs, household expenditure and living-cost pressure."
+      "why_it_matters": "Interest-rate decisions affect borrowing costs, household expenditure and living-cost pressure.",
+      "lifecycle_status": "UPCOMING"
     },
     {
       "date": "2026-09-30",
       "display_date": "30 Sep 2026 · 11:30am AEST",
       "label": "Consumer Price Index, Australia — August 2026",
       "source": "ABS",
-      "why_it_matters": "Updates inflation affecting real wages and household-cost comparisons."
+      "why_it_matters": "Updates inflation affecting real wages and household-cost comparisons.",
+      "lifecycle_status": "UPCOMING"
     },
     {
       "date": "2026-09-30",
       "display_date": "30 Sep 2026",
       "label": "GST distribution reforms — final submissions due",
       "source": "Productivity Commission",
-      "why_it_matters": "Final consultation milestone before the Commission prepares its final report."
+      "why_it_matters": "Final consultation milestone before the Commission prepares its final report.",
+      "lifecycle_status": "UPCOMING"
     },
     {
       "date": "2026-11-01",
       "display_date": "Nov 2026 · exact date pending",
       "label": "Business dynamism — interim report",
       "source": "Productivity Commission",
-      "why_it_matters": "Relevant to productivity, regulation, business costs and the economic environment for employers."
+      "why_it_matters": "Relevant to productivity, regulation, business costs and the economic environment for employers.",
+      "lifecycle_status": "UPCOMING"
     },
     {
       "date": "2026-11-18",
       "display_date": "18 Nov 2026 · 11:30am AEDT",
       "label": "Wage Price Index — September quarter 2026",
       "source": "ABS",
-      "why_it_matters": "Measures underlying wage-price movement independently of the statutory National Minimum Wage."
+      "why_it_matters": "Measures underlying wage-price movement independently of the statutory National Minimum Wage.",
+      "lifecycle_status": "UPCOMING"
     },
     {
       "date": "2026-12-31",
       "display_date": "By 31 Dec 2026",
       "label": "GST distribution reforms — final report to Government",
       "source": "Productivity Commission",
-      "why_it_matters": "Final Productivity Commission findings on GST distribution reforms."
+      "why_it_matters": "Final Productivity Commission findings on GST distribution reforms.",
+      "lifecycle_status": "UPCOMING"
     },
     {
       "date": "2027-03-01",
       "display_date": "Mar–Jun 2027 · timetable pending",
       "label": "Annual Wage Review 2027",
       "source": "Fair Work Commission",
-      "why_it_matters": "Annual statutory process reviewing the National Minimum Wage and modern-award minimum wages."
+      "why_it_matters": "Annual statutory process reviewing the National Minimum Wage and modern-award minimum wages.",
+      "lifecycle_status": "UPCOMING"
     },
     {
       "date": "2027-03-20",
       "display_date": "20 Mar 2027",
       "label": "March pension indexation",
       "source": "Australian Government / Services Australia",
-      "why_it_matters": "Potentially changes pension payment rates and therefore the Chart C benchmark."
+      "why_it_matters": "Potentially changes pension payment rates and therefore the Chart C benchmark.",
+      "lifecycle_status": "UPCOMING"
     },
     {
       "date": "2027-07-01",
       "display_date": "1 Jul 2027",
       "label": "National Minimum Wage / award rates commence",
       "source": "Fair Work Commission",
-      "why_it_matters": "Updates the wage side of THE CONSTANT comparison."
+      "why_it_matters": "Updates the wage side of THE CONSTANT comparison.",
+      "lifecycle_status": "UPCOMING"
     }
   ],
   "remuneration": {
@@ -473,7 +479,6 @@
   },
   "announcement_policy": {
     "main_page_days": 30,
-    "archive_months": 18,
     "archive_years": 7
   },
   "latest_announcements": [
@@ -484,7 +489,11 @@
       "category": "CPI / inflation",
       "title": "July 2026 Consumer Price Index released",
       "summary": "Annual CPI 3.5%; monthly CPI +1.0% original; +0.6% seasonally adjusted; housing 5.0%; food 3.2%; transport 1.6%; trimmed mean 3.6%.",
-      "material_to_constant": true
+      "material_to_constant": true,
+      "status": "OFFICIAL",
+      "matched_upcoming_event": "Consumer Price Index, Australia — July 2026",
+      "matched_event_date": "2026-08-26",
+      "event_lifecycle": "COMPLETED — OFFICIAL RELEASE DETECTED"
     },
     {
       "source": "Social Services Minister — official RSS",
