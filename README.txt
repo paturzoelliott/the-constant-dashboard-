@@ -203,3 +203,18 @@ THE CONSTANT LECI:
 Official ABS observations remain separately identified from
 THE CONSTANT derived measures.
 
+
+
+THE CONSTANT LIVE v5.6.6
+========================
+
+Adds:
+- July 2026 CPI integration.
+- Six-month inflation comparison.
+- Headline, seasonally adjusted, ex-volatile and fuel measures.
+- What Changed This Month.
+- RBA Policy Monitor.
+- Low Essential Cost Index (LECI).
+- Chart C Proposed Wage terminology.
+- Material Developments relevant to THE CONSTANT.
+- 30-day current announcement and seven-year archive policy.

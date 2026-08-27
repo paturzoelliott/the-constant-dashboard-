@@ -1,5 +1,5 @@
 {
-  "version": "5.6.5",
+  "version": "5.6.6",
   "refresh_timezone": "Australia/Sydney",
   "refresh_times": [
     "10:00",
@@ -43,5 +43,15 @@
     "THE CONSTANT three-income essential-burden LECI"
   ],
   "cpi_archive_months": 84,
-  "cpi_archive_years": 7
+  "cpi_archive_years": 7,
+  "v566": {
+    "base_commit": "22410d7b21a9fb2b728996b73ac79472c6dd098a",
+    "current_cpi": "July 2026",
+    "inflation_window": "February–July 2026",
+    "leci_name": "Low Essential Cost Index",
+    "chart_c_proposed_wage": true,
+    "material_developments": true,
+    "announcement_main_days": 30,
+    "archive_years": 7
+  }
 }

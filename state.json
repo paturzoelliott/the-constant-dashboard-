@@ -33,24 +33,8 @@
     "lci_reference_base": "September 2025 quarter = 100",
     "cash_rate_pct": 4.35,
     "cpi_monthly": {
-      "previous": {
-        "month": "2026-06",
-        "reference_period": "June 2026",
-        "release_date": null,
-        "annual_cpi_pct": 3.8,
-        "monthly_original_pct": null,
-        "monthly_sa_pct": null,
-        "housing_annual_pct": 6.8,
-        "food_annual_pct": 3.3,
-        "transport_annual_pct": null,
-        "trimmed_mean_annual_pct": null,
-        "source": "ABS Consumer Price Index, Australia",
-        "official": true
-      },
       "current": {
-        "month": "2026-07",
         "reference_period": "July 2026",
-        "release_date": "26 August 2026",
         "annual_cpi_pct": 3.5,
         "monthly_original_pct": 1.0,
         "monthly_sa_pct": 0.6,
@@ -58,42 +42,23 @@
         "food_annual_pct": 3.2,
         "transport_annual_pct": 1.6,
         "trimmed_mean_annual_pct": 3.6,
-        "source": "ABS Consumer Price Index, Australia",
-        "official": true
+        "ex_volatile_annual_pct": 3.7,
+        "ex_volatile_monthly_pct": 0.9,
+        "automotive_fuel_monthly_pct": 7.5
       },
-      "archive": [
-        {
-          "month": "2026-06",
-          "reference_period": "June 2026",
-          "release_date": null,
-          "annual_cpi_pct": 3.8,
-          "monthly_original_pct": null,
-          "monthly_sa_pct": null,
-          "housing_annual_pct": 6.8,
-          "food_annual_pct": 3.3,
-          "transport_annual_pct": null,
-          "trimmed_mean_annual_pct": null,
-          "source": "ABS Consumer Price Index, Australia",
-          "official": true
-        },
-        {
-          "month": "2026-07",
-          "reference_period": "July 2026",
-          "release_date": "26 August 2026",
-          "annual_cpi_pct": 3.5,
-          "monthly_original_pct": 1.0,
-          "monthly_sa_pct": 0.6,
-          "housing_annual_pct": 5.0,
-          "food_annual_pct": 3.2,
-          "transport_annual_pct": 1.6,
-          "trimmed_mean_annual_pct": 3.6,
-          "source": "ABS Consumer Price Index, Australia",
-          "official": true
-        }
-      ],
-      "archive_months": 84,
-      "archive_years": 7,
-      "methodology": "Official ABS monthly CPI observations. Each new release becomes Current Month. The former current observation becomes Previous Month. Up to 84 monthly observations are retained."
+      "previous": {
+        "reference_period": "June 2026",
+        "annual_cpi_pct": 3.8,
+        "monthly_original_pct": -0.1,
+        "monthly_sa_pct": -0.1,
+        "housing_annual_pct": 6.8,
+        "food_annual_pct": 3.3,
+        "transport_annual_pct": 0.1,
+        "trimmed_mean_annual_pct": 3.6,
+        "ex_volatile_annual_pct": 4.2,
+        "ex_volatile_monthly_pct": 0.3,
+        "automotive_fuel_monthly_pct": -10.9
+      }
     }
   },
   "forward": {
@@ -312,7 +277,7 @@
           "official_actual_rate": true
         }
       ],
-      "updated_at": "2026-08-26T16:00:27+00:00"
+      "updated_at": "2026-08-27T02:06:26+00:00"
     }
   },
   "dashboard_metrics": {
@@ -441,7 +406,12 @@
     "last_decision": "Unchanged",
     "change_basis_points": 0,
     "next_decision": "2026-09-29 14:30 AEST",
-    "year_to_date_change_basis_points": 75
+    "year_to_date_change_basis_points": 75,
+    "inflation_reference_period": "July 2026",
+    "headline_cpi_annual_pct": 3.5,
+    "trimmed_mean_annual_pct": 3.6,
+    "ex_volatile_annual_pct": 3.7,
+    "interpretation_note": "Headline, underlying and volatile-item measures are displayed side by side. No single monthly observation is treated as sufficient evidence for an RBA policy decision."
   },
   "union_award_monitor": {
     "active_days": 30,
@@ -495,6 +465,15 @@
     "archive_years": 7
   },
   "latest_announcements": [
+    {
+      "id": "abs-cpi-2026-07",
+      "date": "2026-08-26",
+      "source": "Australian Bureau of Statistics",
+      "category": "CPI / inflation",
+      "title": "July 2026 Consumer Price Index released",
+      "summary": "Annual CPI 3.5%; monthly CPI +1.0% original; +0.6% seasonally adjusted; housing 5.0%; food 3.2%; transport 1.6%; trimmed mean 3.6%.",
+      "material_to_constant": true
+    },
     {
       "source": "Social Services Minister — official RSS",
       "detail": "September indexation to deliver more cost-of-living relief",
@@ -738,82 +717,30 @@
   },
   "the_constant_derived": {
     "leci_income_burden": {
-      "reference_period": "2026",
-      "before_tax": true,
-      "weekly_costs": {
-        "rent": 650.0,
-        "electricity": 46.15,
-        "gas": 17.31,
-        "water_sewerage": 17.31,
-        "food": 180.0,
-        "transport": 100.0,
-        "health_medicines": 30.0,
-        "insurance": 25.0,
-        "household_necessities": 40.0,
-        "phone_internet": 25.0,
-        "clothing_personal_care": 20.0
-      },
+      "name": "Low Essential Cost Index",
+      "acronym": "LECI",
+      "basis": "before tax",
       "basket_total_weekly": 1150.77,
       "incomes": {
         "minimum_wage": {
           "label": "National Minimum Wage",
-          "weekly": 1004.9,
-          "item_burden_pct": {
-            "rent": 64.68,
-            "electricity": 4.59,
-            "gas": 1.72,
-            "water_sewerage": 1.72,
-            "food": 17.91,
-            "transport": 9.95,
-            "health_medicines": 2.99,
-            "insurance": 2.49,
-            "household_necessities": 3.98,
-            "phone_internet": 2.49,
-            "clothing_personal_care": 1.99
-          },
+          "weekly_income": 1004.9,
           "total_burden_pct": 114.52,
-          "gross_remaining": -145.87
+          "remaining_weekly": -145.87
         },
         "proposed_wage": {
-          "label": "THE CONSTANT Proposed Wage",
-          "weekly": 1313.9,
-          "item_burden_pct": {
-            "rent": 49.47,
-            "electricity": 3.51,
-            "gas": 1.32,
-            "water_sewerage": 1.32,
-            "food": 13.7,
-            "transport": 7.61,
-            "health_medicines": 2.28,
-            "insurance": 1.9,
-            "household_necessities": 3.04,
-            "phone_internet": 1.9,
-            "clothing_personal_care": 1.52
-          },
+          "label": "Chart C Proposed Wage",
+          "weekly_income": 1313.9,
           "total_burden_pct": 87.58,
-          "gross_remaining": 163.13
+          "remaining_weekly": 163.13
         },
         "average_wage": {
           "label": "Average Weekly Ordinary-Time Earnings",
-          "weekly": 2083.7,
-          "item_burden_pct": {
-            "rent": 31.19,
-            "electricity": 2.21,
-            "gas": 0.83,
-            "water_sewerage": 0.83,
-            "food": 8.64,
-            "transport": 4.8,
-            "health_medicines": 1.44,
-            "insurance": 1.2,
-            "household_necessities": 1.92,
-            "phone_internet": 1.2,
-            "clothing_personal_care": 0.96
-          },
+          "weekly_income": 2083.7,
           "total_burden_pct": 55.23,
-          "gross_remaining": 932.93
+          "remaining_weekly": 932.93
         }
-      },
-      "methodology": "THE CONSTANT essential weekly cash-cost basket divided by gross weekly income. All burden percentages are before income tax and Medicare levy."
+      }
     },
     "leci_income_burden_archive": [
       {
@@ -841,5 +768,244 @@
         "before_tax": true
       }
     ]
+  },
+  "inflation_indicator": {
+    "months": [
+      {
+        "month": "2026-02",
+        "label": "Feb",
+        "reference_period": "February 2026",
+        "headline_annual": 3.7,
+        "headline_monthly": 0.0,
+        "headline_monthly_sa": 0.2,
+        "ex_volatile_annual": 4.2,
+        "ex_volatile_monthly": 0.1,
+        "trimmed_mean_annual": 3.3,
+        "housing_annual": 7.2,
+        "food_annual": 3.1,
+        "transport_annual": -0.2,
+        "automotive_fuel_monthly": -3.4
+      },
+      {
+        "month": "2026-03",
+        "label": "Mar",
+        "reference_period": "March 2026",
+        "headline_annual": 4.6,
+        "headline_monthly": 1.1,
+        "headline_monthly_sa": 1.1,
+        "ex_volatile_annual": 3.9,
+        "ex_volatile_monthly": 0.1,
+        "trimmed_mean_annual": 3.3,
+        "housing_annual": 6.5,
+        "food_annual": 3.1,
+        "transport_annual": 8.9,
+        "automotive_fuel_monthly": 32.8
+      },
+      {
+        "month": "2026-04",
+        "label": "Apr",
+        "reference_period": "April 2026",
+        "headline_annual": 4.2,
+        "headline_monthly": 0.4,
+        "headline_monthly_sa": -0.1,
+        "ex_volatile_annual": 3.8,
+        "ex_volatile_monthly": 0.6,
+        "trimmed_mean_annual": 3.4,
+        "housing_annual": 6.3,
+        "food_annual": 2.8,
+        "transport_annual": 6.6,
+        "automotive_fuel_monthly": -7.0
+      },
+      {
+        "month": "2026-05",
+        "label": "May",
+        "reference_period": "May 2026",
+        "headline_annual": 4.0,
+        "headline_monthly": -0.7,
+        "headline_monthly_sa": -0.1,
+        "ex_volatile_annual": 3.9,
+        "ex_volatile_monthly": -0.3,
+        "trimmed_mean_annual": 3.6,
+        "housing_annual": 6.5,
+        "food_annual": 3.3,
+        "transport_annual": 3.3,
+        "automotive_fuel_monthly": -11.9
+      },
+      {
+        "month": "2026-06",
+        "label": "Jun",
+        "reference_period": "June 2026",
+        "headline_annual": 3.8,
+        "headline_monthly": -0.1,
+        "headline_monthly_sa": -0.1,
+        "ex_volatile_annual": 4.2,
+        "ex_volatile_monthly": 0.3,
+        "trimmed_mean_annual": 3.6,
+        "housing_annual": 6.8,
+        "food_annual": 3.3,
+        "transport_annual": 0.1,
+        "automotive_fuel_monthly": -10.9
+      },
+      {
+        "month": "2026-07",
+        "label": "Jul",
+        "reference_period": "July 2026",
+        "headline_annual": 3.5,
+        "headline_monthly": 1.0,
+        "headline_monthly_sa": 0.6,
+        "ex_volatile_annual": 3.7,
+        "ex_volatile_monthly": 0.9,
+        "trimmed_mean_annual": 3.6,
+        "housing_annual": 5.0,
+        "food_annual": 3.2,
+        "transport_annual": 1.6,
+        "automotive_fuel_monthly": 7.5
+      }
+    ],
+    "archive": [
+      {
+        "month": "2026-02",
+        "label": "Feb",
+        "reference_period": "February 2026",
+        "headline_annual": 3.7,
+        "headline_monthly": 0.0,
+        "headline_monthly_sa": 0.2,
+        "ex_volatile_annual": 4.2,
+        "ex_volatile_monthly": 0.1,
+        "trimmed_mean_annual": 3.3,
+        "housing_annual": 7.2,
+        "food_annual": 3.1,
+        "transport_annual": -0.2,
+        "automotive_fuel_monthly": -3.4
+      },
+      {
+        "month": "2026-03",
+        "label": "Mar",
+        "reference_period": "March 2026",
+        "headline_annual": 4.6,
+        "headline_monthly": 1.1,
+        "headline_monthly_sa": 1.1,
+        "ex_volatile_annual": 3.9,
+        "ex_volatile_monthly": 0.1,
+        "trimmed_mean_annual": 3.3,
+        "housing_annual": 6.5,
+        "food_annual": 3.1,
+        "transport_annual": 8.9,
+        "automotive_fuel_monthly": 32.8
+      },
+      {
+        "month": "2026-04",
+        "label": "Apr",
+        "reference_period": "April 2026",
+        "headline_annual": 4.2,
+        "headline_monthly": 0.4,
+        "headline_monthly_sa": -0.1,
+        "ex_volatile_annual": 3.8,
+        "ex_volatile_monthly": 0.6,
+        "trimmed_mean_annual": 3.4,
+        "housing_annual": 6.3,
+        "food_annual": 2.8,
+        "transport_annual": 6.6,
+        "automotive_fuel_monthly": -7.0
+      },
+      {
+        "month": "2026-05",
+        "label": "May",
+        "reference_period": "May 2026",
+        "headline_annual": 4.0,
+        "headline_monthly": -0.7,
+        "headline_monthly_sa": -0.1,
+        "ex_volatile_annual": 3.9,
+        "ex_volatile_monthly": -0.3,
+        "trimmed_mean_annual": 3.6,
+        "housing_annual": 6.5,
+        "food_annual": 3.3,
+        "transport_annual": 3.3,
+        "automotive_fuel_monthly": -11.9
+      },
+      {
+        "month": "2026-06",
+        "label": "Jun",
+        "reference_period": "June 2026",
+        "headline_annual": 3.8,
+        "headline_monthly": -0.1,
+        "headline_monthly_sa": -0.1,
+        "ex_volatile_annual": 4.2,
+        "ex_volatile_monthly": 0.3,
+        "trimmed_mean_annual": 3.6,
+        "housing_annual": 6.8,
+        "food_annual": 3.3,
+        "transport_annual": 0.1,
+        "automotive_fuel_monthly": -10.9
+      },
+      {
+        "month": "2026-07",
+        "label": "Jul",
+        "reference_period": "July 2026",
+        "headline_annual": 3.5,
+        "headline_monthly": 1.0,
+        "headline_monthly_sa": 0.6,
+        "ex_volatile_annual": 3.7,
+        "ex_volatile_monthly": 0.9,
+        "trimmed_mean_annual": 3.6,
+        "housing_annual": 5.0,
+        "food_annual": 3.2,
+        "transport_annual": 1.6,
+        "automotive_fuel_monthly": 7.5
+      }
+    ],
+    "display_months": 6,
+    "archive_months": 84,
+    "archive_years": 7,
+    "methodology": "Official ABS CPI measures displayed together to distinguish headline inflation, underlying inflation, volatile-item effects and major component movements.",
+    "ex_volatile_definition": "ABS CPI excluding volatile items excludes automotive fuel, fruit and vegetables."
+  },
+  "constant_material_monitor": {
+    "active_days": 30,
+    "archive_years": 7,
+    "active": [
+      {
+        "id": "abs-cpi-2026-07",
+        "date": "2026-08-26",
+        "source": "Australian Bureau of Statistics",
+        "title": "July 2026 CPI released",
+        "status": "OFFICIAL",
+        "summary": "Annual CPI eased from 3.8% in June to 3.5% in July. Automotive fuel rose 7.5% in July.",
+        "affects": [
+          "Inflation Indicator",
+          "RBA Policy Monitor",
+          "Living-cost analysis"
+        ]
+      },
+      {
+        "id": "dss-2026-08-20-pension-indexation",
+        "date": "2026-08-20",
+        "source": "Australian Government",
+        "title": "20 September pension indexation announced",
+        "status": "ANNOUNCED / PENDING",
+        "summary": "Maximum single pension announced to increase by $36.80 per fortnight to $1,237.70 from 20 September 2026.",
+        "affects": [
+          "Chart C",
+          "Weekly Chart C",
+          "Wage / Chart C ratio",
+          "Weekly gap",
+          "Chart C Proposed Wage"
+        ]
+      },
+      {
+        "id": "rba-2026-08-policy",
+        "date": "2026-08",
+        "source": "Reserve Bank of Australia",
+        "title": "RBA monetary-policy development",
+        "status": "OFFICIAL MONITOR",
+        "summary": "RBA decisions and statements are monitored where they materially affect inflation, household costs or THE CONSTANT.",
+        "affects": [
+          "RBA Policy Monitor",
+          "Household financing conditions",
+          "Inflation-policy comparison"
+        ]
+      }
+    ],
+    "archive": []
   }
 }
