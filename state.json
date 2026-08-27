@@ -1,5 +1,5 @@
 {
-  "version": "5.6.4",
+  "version": "5.6.6",
   "started_at": "2026-08-20T07:15:53+00:00",
   "last_check": "2026-08-27T02:11:42+00:00",
   "next_check": "2026-08-27T22:00:00+10:00",
@@ -296,7 +296,7 @@
           "official_actual_rate": true
         }
       ],
-      "updated_at": "2026-08-27T02:11:42+00:00"
+      "updated_at": "2026-08-27T02:23:04+00:00"
     }
   },
   "dashboard_metrics": {
@@ -812,7 +812,7 @@
           "gross_remaining": -145.87
         },
         "proposed_wage": {
-          "label": "THE CONSTANT Proposed Wage",
+          "label": "Chart C Proposed Wage",
           "weekly": 1313.9,
           "item_burden_pct": {
             "rent": 49.47,

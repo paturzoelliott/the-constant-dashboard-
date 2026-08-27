@@ -21,7 +21,7 @@ DATA_DIR.mkdir(parents=True, exist_ok=True)
 STATE_FILE = DATA_DIR / "state.json"
 
 DEFAULT = {
-    "version": "5.6.4",
+    "version": "5.6.6",
     "started_at": None,
     "last_check": None,
     "next_check": None,
@@ -1657,7 +1657,7 @@ def recalculate_leci_income_burden():
         "proposed_wage": {
 
             "label":
-                "THE CONSTANT Proposed Wage",
+                "Chart C Proposed Wage",
 
             "weekly":
                 proposed,
@@ -1818,7 +1818,7 @@ def check_now():
 # Rebuild all derived values from current official/base state.
 # ------------------------------------------------------------
 
-state["version"] = "5.6.4"
+state["version"] = "5.6.6"
 
 recalc()
 recalc_book_impact_model()
