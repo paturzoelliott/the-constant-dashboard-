@@ -2259,6 +2259,17 @@ CONSTANT_NON_MATERIAL_SIGNALS = {
     "last modified",
 }
 
+CONSTANT_EXPLICIT_NON_RELEVANCE_SIGNALS = {
+    "unrelated to",
+    "not related to",
+    "not relevant to",
+    "no effect on",
+    "no impact on",
+    "does not affect",
+    "does not impact",
+    "unconnected to",
+}
+
 
 def _material_text(item):
     """Create one normalised searchable string from a candidate item."""
@@ -2286,10 +2297,20 @@ def _material_text(item):
     elif affects:
         parts.append(str(affects))
 
+    text = " ".join(parts).lower()
+
+    # Normalise punctuation/hyphens so terms such as
+    # "monetary-policy" become "monetary policy".
+    text = re.sub(
+        r"[^a-z0-9%$]+",
+        " ",
+        text
+    )
+
     return re.sub(
         r"\s+",
         " ",
-        " ".join(parts).lower()
+        text
     ).strip()
 
 
@@ -2327,6 +2348,23 @@ def assess_constant_materiality(item):
             "material": False,
             "categories": [],
             "reason": "No substantive content."
+        }
+
+    # Explicit non-relevance language overrides mere keyword presence.
+    # Example: "unrelated to wages, pensions or inflation" is not material.
+    explicit_non_relevance = any(
+        signal in text
+        for signal in CONSTANT_EXPLICIT_NON_RELEVANCE_SIGNALS
+    )
+
+    if explicit_non_relevance and not item.get("affects"):
+        return {
+            "material": False,
+            "categories": [],
+            "reason": (
+                "Candidate explicitly states that the matter is unrelated "
+                "to or has no effect on THE CONSTANT."
+            )
         }
 
     substantive_hits = {}
