@@ -2187,6 +2187,414 @@ def maintain_announcement_archive():
     state["announcement_archive"] = kept[:1000]
 
 
+
+# =============================================================================
+# THE CONSTANT LIVE v5.6.7 — STAGE 3
+# CONTROLLED MATERIAL-DEVELOPMENT RELEVANCE FILTER
+# =============================================================================
+
+CONSTANT_MATERIAL_CATEGORIES = {
+    "benchmark": {
+        "chart c",
+        "pension",
+        "income test",
+        "free area",
+        "taper",
+        "minimum wage",
+        "national minimum wage",
+        "award wage",
+        "wage review",
+    },
+    "calculation": {
+        "ratio",
+        "weekly gap",
+        "structural shortfall",
+        "proposed wage",
+        "corrected wage",
+        "payg",
+        "medicare",
+        "superannuation",
+        "workers compensation",
+    },
+    "essential_cost": {
+        "cpi",
+        "inflation",
+        "living cost",
+        "housing",
+        "rent",
+        "electricity",
+        "gas",
+        "water",
+        "food",
+        "transport",
+        "fuel",
+        "insurance",
+    },
+    "economic_interpretation": {
+        "cash rate",
+        "monetary policy",
+        "labour force",
+        "unemployment",
+        "employment",
+        "participation",
+        "hours worked",
+        "wage price index",
+        "productivity",
+        "gst",
+    },
+}
+
+# Generic page activity is deliberately not evidence of materiality.
+CONSTANT_NON_MATERIAL_SIGNALS = {
+    "page updated",
+    "website updated",
+    "source changed",
+    "content changed",
+    "new page",
+    "document uploaded",
+    "page refreshed",
+    "http 200",
+    "http 304",
+    "etag changed",
+    "last modified",
+}
+
+
+def _material_text(item):
+    """Create one normalised searchable string from a candidate item."""
+    if not isinstance(item, dict):
+        return ""
+
+    parts = []
+
+    for key in (
+        "title",
+        "summary",
+        "detail",
+        "matter",
+        "category",
+        "source",
+    ):
+        value = item.get(key)
+        if value:
+            parts.append(str(value))
+
+    affects = item.get("affects", [])
+
+    if isinstance(affects, (list, tuple, set)):
+        parts.extend(str(x) for x in affects if x)
+    elif affects:
+        parts.append(str(affects))
+
+    return re.sub(
+        r"\s+",
+        " ",
+        " ".join(parts).lower()
+    ).strip()
+
+
+def assess_constant_materiality(item):
+    """
+    Determine whether an item is materially relevant to THE CONSTANT.
+
+    Materiality requires a substantive connection to at least one of:
+      1. a benchmark;
+      2. a derived calculation;
+      3. an essential-cost measure;
+      4. substantive economic interpretation used by THE CONSTANT.
+
+    A webpage/source changing by itself is NOT sufficient.
+    """
+    if not isinstance(item, dict):
+        return {
+            "material": False,
+            "categories": [],
+            "reason": "Invalid candidate."
+        }
+
+    # Explicit False always wins.
+    if item.get("material_to_constant") is False:
+        return {
+            "material": False,
+            "categories": [],
+            "reason": "Explicitly marked non-material."
+        }
+
+    text = _material_text(item)
+
+    if not text:
+        return {
+            "material": False,
+            "categories": [],
+            "reason": "No substantive content."
+        }
+
+    substantive_hits = {}
+
+    for category, terms in CONSTANT_MATERIAL_CATEGORIES.items():
+        hits = sorted(
+            term
+            for term in terms
+            if term in text
+        )
+
+        if hits:
+            substantive_hits[category] = hits
+
+    # Explicit affects fields are especially strong evidence because
+    # they identify the actual dashboard consequence.
+    affects = item.get("affects", [])
+    has_affects = bool(affects)
+
+    # Explicit True is accepted only where there is also substantive
+    # subject content or a declared affected dashboard component.
+    explicit_true = item.get("material_to_constant") is True
+
+    material = bool(
+        substantive_hits
+        or has_affects
+    )
+
+    if explicit_true and (substantive_hits or has_affects):
+        material = True
+
+    if not material:
+        noise_only = any(
+            signal in text
+            for signal in CONSTANT_NON_MATERIAL_SIGNALS
+        )
+
+        return {
+            "material": False,
+            "categories": [],
+            "reason": (
+                "Source/page activity only; no demonstrated effect on "
+                "a THE CONSTANT benchmark, calculation, essential-cost "
+                "measure or substantive economic interpretation."
+                if noise_only
+                else
+                "No demonstrated material connection to THE CONSTANT."
+            )
+        }
+
+    categories = sorted(substantive_hits.keys())
+
+    return {
+        "material": True,
+        "categories": categories,
+        "reason": (
+            "Material connection established to: "
+            + (
+                ", ".join(categories)
+                if categories
+                else "declared THE CONSTANT dashboard effect"
+            )
+            + "."
+        )
+    }
+
+
+def _material_item_date(item):
+    """
+    Parse supported material-development dates.
+    YYYY-MM-DD is preferred. YYYY-MM is treated as the first day
+    of that month for archive-age purposes.
+    """
+    from datetime import date, datetime
+
+    raw = str(item.get("date", "")).strip()
+
+    if not raw:
+        return date.today()
+
+    for fmt in ("%Y-%m-%d", "%Y-%m"):
+        try:
+            return datetime.strptime(raw, fmt).date()
+        except Exception:
+            pass
+
+    return date.today()
+
+
+def _material_item_key(item):
+    """Stable duplicate key for material developments."""
+    if item.get("id"):
+        return str(item["id"]).strip().lower()
+
+    return "|".join([
+        str(item.get("date", "")).strip().lower(),
+        str(item.get("source", "")).strip().lower(),
+        str(item.get("title", "")).strip().lower(),
+    ])
+
+
+def upsert_constant_material_development(item):
+    """
+    Add/update a material development only after passing the
+    controlled relevance assessment.
+    """
+    assessment = assess_constant_materiality(item)
+
+    if not assessment["material"]:
+        return False
+
+    monitor = state.setdefault(
+        "constant_material_monitor",
+        {
+            "active_days": 30,
+            "archive_years": 7,
+            "active": [],
+            "archive": [],
+        }
+    )
+
+    candidate = dict(item)
+
+    candidate["material_to_constant"] = True
+    candidate["material_categories"] = assessment["categories"]
+    candidate["materiality_reason"] = assessment["reason"]
+
+    key = _material_item_key(candidate)
+
+    active = monitor.setdefault("active", [])
+    archive = monitor.setdefault("archive", [])
+
+    # Update existing active item.
+    for i, old in enumerate(active):
+        if _material_item_key(old) == key:
+            merged = dict(old)
+            merged.update(candidate)
+            active[i] = merged
+            return True
+
+    # If an archived item becomes current again, remove old archive copy.
+    archive[:] = [
+        old
+        for old in archive
+        if _material_item_key(old) != key
+    ]
+
+    active.insert(0, candidate)
+
+    return True
+
+
+def maintain_constant_material_monitor():
+    """
+    Keep material developments active for 30 days and archived for
+    seven years. Non-material entries are removed from the material
+    feed rather than archived as if they were material.
+    """
+    from datetime import date
+
+    monitor = state.setdefault(
+        "constant_material_monitor",
+        {
+            "active_days": 30,
+            "archive_years": 7,
+            "active": [],
+            "archive": [],
+        }
+    )
+
+    active_days = int(
+        monitor.get("active_days", 30)
+    )
+
+    archive_years = int(
+        monitor.get("archive_years", 7)
+    )
+
+    archive_days = int(
+        round(archive_years * 365.25)
+    )
+
+    today = date.today()
+
+    new_active = []
+    archive = list(
+        monitor.setdefault("archive", [])
+    )
+
+    # Reassess every active item under the controlled Stage 3 rule.
+    for item in monitor.get("active", []):
+
+        assessment = assess_constant_materiality(item)
+
+        if not assessment["material"]:
+            continue
+
+        cleaned = dict(item)
+        cleaned["material_to_constant"] = True
+        cleaned["material_categories"] = assessment["categories"]
+        cleaned["materiality_reason"] = assessment["reason"]
+
+        item_date = _material_item_date(cleaned)
+        age = (today - item_date).days
+
+        if age > active_days:
+            key = _material_item_key(cleaned)
+
+            if not any(
+                _material_item_key(old) == key
+                for old in archive
+            ):
+                archived = dict(cleaned)
+                archived["archived_at"] = now_iso()
+                archive.insert(0, archived)
+        else:
+            new_active.append(cleaned)
+
+    # Revalidate and retain only material archive entries within 7 years.
+    new_archive = []
+
+    seen = set()
+
+    for item in archive:
+
+        assessment = assess_constant_materiality(item)
+
+        if not assessment["material"]:
+            continue
+
+        item_date = _material_item_date(item)
+
+        if (today - item_date).days > archive_days:
+            continue
+
+        key = _material_item_key(item)
+
+        if key in seen:
+            continue
+
+        seen.add(key)
+
+        cleaned = dict(item)
+        cleaned["material_to_constant"] = True
+        cleaned["material_categories"] = assessment["categories"]
+        cleaned["materiality_reason"] = assessment["reason"]
+
+        new_archive.append(cleaned)
+
+    # Newest first.
+    new_active.sort(
+        key=lambda x: str(x.get("date", "")),
+        reverse=True
+    )
+
+    new_archive.sort(
+        key=lambda x: str(x.get("date", "")),
+        reverse=True
+    )
+
+    monitor["active_days"] = 30
+    monitor["archive_years"] = 7
+    monitor["active"] = new_active[:100]
+    monitor["archive"] = new_archive[:1000]
+
+    return True
+
+
 def check_all():
     errors=[]
     for name,(url,kind) in SOURCES.items():
@@ -2241,6 +2649,7 @@ def check_all():
     promote_completed_upcoming_events()
 
     maintain_announcement_archive()
+    maintain_constant_material_monitor()
     recalculate_leci_income_burden()
     recalc_book_impact_model()
     recalc_income_support_counterfactual()
@@ -2501,6 +2910,7 @@ state["version"] = "5.6.6"
 recalc()
 recalc_book_impact_model()
 recalc_income_support_counterfactual()
+maintain_constant_material_monitor()
 
 save_state()
 

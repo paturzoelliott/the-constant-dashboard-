@@ -929,7 +929,12 @@
           "Inflation Indicator",
           "RBA Policy Monitor",
           "Living-cost analysis"
-        ]
+        ],
+        "material_to_constant": true,
+        "material_categories": [
+          "essential_cost"
+        ],
+        "materiality_reason": "Material connection established to: essential_cost."
       },
       {
         "id": "dss-2026-08-20-pension-indexation",
@@ -944,7 +949,13 @@
           "Wage / Chart C ratio",
           "Weekly gap",
           "Chart C Proposed Wage"
-        ]
+        ],
+        "material_to_constant": true,
+        "material_categories": [
+          "benchmark",
+          "calculation"
+        ],
+        "materiality_reason": "Material connection established to: benchmark, calculation."
       },
       {
         "id": "rba-2026-08-policy",
@@ -957,7 +968,12 @@
           "RBA Policy Monitor",
           "Household financing conditions",
           "Inflation-policy comparison"
-        ]
+        ],
+        "material_to_constant": true,
+        "material_categories": [
+          "essential_cost"
+        ],
+        "materiality_reason": "Material connection established to: essential_cost."
       }
     ],
     "archive": []
