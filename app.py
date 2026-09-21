@@ -8,7 +8,7 @@ from pathlib import Path
 
 import requests
 from bs4 import BeautifulSoup
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, jsonify, send_from_directory, session
 
 PORT = int(os.getenv("PORT", "8765"))
 from zoneinfo import ZoneInfo
@@ -22,7 +22,7 @@ STATE_FILE = DATA_DIR / "state.json"
 RUNTIME_STATE_FILE = DATA_DIR / "runtime_state.json"
 
 DEFAULT = {
-    "version": "5.6.7",
+    "version": "5.7.0",
     "started_at": None,
     "last_check": None,
     "next_check": None,
@@ -36,16 +36,16 @@ DEFAULT = {
     "errors": [],
     "core": {
         "minimum_wage_weekly": 1004.90,
-        "chart_c_fortnightly": 2627.80,
-        "chart_c_weekly": 1313.90,
-        "ratio_pct": 76.4822,
-        "weekly_gap": 309.00,
+        "chart_c_fortnightly": 2701.40,
+        "chart_c_weekly": 1350.70,
+        "ratio_pct": 74.3985,
+        "weekly_gap": 345.80,
         "income_free_area_fortnightly": 226.00,
         "taper": 0.50
     },
     "official": {
-        "cpi_reference_period": "June 2026",
-        "cpi_annual_pct": 3.8,
+        "cpi_reference_period": "July 2026",
+        "cpi_annual_pct": 3.5,
         "employee_lci_annual_pct": 3.7,
         "employee_lci_quarterly_pct": 1.5,
         "pblci_annual_pct": 4.6,
@@ -54,7 +54,7 @@ DEFAULT = {
         "cash_rate_pct": 4.35
     },
     "forward": {
-        "status": "Derived from Government-announced pension rate — Services Australia cut-off table pending",
+        "status": "Official Services Australia cut-off confirmed — effective 20 September 2026",
         "effective_date": "2026-09-20",
         "chart_c_fortnightly": 2701.40,
         "chart_c_weekly": 1350.70,
@@ -64,7 +64,7 @@ DEFAULT = {
     "book_impact_model": {
         "methodology": "THE CONSTANT book methodology — actual statutory minimum wage versus Chart-C-aligned corrected wage counterfactual",
         "actual_wage_weekly": 1004.90,
-        "corrected_wage_weekly": 1313.90,
+        "corrected_wage_weekly": 1350.70,
         "annual_weeks": 52,
 
         "lecib": {
@@ -115,45 +115,63 @@ DEFAULT = {
     "income_support_counterfactual": {
         "methodology": "Preserve each payment's current percentage relationship to the actual National Minimum Wage, then apply that same percentage to THE CONSTANT corrected-wage counterfactual.",
         "actual_nmw_weekly": 1004.90,
-        "corrected_wage_weekly": 1313.90,
+        "corrected_wage_weekly": 1350.70,
         "payments": {
             "age_pension_single_basic": {
                 "label": "Age Pension — single basic rate",
-                "actual_fortnightly": 1100.30,
+                "actual_fortnightly": 1135.40,
                 "source": "Services Australia",
-                "source_effective_period": "20 March–19 September 2026",
+                "source_effective_period": "from 20 September 2026",
                 "official": True
             },
             "age_pension_single_total": {
                 "label": "Age Pension — single total",
-                "actual_fortnightly": 1200.90,
+                "actual_fortnightly": 1237.70,
                 "source": "Services Australia",
-                "source_effective_period": "20 March–19 September 2026",
+                "source_effective_period": "from 20 September 2026",
                 "official": True
             },
             "dsp_single_basic": {
                 "label": "DSP — adult single basic rate",
-                "actual_fortnightly": 1100.30,
+                "actual_fortnightly": 1135.40,
                 "source": "Services Australia — Guide to Australian Government payments",
-                "source_effective_period": "1 July–19 September 2026",
+                "source_effective_period": "from 20 September 2026",
                 "official": True
             },
             "dsp_single_typical_total": {
                 "label": "DSP — adult single typical total",
-                "actual_fortnightly": 1200.90,
+                "actual_fortnightly": 1237.70,
                 "source": "Services Australia — Guide to Australian Government payments",
-                "source_effective_period": "1 July–19 September 2026",
+                "source_effective_period": "from 20 September 2026",
                 "official": True
             },
             "jobseeker_single_no_children": {
                 "label": "JobSeeker — single, no children",
-                "actual_fortnightly": 808.70,
+                "actual_fortnightly": 824.90,
                 "source": "Services Australia",
-                "source_effective_period": "from 20 March 2026",
+                "source_effective_period": "from 20 September 2026",
                 "official": True
             }
         },
         "calculated": {}
+    },
+    "acoss_monitor": {
+        "classification": "Independent policy position — not THE CONSTANT methodology and not Australian Government policy.",
+        "source_date": "2026-09-18",
+        "publication": "Income support needs real increase not just indexation",
+        "benchmark_weekly": 618.00,
+        "benchmark_fortnightly": 1236.00,
+        "benchmark_basis": "ACOSS calls for JobSeeker, Youth Allowance, Parenting Payment and related supports to reach parity with the pension and Pension Supplement, at least $618 per week on current rates, and to be indexed to wages as well as prices.",
+        "chart_c_ratio_pct": 45.7541,
+        "relationship_note": "ACOSS does not derive $618 from Chart C. THE CONSTANT independently expresses the ACOSS benchmark against Chart C as a common denominator.",
+        "source_url": "https://www.acoss.org.au/media_release/income-support-needs-real-increase-not-just-indexation/",
+        "status": "CURRENT ACOSS POSITION"
+    },
+    "visitor_counter": {
+        "total_visits": 0,
+        "label": "THE CONSTANT Live visits",
+        "method": "One count per browser session",
+        "privacy": "No names or personal identifiers are stored by this counter."
     },
     "dashboard_metrics": {
         "minimum_wage_annual_growth_pct": 6.0021,
@@ -280,6 +298,7 @@ SOURCES = {
     "Safe Work Australia — Premiums": ("https://www.safeworkaustralia.gov.au/book/comparison-workers-compensation-arrangements-australia-and-new-zealand-2025-30th-edition/chapter-8-scheme-administrative-and-funding-arrangements/premiums","workers_comp"),
     "Services Australia — Age Pension Rates": ("https://www.servicesaustralia.gov.au/how-much-age-pension-you-can-get?context=22526","income_support_age_pension"),
     "Services Australia — JobSeeker Rates": ("https://www.servicesaustralia.gov.au/how-much-jobseeker-payment-you-can-get?context=51411","income_support_jobseeker"),
+    "ACOSS — Income Support Position": ("https://www.acoss.org.au/media-releases/","acoss"),
 }
 
 TERMS = ("pension","jobseeker","social security","indexation","payment","income test","deeming","cost of living","allowance","supplement","minimum wage","wage","cpi","inflation")
@@ -287,6 +306,7 @@ TERMS = ("pension","jobseeker","social security","indexation","payment","income 
 session = requests.Session()
 session.headers.update({"User-Agent":"THE-CONSTANT-Public-Monitor/4.1"})
 app = Flask(__name__)
+app.secret_key = os.getenv("SECRET_KEY", "the-constant-live-v570-session-key")
 lock = threading.RLock()
 
 def now_iso():
@@ -567,6 +587,12 @@ def recalc():
     dm["forward_weekly_gap_change"]=round(f["weekly_gap"]-c["weekly_gap"],2)
     if "book_impact_model" in state:
         recalc_book_impact_model()
+    if "acoss_monitor" in state:
+        ac = state["acoss_monitor"]
+        weekly = float(ac.get("benchmark_weekly", 0) or 0)
+        ac["benchmark_fortnightly"] = round(weekly * 2, 2)
+        chart_c_fn = float(c["chart_c_fortnightly"])
+        ac["chart_c_ratio_pct"] = round((weekly * 2 / chart_c_fn) * 100, 4) if chart_c_fn else None
 
 
 def resident_income_tax_2026_27(income):
@@ -1306,6 +1332,42 @@ def parse_chart_c(t):
         state["core"]["chart_c_fortnightly"]=max(vals); recalc(); return True
     return False
 
+def parse_acoss(t):
+    """
+    Monitor ACOSS's latest published income-support adequacy benchmark.
+    ACOSS is an independent policy source, not an official government source.
+    Only update when a clear weekly dollar benchmark is stated with the
+    pension/Pension Supplement parity position.
+    """
+    lower = t.lower()
+    if "pension" not in lower or "supplement" not in lower:
+        return False
+
+    vals = []
+    for m in re.finditer(r"(?:at least|minimum of|to)\s*\$([\d,]+(?:\.\d{1,2})?)\s*(?:a|per)\s*week", t, re.I):
+        v = money(m.group(1))
+        if 300 <= v <= 1000:
+            vals.append(v)
+
+    if not vals:
+        return False
+
+    latest = max(vals)
+    ac = state.setdefault("acoss_monitor", {})
+    changed = float(ac.get("benchmark_weekly", 0) or 0) != latest
+    ac["benchmark_weekly"] = round(latest, 2)
+    ac["benchmark_fortnightly"] = round(latest * 2, 2)
+    ac["chart_c_ratio_pct"] = round(
+        (latest * 2 / float(state["core"]["chart_c_fortnightly"])) * 100, 4
+    )
+    ac["status"] = "CURRENT ACOSS POSITION"
+    ac["classification"] = "Independent policy position — not THE CONSTANT methodology and not Australian Government policy."
+    ac["relationship_note"] = (
+        "ACOSS does not derive its benchmark from Chart C. "
+        "THE CONSTANT independently expresses the ACOSS benchmark against Chart C as a common denominator."
+    )
+    return changed
+
 def parse_rss(html):
     soup=BeautifulSoup(html,"xml")
     m=meta("Social Services Minister — Media Releases")
@@ -1478,6 +1540,7 @@ def parse_income_support_jobseeker(t):
         key = "jobseeker_single_no_children"
         if payments[key]["actual_fortnightly"] != v:
             payments[key]["actual_fortnightly"] = v
+            payments[key]["source_effective_period"] = "current Services Australia published rate"
             changed = True
 
     if changed:
@@ -2678,6 +2741,7 @@ def check_all():
             elif kind=="ato_tax": changed=parse_ato_tax(t)
             elif kind=="income_support_age_pension": changed=parse_income_support_age_pension(t)
             elif kind=="income_support_jobseeker": changed=parse_income_support_jobseeker(t)
+            elif kind=="acoss": changed=parse_acoss(t)
             if changed: mark_change()
         except Exception as e: errors.append(f"{name}: {e}")
     maintain_union_archive()
@@ -2688,6 +2752,7 @@ def check_all():
 
     maintain_announcement_archive()
     maintain_constant_material_monitor()
+    recalc()
     recalculate_leci_income_burden()
     recalc_book_impact_model()
     recalc_income_support_counterfactual()
@@ -2764,7 +2829,7 @@ def recalculate_leci_income_burden():
         or 1004.90
     )
 
-    proposed = 1313.90
+    proposed = float(state["core"]["chart_c_weekly"])
 
     average = 2083.70
 
@@ -2916,6 +2981,80 @@ def loop():
                 pass
 
 
+def _counter_store_config():
+    """Return external persistent counter configuration when supplied by Render env vars."""
+    url = os.getenv("UPSTASH_REDIS_REST_URL", "").strip().rstrip("/")
+    token = os.getenv("UPSTASH_REDIS_REST_TOKEN", "").strip()
+    key = os.getenv("VISITOR_COUNTER_KEY", "the_constant_live_total_visits").strip()
+    return url, token, key
+
+def _persistent_counter_increment():
+    """Atomically increment the lifetime counter in external Redis-compatible storage."""
+    url, token, key = _counter_store_config()
+    if not url or not token:
+        return None
+    try:
+        r = requests.post(
+            f"{url}/incr/{key}",
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=8,
+        )
+        r.raise_for_status()
+        payload = r.json()
+        return int(payload.get("result"))
+    except Exception:
+        return None
+
+def _persistent_counter_read():
+    """Read the lifetime count without incrementing it."""
+    url, token, key = _counter_store_config()
+    if not url or not token:
+        return None
+    try:
+        r = requests.get(
+            f"{url}/get/{key}",
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=8,
+        )
+        r.raise_for_status()
+        value = r.json().get("result")
+        return int(value or 0)
+    except Exception:
+        return None
+
+@app.post("/api/visit")
+def visitor_count():
+    """Count one dashboard visit per browser session; prefer persistent external storage."""
+    vc = state.setdefault("visitor_counter", {
+        "total_visits": 0,
+        "label": "THE CONSTANT Live visits",
+        "method": "One count per browser session",
+        "privacy": "No names or personal identifiers are stored by this counter."
+    })
+
+    storage = "local fallback"
+    if not session.get("tc_visit_counted"):
+        persistent_total = _persistent_counter_increment()
+        if persistent_total is not None:
+            vc["total_visits"] = persistent_total
+            storage = "persistent"
+        else:
+            vc["total_visits"] = int(vc.get("total_visits", 0) or 0) + 1
+            save_state()
+        session["tc_visit_counted"] = True
+    else:
+        persistent_total = _persistent_counter_read()
+        if persistent_total is not None:
+            vc["total_visits"] = persistent_total
+            storage = "persistent"
+
+    return jsonify({
+        "total_visits": int(vc.get("total_visits", 0) or 0),
+        "method": vc.get("method"),
+        "privacy": vc.get("privacy"),
+        "storage": storage
+    })
+
 @app.get("/")
 def home(): return send_from_directory(APP_DIR,"index.html")
 
@@ -2943,7 +3082,14 @@ def check_now():
 # Rebuild all derived values from current official/base state.
 # ------------------------------------------------------------
 
-state["version"] = "5.6.7"
+state["version"] = "5.7.0"
+
+# v5.7.0 effective-date migration.
+# A persisted pre-20-Sep state must not overwrite the now-current official Chart C.
+state["core"]["chart_c_fortnightly"] = 2701.40
+state["core"]["chart_c_weekly"] = 1350.70
+state["forward"]["chart_c_fortnightly"] = 2701.40
+state["forward"]["status"] = "Official Services Australia cut-off confirmed — effective 20 September 2026"
 
 recalc()
 recalc_book_impact_model()
