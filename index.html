@@ -534,8 +534,40 @@ body,
 
 </style>
 
+
+
+<style id="tc-what-left-style">
+.whatleft-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0}.whatleft-controls label{font-size:12px;color:#9fb0c8;font-weight:700}.whatleft-controls input,.whatleft-controls select{display:block;width:100%;margin-top:6px;padding:9px;border-radius:8px;background:#07182f;color:#fff;border:1px solid rgba(255,255,255,.15)}.whatleft-table{width:100%;border-collapse:collapse;margin-top:14px}.whatleft-table th,.whatleft-table td{padding:8px;border-bottom:1px solid rgba(255,255,255,.08);text-align:right}.whatleft-table th:first-child,.whatleft-table td:first-child{text-align:left}.whatleft-negative{font-weight:800}.whatleft-note{margin-top:10px}
+</style>
+<style id="tc-igr-lab-style">.scenario-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:14px}.scenario-controls label{font-size:12px;color:#9fb0c8;font-weight:700}.scenario-controls select,.scenario-controls input{display:block;width:100%;margin-top:6px;padding:9px;border-radius:8px;background:#07182f;color:#fff;border:1px solid rgba(255,255,255,.15)}#igrScenarioChart{width:100%;min-width:650px}</style>
+
+<style id="tc-journey-style">
+.tc-journey{position:sticky;top:0;z-index:50;background:rgba(4,14,29,.96);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px;margin:10px 0 16px}.tc-journey-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.tc-journey a{display:block;text-align:center;padding:9px 8px;border-radius:9px;border:1px solid rgba(255,255,255,.12);text-decoration:none;color:inherit;font-weight:800}.tc-journey a:hover,.tc-journey a.active{background:rgba(255,255,255,.08)}.tc-journey small{display:block;font-weight:400;opacity:.72;margin-top:2px}@media(max-width:700px){.tc-journey-grid{grid-template-columns:1fr}.tc-journey{position:relative}}
+</style>
+
+<style id="tc-v94-ux">
+:root{--tc-focus:2px solid currentColor}
+html{scroll-behavior:smooth;scroll-padding-top:92px}
+:focus-visible{outline:var(--tc-focus);outline-offset:3px}
+#tc-v94-skip{position:fixed;left:12px;top:-60px;z-index:99999;padding:10px 14px;background:#fff;color:#111;border:1px solid currentColor;border-radius:8px}
+#tc-v94-skip:focus{top:12px}
+.tc-v94-status{display:flex;gap:.55rem;align-items:center;flex-wrap:wrap;font-size:.82rem;margin:.5rem 0 1rem}
+.tc-v94-chip{border:1px solid currentColor;border-radius:999px;padding:.25rem .55rem}
+.tc-v94-help{cursor:help;text-decoration:underline dotted;text-underline-offset:3px}
+@media(max-width:760px){html{scroll-padding-top:72px}.tc-journey-nav,.tc-depth-controls{max-width:100%;overflow-x:auto}.tc-grid,.metric-grid,.cards{grid-template-columns:1fr!important}.tc-v94-status{font-size:.76rem}table{display:block;overflow-x:auto;white-space:nowrap}button,input,select{min-height:44px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
 </head>
-<body><div class="tc-shell">
+<body>
+<a id="tc-v94-skip" href="#australia-now">Skip to current evidence</a>
+<div class="tc-shell">
+<nav class="tc-journey" id="research-journey" aria-label="THE CONSTANT research journey"><div class="tc-journey-grid">
+<a href="#journey-see" data-journey="see">SEE IT<small>Current position & evidence</small></a>
+<a href="#journey-understand" data-journey="understand">UNDERSTAND IT<small>Mechanism, history & consequences</small></a>
+<a href="#journey-test" data-journey="test">TEST IT<small>Scenarios, data & reproducibility</small></a>
+</div></nav>
+<div id="journey-see" class="tc-anchor" aria-hidden="true"></div>
+
 
 <div class="tc-howto" id="tc-how-to-read">
     <div class="tc-howto-title">How to read THE CONSTANT</div>
@@ -549,41 +581,67 @@ body,
     live monitor.
 </div>
 
+<style>
+.tc-header-right{display:flex;align-items:center;gap:16px;text-align:right}.tc-live-visits{font-size:12px;line-height:1.2;color:#9fc5e8;white-space:nowrap}.tc-live-visits strong{display:block;font-size:18px;color:#57e3ff}.tc-live-visits .counter-status{font-size:10px;color:#7f9bb8}@media(max-width:700px){.tc-header-right{gap:9px}.tc-live-visits{font-size:10px}.tc-live-visits strong{font-size:15px}}
+</style>
 <div class="wrap">
-<header class="header"><div><div class="logo">THE CONSTANT</div><span class="badge">● LIVE OFFICIAL SOURCE MONITOR</span></div><div><div id="clock" class="clock">--:--:--</div><div class="clocklabel">Viewer local time</div></div>
+<header class="header"><div><div class="logo">THE CONSTANT</div><span class="badge">● LIVE OFFICIAL SOURCE MONITOR</span></div><div class="tc-header-right"><div class="tc-live-visits" title="Counts once per browser session; no names or personal identifiers stored">LIVE VISITS<strong id="visitcount">—</strong><span id="visitstorage" class="counter-status"></span></div><div><div id="clock" class="clock">--:--:--</div><div class="clocklabel">Viewer local time</div></div></div>
 </header>
 
-<section class="card" id="visitor-counter" style="margin-top:22px">
-<div class="title">THE CONSTANT LIVE — VISITOR COUNTER</div>
-<div class="stat">
-<div class="lab">Dashboard Visits</div>
-<div id="visitcount" class="val cyan">—</div>
-<div class="sub">Counts once per browser session · no names or personal identifiers stored by this counter</div><div id="visitstorage" class="sub"></div>
-</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="tc-v94-status" role="status" aria-live="polite"><span class="tc-v94-chip">DEPLOYMENT CANDIDATE</span><span class="tc-v94-chip">Verified-state protection ON</span><span class="tc-v94-chip">Automatic release monitoring ON</span><span class="tc-v94-chip tc-v94-help" title="If a source fails validation, THE CONSTANT Live retains the last verified observation and displays the failure.">Failure-safe updates ⓘ</span></div>
+<section class="card" id="australia-now">
+  <div class="title">AUSTRALIA NOW</div>
+  <div class="sub">One-screen snapshot of the latest verified wage, adequacy, prices, labour-market and monetary-policy observations held by THE CONSTANT Live.</div>
+  <div class="four" style="margin-top:14px">
+    <div class="stat"><div class="lab">National Minimum Wage</div><div id="an-mw" class="val cyan">—</div><div class="sub">per week</div></div>
+    <div class="stat"><div class="lab">Chart C</div><div id="an-cc" class="val gold">—</div><div class="sub">weekly equivalent</div></div>
+    <div class="stat"><div class="lab">NMW / Chart C</div><div id="an-ratio" class="val red">—</div><div class="sub">current relationship</div></div>
+    <div class="stat"><div class="lab">Weekly difference</div><div id="an-gap" class="val red">—</div><div class="sub">Chart C − NMW</div></div>
+  </div>
+  <div class="four" style="margin-top:10px">
+    <div class="stat"><div class="lab">Annual CPI</div><div id="an-cpi" class="val orange">—</div><div id="an-cpi-ref" class="sub">—</div></div>
+    <div class="stat"><div class="lab">Employment</div><div id="an-employment" class="val cyan">—</div><div id="an-labour-ref" class="sub">—</div></div>
+    <div class="stat"><div class="lab">Unemployment / Participation</div><div id="an-labour-rates" class="val gold">—</div><div class="sub">official labour-force rates</div></div>
+    <div class="stat"><div class="lab">RBA Cash Rate</div><div id="an-cash" class="val cyan">—</div><div class="sub">cash-rate target</div></div>
+  </div>
+  <div class="tc-howto" style="margin-top:12px"><strong>Freshness & evidence:</strong> <span id="an-freshness">—</span><br><span class="sub">Official observations remain visible at their last verified values if a source or parser fails. Derived ratio and gap values are recalculated from the verified NMW and Chart C inputs.</span></div>
 </section>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<style>
+#source-release-control .tc-src-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr 1.4fr;gap:1px;background:#d9e2ea;border:1px solid #d9e2ea;border-radius:8px;overflow:hidden;margin-top:12px}
+#source-release-control .tc-src-cell{background:var(--card,#fff);padding:9px 10px;font-size:12px;min-width:0}.tc-src-head{font-weight:700;color:#789;letter-spacing:.04em;text-transform:uppercase}.tc-src-name{font-weight:700}.tc-src-ok{color:#20a464}.tc-src-warn{color:#d58b00}.tc-src-err{color:#d14b4b}.tc-src-muted{color:#789;font-size:11px;margin-top:3px}@media(max-width:800px){#source-release-control .tc-src-grid{display:block}#source-release-control .tc-src-head{display:none}#source-release-control .tc-src-cell{border-bottom:1px solid #e3e9ee}#source-release-control .tc-src-cell[data-label]:before{content:attr(data-label) ': ';font-weight:700;color:#789}}
+</style>
+<section class="card" id="source-release-control">
+  <div class="title">SOURCE HEALTH + RELEASE INTELLIGENCE</div>
+  <div class="tc-explainer"><strong>Primary operational control panel.</strong> Detailed source diagnostics and full calendars remain available below in collapsed technical panels so unique evidence is preserved without repeating the same status on the main reading path.</div>
+  <div class="tc-explainer"><strong>Five core official source families, one control panel.</strong> See the latest verified period, source health, next expected release and current monitoring state. Release windows accelerate checks to five minutes; a failed fetch or validation never overwrites the last verified observation.</div>
+  <div id="src-release-summary" class="sub" style="margin-top:10px">Loading source intelligence…</div>
+  <div id="src-release-grid" class="tc-src-grid"></div>
+  <div id="src-release-note" class="sub" style="margin-top:10px"></div>
+</section>
 
 <section class="card" id="current-verified">
     <div class="title">CURRENT VERIFIED — 20 SEPTEMBER 2026</div>
@@ -738,7 +796,7 @@ Fuel is shown separately so major volatile movements remain visible.
 </section>
 
 <section class="card" id="tc-what-changed">
-<div class="title">WHAT CHANGED THIS MONTH?</div>
+<div class="title">JULY 2026 CPI SNAPSHOT — HISTORICAL OBSERVATION</div>
 
 <div class="four">
 
@@ -769,7 +827,7 @@ Fuel is shown separately so major volatile movements remain visible.
 </div>
 
 <div class="sub" style="margin-top:12px">
-Annual headline inflation eased from 3.8% to 3.5%.
+In the July 2026 release, annual headline inflation eased from 3.8% to 3.5%.
 The monthly increase is shown alongside the separate automotive-fuel
 movement and underlying-inflation measures.
 </div>
@@ -782,9 +840,9 @@ movement and underlying-inflation measures.
 <div class="four">
 
 <div class="stat">
-<div class="lab">Headline CPI</div>
+<div class="lab">Headline CPI — July snapshot</div>
 <div class="val orange">3.5%</div>
-<div class="sub">July annual</div>
+<div class="sub">historical July 2026 observation</div>
 </div>
 
 <div class="stat">
@@ -812,6 +870,7 @@ THE CONSTANT presents headline, underlying and volatile-item inflation
 together. No single monthly observation is treated as sufficient evidence
 for an RBA policy decision.
 </div>
+<div class="tc-explainer" style="margin-top:12px"><strong>Decision readiness:</strong> The next Monetary Policy Board meeting is 28–29 September 2026, with the decision statement scheduled for 29 September at 2:30 pm AEST. Live accelerates monitoring around the release, but changes the displayed cash-rate target only after the RBA statement is parsed and validated. If validation fails, the last verified rate remains visible.</div>
 
 </section>
 
@@ -924,6 +983,17 @@ PREVIOUS MONTH
 <strong id="cpiprevreference">
 Reference month: —
 </strong>
+
+<style id="tc-release-strip-style">
+#next-release-strip .tc-release-strip-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:12px}#next-release-strip .tc-release-tile{border:1px solid #d9e2ea;border-radius:9px;padding:10px;background:var(--card,#fff);min-height:112px}#next-release-strip .tc-release-name{font-weight:750;font-size:12px}.tc-release-count{font-size:18px;font-weight:800;margin:8px 0 3px}.tc-release-meta{font-size:11px;color:#789;line-height:1.45}.tc-release-due{border-color:#d58b00!important}.tc-release-attn{border-color:#d14b4b!important}@media(max-width:900px){#next-release-strip .tc-release-strip-grid{grid-template-columns:1fr 1fr}}@media(max-width:520px){#next-release-strip .tc-release-strip-grid{grid-template-columns:1fr}}
+</style>
+<section class="card" id="next-release-strip">
+ <div class="title">NEXT RELEASES · AUTOMATIC UPDATE TIMING</div>
+ <div class="tc-explainer"><strong>When should Live move next?</strong> Countdown to the next detected official release for CPI, Labour Force, RBA, FWC and Services Australia/DSS, together with the exact last source check. Normal monitoring is hourly; an active release window accelerates to five-minute checks.</div>
+ <div id="tc-release-strip-summary" class="sub" style="margin-top:9px">Loading release timing…</div>
+ <div id="tc-release-strip-grid" class="tc-release-strip-grid"></div>
+ <div id="tc-release-strip-note" class="sub" style="margin-top:9px"></div>
+</section>
 
 <div id="cpiprevrelease"></div>
 
@@ -1106,13 +1176,25 @@ Awaiting verified ABS source update
 <div class="stat">
 <div class="lab">Employment</div>
 <div id="employmentlevel" class="val cyan">—</div>
-<div class="sub">persons</div>
+<div class="sub">persons · official ABS observation</div>
 </div>
 
 <div class="stat">
-<div class="lab">Hours Worked Change</div>
-<div id="hourschange" class="val purple">—</div>
-<div class="sub">monthly</div>
+<div class="lab">Full-Time Employment</div>
+<div id="fulltimeemployment" class="val cyan">—</div>
+<div class="sub">persons · shown when verified</div>
+</div>
+
+<div class="stat">
+<div class="lab">Part-Time Employment</div>
+<div id="parttimeemployment" class="val cyan">—</div>
+<div class="sub">persons · shown when verified</div>
+</div>
+
+<div class="stat">
+<div class="lab">Hours Worked</div>
+<div id="hourslevel" class="val purple">—</div>
+<div id="hourschange" class="sub">monthly change —</div>
 </div>
 
 <div class="stat">
@@ -1121,6 +1203,10 @@ Awaiting verified ABS source update
 <div class="sub">seasonally adjusted</div>
 </div>
 
+</div>
+
+<div class="tc-archive-note" id="labourmeta">
+Reference period and verification status will appear here.
 </div>
 
 <div class="tc-archive-note">
@@ -1205,7 +1291,7 @@ weekly Chart C, wage/Chart C ratio and weekly gap.
 <div class="stat"><div class="lab">Pre-20 Sep</div><div id="legacycurrentcc" class="val gold">$2,627.80</div><div class="sub">previous official · per fortnight</div></div>
 <div class="stat"><div class="lab">20 Sep Current</div><div id="legacyforwardcc" class="val gold">$2,701.40</div><div class="sub">current official · per fortnight</div></div>
 <div class="stat"><div class="lab">Gap Change</div><div id="legacygapchange" class="val red">+$36.80</div><div class="sub">per week</div></div>
-<div class="stat"><div class="lab">Ratio Movement</div><div class="val red"><span id="legacyratiofrom">76.49%</span> → <span id="legacyratioto">74.40%</span></div><div class="sub">previous → current official</div></div>
+<div class="stat"><div class="lab">Ratio Movement</div><div class="val red"><span id="legacyratiofrom">76.48%</span> → <span id="legacyratioto">74.40%</span></div><div class="sub">previous → current official</div></div>
 </div>
 </section>
 
@@ -1228,8 +1314,86 @@ weekly Chart C, wage/Chart C ratio and weekly gap.
 </div>
 </section>
 
-<section class="card">
-<div class="title">THE CONSTANT — ECONOMIC & POLICY CALENDAR</div>
+
+
+<section class="card" id="evidence-explorer-card">
+<div class="title">128-QUARTER EVIDENCE EXPLORER — 1995 Q1 TO 2026 Q4</div>
+<div class="tc-explainer"><strong>Frozen publication evidence.</strong> This explorer activates only when the deployed publication CSV passes its exact SHA-256, 128-quarter sequence and locked checkpoint tests. Missing or altered data are never interpolated or silently substituted.</div>
+<div id="evidence-status" class="sub" style="margin:10px 0">Checking frozen publication dataset…</div>
+<div id="evidence-landing" class="four" style="margin:12px 0"><div class="sub">Loading long-run evidence…</div></div>
+<div id="evidence-regimes" class="tc-explainer" style="margin:10px 0"><strong>Reading the chart.</strong> The landing view marks the immediate pre-break reference, the 2000 Q3 structural boundary, the lower post-break regime and the latest verified endpoint. Select another metric or quarter to examine the underlying observations.</div>
+<div id="evidence-controls" style="display:none;margin:12px 0;gap:8px;flex-wrap:wrap">
+  <button type="button" data-evmetric="ratio_pct">Ratio %</button>
+  <button type="button" data-evmetric="minimum_wage_weekly">NMW $/week</button>
+  <button type="button" data-evmetric="chart_c_weekly">Chart C $/week</button>
+  <button type="button" data-evmetric="weekly_gap">Weekly gap</button>
+  <button type="button" data-evmetric="annualised_gap">Annualised gap</button>
+  <select id="evidence-quarter" aria-label="Select quarter"></select>
+</div>
+<div id="evidence-chart" style="min-height:280px"></div>
+<div id="evidence-selected" class="four" style="margin-top:12px"></div>
+<div id="evidence-method" class="sub" style="margin-top:12px"></div>
+</section>
+
+
+<section class="card" id="live-cycle-2026-card">
+<div class="title">2026 LIVE CYCLE — WAGE RESET → CHART C INDEXATION</div>
+<div class="tc-explainer"><strong>One year, three observations.</strong> Follow the ratio from Q2, through the July National Minimum Wage reset in Q3, to the September Chart C indexation reflected in Q4. This isolates the live 2026 sequence without treating timing alone as proof of causation.</div>
+<div id="live-cycle-2026-summary" class="three" style="margin-top:12px"><div class="sub">Loading 2026 live cycle…</div></div>
+<div id="live-cycle-2026-movement" class="four" style="margin-top:12px"></div>
+<div id="live-cycle-2026-method" class="tc-explainer" style="margin-top:12px"></div>
+</section>
+
+<section class="card" id="structural-evidence-card">
+<div class="title">STRUCTURAL EVIDENCE — WHAT THE 128 QUARTERS TEST</div>
+<div class="tc-explainer"><strong>Estimated / tested evidence.</strong> These results are kept separate from the raw quarterly observations. They test whether the relationship changed at the 2000 boundary and describe the lower post-break regime; they do not establish policy intent.</div>
+<div id="structural-summary" class="four" style="margin-top:12px"><div class="sub">Loading structural evidence…</div></div>
+<div id="structural-tests" style="margin-top:12px"></div>
+<div id="annual-cycle" style="margin-top:12px"></div>
+<div id="structural-safeguard" class="sub" style="margin-top:12px"></div>
+</section>
+
+
+<section class="card" id="repro-centre-card">
+<div class="title">DATA EXPLORER & REPRODUCIBILITY CENTRE</div>
+<div class="tc-explainer"><strong>Examine the number, not just the conclusion.</strong> Select any verified quarter above, then use this centre to see how THE CONSTANT derives the ratio and gap, whether the frozen publication dataset passed verification, and which evidence class a result belongs to.</div>
+<div id="repro-status" class="four" style="margin-top:12px"><div class="sub">Loading reproducibility record…</div></div>
+<div class="three" style="margin-top:12px">
+ <div class="stat"><div class="lab">Ratio formula</div><div class="val cyan" style="font-size:18px">100 × NMW ÷ Chart C</div><div class="sub">DERIVED CALCULATION</div></div>
+ <div class="stat"><div class="lab">Weekly gap formula</div><div class="val gold" style="font-size:18px">Chart C − NMW</div><div class="sub">DERIVED CALCULATION</div></div>
+ <div class="stat"><div class="lab">Chart C formula</div><div class="val purple" style="font-size:18px">F + (P + Supp + PA) ÷ r</div><div class="sub">Rent Assistance / Remote Area Allowance excluded</div></div>
+</div>
+<details style="margin-top:14px"><summary><strong>Examine this result — method & provenance</strong></summary><div id="repro-method" class="sub" style="margin-top:10px;line-height:1.65"></div></details>
+<details style="margin-top:10px"><summary><strong>Evidence hierarchy</strong></summary><div id="repro-hierarchy" style="margin-top:10px"></div></details>
+<div class="tc-explainer" style="margin-top:14px"><strong>Replication rule.</strong> If the frozen CSV is absent, altered or fails a checkpoint, Live disables historical reproduction. It does not rebuild missing observations from manuscript tables.</div>
+</section>
+
+
+<section class="card" id="alert-recovery-card">
+<div class="title">LIVE ALERTS & FAILURE RECOVERY</div>
+<div class="tc-explainer"><strong>Verified data is protected.</strong> This panel surfaces source failures, stale feeds and active release windows. A failed scrape, malformed release or validation failure cannot replace the last verified observation; automatic checking continues until a valid candidate is available.</div>
+<div id="alert-summary" class="four" style="margin-top:12px"><div class="sub">Loading operational alerts…</div></div>
+<div id="alert-events" style="margin-top:12px"></div>
+<details style="margin-top:12px"><summary><strong>Recovery rule</strong></summary><div id="alert-rule" class="sub" style="margin-top:10px;line-height:1.65">Detect → parse → validate. Only a validated candidate may publish. Failure → retain last verified → flag visibly → retry automatically.</div></details>
+</section>
+
+<section class="card" id="audit-trail-card">
+<div class="title">WHAT CHANGED? — VERSIONED AUDIT TRAIL</div>
+<div class="tc-explainer"><strong>Automatic does not mean invisible.</strong> Every validated substantive update is appended to a provenance log showing the source, old value, new value, detection/validation time and the calculations affected. Failed validation does not overwrite the last verified observation.</div>
+<div id="audit-summary" class="four" style="margin-top:12px"><div class="sub">Loading audit trail…</div></div>
+<div id="audit-events" style="margin-top:12px"></div>
+<details style="margin-top:12px"><summary><strong>How the audit trail works</strong></summary><div class="sub" style="margin-top:10px;line-height:1.65">Source → detect → parse → validate → append audit event → recalculate → publish. The log is append-only JSONL. Runtime health checks that do not change a verified value are not presented as data revisions.</div></details>
+</section>
+
+<details class="card" id="next-releases-card"><summary><strong>DETAILED RELEASE CALENDAR & METHOD</strong></summary>
+<div class="title">NEXT EXPECTED OFFICIAL RELEASES</div>
+<div class="tc-explainer"><strong>Release-aware monitoring.</strong> Dates are drawn from official publication pages where detectable, with the regular March/September social-security indexation cycle monitored separately. Live checks every five minutes inside an active release window. A calendar-fetch failure does not alter verified economic data.</div>
+<div id="nextreleases"><div class="sub">Loading release calendar…</div></div>
+<div id="calendarverified" class="sub" style="margin-top:10px"></div>
+</details>
+
+<details class="card" id="economic-policy-calendar"><summary><strong>FULL ECONOMIC & POLICY CALENDAR</strong></summary>
+<div class="title" style="margin-top:12px">THE CONSTANT — ECONOMIC & POLICY CALENDAR</div>
 
 <div class="tc-explainer">
 <strong>Forward-looking official calendar.</strong>
@@ -1240,7 +1404,7 @@ to amendment by the issuing institution.
 </div>
 
 <div id="eventlist"></div>
-</section>
+</details>
 
 
 
@@ -1643,15 +1807,30 @@ Tracks wage claims and award applications affecting low-paid and
 <button class="archivebtn" onclick="toggleArchive()">VIEW 7-YEAR ARCHIVE</button>
 <div id="unionarchive" class="archivepanel"></div>
 </section>
+<div id="journey-understand" class="tc-anchor" aria-hidden="true"></div>
+<section class="card" id="institutional-evidence-timeline">
+<div class="title">INSTITUTIONAL EVIDENCE TIMELINE</div>
+<div class="tc-explainer">
+Places the measured wage–Chart C record beside documented institutional changes. Event markers provide historical context; chronological proximity is <strong>not</strong> presented as proof of causation, policy intent or coordination.
+</div>
+<div class="three" style="margin:14px 0">
+<div class="stat"><div class="lab">Immediate Pre-Rupture</div><div class="val gold">2000 Q2</div><div class="sub">93.4641% publication reference</div></div>
+<div class="stat"><div class="lab">Formal Regime Boundary</div><div class="val red">2000 Q3</div><div class="sub">Chow / HAC boundary</div></div>
+<div class="stat"><div class="lab">Current Endpoint</div><div class="val cyan">2026 Q4</div><div class="sub">74.3985%</div></div>
+</div>
+<div id="institutionalTimeline"><div class="sub">Loading institutional chronology…</div></div>
+<div class="tc-archive-note" style="margin-top:14px"><strong>Reading rule:</strong> the timeline answers <em>what changed, and when?</em> The structural tests answer whether the statistical relationship changed. Neither chronology nor statistical association, by itself, proves why a policy was adopted or that an institution intended the observed ratio.</div>
+</section>
+
 </main><aside>
-<section class="card"><div class="title">OFFICIAL SOURCE HEALTH</div>
+<details class="card" id="legacy-source-health"><summary><strong>DETAILED SOURCE HEALTH</strong></summary><div class="title" style="margin-top:12px">OFFICIAL SOURCE HEALTH</div>
 <div class="tc-explainer" data-explainer="OFFICIAL SOURCE HEALTH">
 Shows whether each official source was successfully checked.
         A temporary warning means the source could not be reached during the
         latest check and the <strong>last verified value is retained.</strong>
         It does not mean the underlying data has been changed.
 </div>
-<div id="sources">Loading…</div></section>
+<div id="sources">Loading…</div></details>
 <section class="card">
 <div class="title">OFFICIAL ANNOUNCEMENTS — LAST 30 DAYS</div>
 <div class="tc-explainer" data-explainer="OFFICIAL ANNOUNCEMENTS">
@@ -1667,246 +1846,152 @@ Relevant official announcements remain on the main dashboard for
 </section>
 <section class="card">
 
-<section class="card" id="ten-year-scenario">
 
-<div class="title">
-10-YEAR STRUCTURAL DIVERGENCE SCENARIO — 2026 TO 2036
+<section class="card" id="wage-floor-population-lab">
+<div class="title">EMPLOYMENT &amp; WAGE-FLOOR POPULATION LABORATORY</div>
+<div class="sub">SEE IT → UNDERSTAND IT → TEST IT · Distribution evidence and costing assumptions are kept separate.</div>
+<div id="wf-pop-summary" class="grid" style="margin-top:12px"><div class="sub">Loading wage-floor evidence…</div></div>
+<div class="tc-explainer" id="wf-dsi" style="margin-top:12px"></div>
+<div class="title" style="font-size:16px;margin-top:18px">DIRECT COSTING SCENARIO</div>
+<div class="wf-controls">
+<label>Affected employees<input id="wfWorkers" type="number" min="0" step="1000" value="1261000"></label>
+<label>Average paid hours / week<input id="wfHours" type="number" min="0" max="80" step="0.1" value="24.1"></label>
+<label>Casual share (%)<input id="wfCasual" type="number" min="0" max="100" step="0.1" value="55"></label>
+<label>Permanent hourly gap ($)<input id="wfPermGap" type="number" min="0" step="0.01" value="8.9237"></label>
+<label>Casual hourly gap ($)<input id="wfCasGap" type="number" min="0" step="0.01" value="11.1546"></label>
+<select id="wfScenario"><option value="A">Scenario A — direct legal floor</option><option value="B">Scenario B — award relativities</option><option value="C">Scenario C — spillover sensitivity</option></select>
 </div>
+<div id="wf-cost-results" class="grid" style="margin-top:12px"></div>
+<div class="tc-explainer" id="wf-warning" style="margin-top:12px"></div>
+<details style="margin-top:12px"><summary><strong>Examine this result</strong></summary><div id="wf-method" class="sub" style="margin-top:10px"></div></details>
+</section>
+<style id="tc-wage-floor-pop-style">
+#wage-floor-population-lab .wf-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:12px}#wage-floor-population-lab .wf-controls label{font-size:12px;font-weight:700;color:#9fb0c8}#wage-floor-population-lab .wf-controls input,#wage-floor-population-lab .wf-controls select{display:block;width:100%;box-sizing:border-box;margin-top:6px;padding:9px;border-radius:8px;background:#07182f;color:#fff;border:1px solid rgba(255,255,255,.15)}
+</style>
+<script id="tc-wage-floor-pop-script">
+(function(){
+ let base=null;
+ const money=x=>'$'+Number(x).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+ const num=(id)=>Number(document.getElementById(id).value)||0;
+ function cost(){if(!base)return;const workers=num('wfWorkers'),hours=num('wfHours'),cas=num('wfCasual')/100,pg=num('wfPermGap'),cg=num('wfCasGap');const cworkers=workers*cas,pworkers=workers-cworkers;const annualPerm=pworkers*hours*pg*52,annualCas=cworkers*hours*cg*52,total=annualPerm+annualCas;const scen=document.getElementById('wfScenario').value;document.getElementById('wf-cost-results').innerHTML='<div class="stat"><div class="lab">Permanent workers</div><div class="val cyan">'+Math.round(pworkers).toLocaleString()+'</div><div class="sub">scenario input</div></div><div class="stat"><div class="lab">Casual workers</div><div class="val cyan">'+Math.round(cworkers).toLocaleString()+'</div><div class="sub">scenario input</div></div><div class="stat"><div class="lab">Direct annual wage difference</div><div class="val gold">'+money(total/1e9)+'b</div><div class="sub">mechanical scenario calculation</div></div><div class="stat"><div class="lab">Average / affected worker</div><div class="val red">'+money(workers?total/workers:0)+'</div><div class="sub">annual</div></div>';document.getElementById('wf-warning').innerHTML='<strong>Scenario '+scen+':</strong> '+base.scenario_definitions[scen]+' The calculator only computes the direct hourly-gap arithmetic entered above. It does not claim that every employee in the distribution band receives that correction.';}
+ async function load(){const r=await fetch('/api/wage-floor-population',{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);base=await r.json();const d=base.distribution,c=base.costing;document.getElementById('wf-pop-summary').innerHTML='<div class="stat"><div class="lab">NMW → Chart C band</div><div class="val cyan">'+money(d.nmw_weekly)+' → '+money(d.chart_c_weekly)+'</div><div class="sub">August 2025 weekly earnings basis</div></div><div class="stat"><div class="lab">Direct lower bound</div><div class="val gold">'+d.direct_lower_bound_employees.toLocaleString()+'</div><div class="sub">≈ '+d.direct_lower_bound_share_pct+'% of employees</div></div><div class="stat"><div class="lab">Interpolated estimate</div><div class="val gold">'+d.interpolated_employees.toLocaleString()+'</div><div class="sub">≈ '+d.interpolated_share_pct+'% of employees</div></div><div class="stat"><div class="lab">DSI — preliminary</div><div class="val red">'+d.dsi_preliminary_pp.toFixed(1)+' pp</div><div class="sub">distribution separation estimate</div></div>';document.getElementById('wf-dsi').innerHTML='<strong>What DSI means:</strong> '+d.interpretation;document.getElementById('wf-method').innerHTML='<strong>May 2025 EEH direct-floor benchmark:</strong> permanent gap '+money(c.permanent_max_hourly_gap)+'/h; casual gap '+money(c.casual_max_hourly_gap)+'/h. Permanent formula: <code>'+c.direct_formula_permanent+'</code>. Casual formula: <code>'+c.direct_formula_casual+'</code>.<br><br><strong>Method safeguard:</strong> '+c.note+' The August 2025 distribution estimate and May 2025 EEH costing benchmark are deliberately not merged into a single “official affected worker” count.';['wfWorkers','wfHours','wfCasual','wfPermGap','wfCasGap','wfScenario'].forEach(id=>document.getElementById(id).addEventListener('input',cost));cost();}
+ load().catch(e=>{document.getElementById('wf-pop-summary').innerHTML='<div class="sub">Wage-floor population API unavailable — '+e.message+'</div>';});
+})();
+</script>
 
-<div class="tc-explainer">
-
-<strong>Scenario analysis — not a government forecast.</strong>
-
-This analytical scenario begins with the announced
-20 September 2026 Chart C of
-<strong>$2,701.40 per fortnight</strong>,
-or <strong>$1,350.70 per week</strong>.
-
-Future Chart C is then modelled at approximately
-<strong>2.585722% per year</strong>, representing exactly 80% of the verified
-2016 Q3–2026 Q3 Chart C compound annual growth rate of
-<strong>3.232153%</strong>.
-
-The National Minimum Wage is not forecast here.
-Instead, the lower path shows what the wage would be
-if the announced September 2026 relationship of
-<strong>74.3985% of Chart C</strong> were maintained.
-
+<section class="card" id="super-retirement-lab">
+<div class="title">WAGE → SUPERANNUATION → RETIREMENT LABORATORY</div>
+<div class="tc-explainer"><strong>SCENARIO / DERIVED CALCULATION.</strong> A wage difference also changes compulsory employer super contributions. This laboratory isolates that transmission and compounds the contribution difference under assumptions you can change. It is not a forecast of an individual retirement balance or financial advice.</div>
+<div class="super-controls">
+<label>Lower weekly wage $<input id="srLowWage" type="number" min="0" step="0.01" value="1004.90"></label>
+<label>Comparison weekly wage $<input id="srHighWage" type="number" min="0" step="0.01" value="1350.70"></label>
+<label>Employer super %<input id="srSG" type="number" min="0" max="30" step="0.1" value="12.0"></label>
+<label>Years<select id="srYears"><option>10</option><option>20</option><option>30</option><option selected>40</option></select></label>
+<label>Annual wage growth %<input id="srWageGrowth" type="number" min="-10" max="20" step="0.1" value="0"></label>
+<label>Nominal investment return %<input id="srReturn" type="number" min="-20" max="30" step="0.1" value="6.0"></label>
+<label>Annual investment fees %<input id="srFees" type="number" min="0" max="10" step="0.1" value="0.7"></label>
+<label>Contributions tax %<input id="srTax" type="number" min="0" max="50" step="0.1" value="15.0"></label>
 </div>
-
-<div class="three">
-
-<div class="stat">
-<div class="lab">2036 Chart C</div>
-<div class="val gold">$1,743.52</div>
-<div class="sub">weekly scenario benchmark</div>
+<div class="four" style="margin-top:14px">
+<div class="stat"><div class="lab">Weekly wage difference</div><div class="val gold" id="srWageGap">—</div><div class="sub" id="srAnnualWageGap">—</div></div>
+<div class="stat"><div class="lab">Employer super difference</div><div class="val purple" id="srSuperGap">—</div><div class="sub" id="srAnnualSuperGap">—</div></div>
+<div class="stat"><div class="lab">After contributions tax</div><div class="val cyan" id="srNetContribution">—</div><div class="sub">first-year contribution difference</div></div>
+<div class="stat"><div class="lab">Accumulated difference</div><div class="val red" id="srFutureGap">—</div><div class="sub" id="srFutureSub">—</div></div>
 </div>
-
-<div class="stat">
-<div class="lab">Wage at 74.40%</div>
-<div class="val cyan">$1,297.16</div>
-<div class="sub">continuation scenario</div>
-</div>
-
-<div class="stat">
-<div class="lab">2036 Structural Divergence</div>
-<div class="val red">$446.37</div>
-<div class="sub">per week</div>
-</div>
-
-</div>
-
-<div class="three" style="margin-top:12px">
-
-<div class="stat">
-<div class="lab">THE CONSTANT Corrected Wage</div>
-<div class="val gold">$1,743.52</div>
-<div class="sub">2036 counterfactual — 100% Chart C</div>
-</div>
-
-<div class="stat">
-<div class="lab">Scenario Relationship</div>
-<div class="val red">74.40%</div>
-<div class="sub">wage / Chart C</div>
-</div>
-
-<div class="stat">
-<div class="lab">Corrected Relationship</div>
-<div class="val green">100%</div>
-<div class="sub">Chart C alignment</div>
-</div>
-
-</div>
-
-<div class="tc-scenario-chart-wrap">
-
-<svg
-id="scenarioChart"
-viewBox="0 0 1000 520"
-role="img"
-aria-label="Projected Chart C corrected wage and 74.3985 percent wage relationship scenario"
-></svg>
-
-</div>
-
-<div class="tc-scenario-legend">
-
-<span class="gold">
-● Chart C / THE CONSTANT corrected-wage counterfactual
-</span>
-
-<span class="cyan">
-● Wage maintaining 74.3985% relationship
-</span>
-
-</div>
-
-<div class="tc-explainer">
-
-<strong>Why this matters.</strong>
-
-Under THE CONSTANT methodology, the corrected-wage
-counterfactual is the weekly Chart C benchmark itself.
-
-For that reason, Chart C and the corrected-wage
-counterfactual occupy the same line on this chart.
-
-If Chart C followed this deliberately reduced growth
-scenario while the wage remained at 74.3985% of the
-benchmark, the modelled weekly divergence would increase
-to approximately <strong>$446.37</strong>
-by 2036.
-
-The purpose of the scenario is not to predict future
-Fair Work Commission decisions or future pension policy.
-It illustrates how an existing structural relationship
-can compound when two interacting benchmarks continue
-along different paths.
-
-</div>
-
-<div style="overflow-x:auto">
-
-<table class="claimtable">
-
-<thead>
-<tr>
-<th>Year</th>
-<th>Chart C</th>
-<th>Wage at 74.3985%</th>
-<th>Corrected Wage</th>
-<th>Structural Divergence</th>
-</tr>
-</thead>
-
-<tbody>
-<tr>
-<td>2026</td>
-<td>$1,350.70</td>
-<td>$1,004.90</td>
-<td>$1,350.70</td>
-<td>$345.80</td>
-</tr>
-<tr>
-<td>2027</td>
-<td>$1,385.63</td>
-<td>$1,030.88</td>
-<td>$1,385.63</td>
-<td>$354.74</td>
-</tr>
-<tr>
-<td>2028</td>
-<td>$1,421.45</td>
-<td>$1,057.54</td>
-<td>$1,421.45</td>
-<td>$363.91</td>
-</tr>
-<tr>
-<td>2029</td>
-<td>$1,458.21</td>
-<td>$1,084.88</td>
-<td>$1,458.21</td>
-<td>$373.32</td>
-</tr>
-<tr>
-<td>2030</td>
-<td>$1,495.91</td>
-<td>$1,112.94</td>
-<td>$1,495.91</td>
-<td>$382.98</td>
-</tr>
-<tr>
-<td>2031</td>
-<td>$1,534.59</td>
-<td>$1,141.71</td>
-<td>$1,534.59</td>
-<td>$392.88</td>
-</tr>
-<tr>
-<td>2032</td>
-<td>$1,574.27</td>
-<td>$1,171.24</td>
-<td>$1,574.27</td>
-<td>$403.04</td>
-</tr>
-<tr>
-<td>2033</td>
-<td>$1,614.98</td>
-<td>$1,201.52</td>
-<td>$1,614.98</td>
-<td>$413.46</td>
-</tr>
-<tr>
-<td>2034</td>
-<td>$1,656.74</td>
-<td>$1,232.59</td>
-<td>$1,656.74</td>
-<td>$424.15</td>
-</tr>
-<tr>
-<td>2035</td>
-<td>$1,699.58</td>
-<td>$1,264.46</td>
-<td>$1,699.58</td>
-<td>$435.12</td>
-</tr>
-<tr>
-<td>2036</td>
-<td>$1,743.52</td>
-<td>$1,297.16</td>
-<td>$1,743.52</td>
-<td>$446.37</td>
-</tr>
-</tbody>
-
-</table>
-
-</div>
-
-<div class="sub" style="margin-top:14px">
-
-<strong>Method:</strong>
-20 September 2026 Chart C = $1,350.70/week.
-Scenario Chart C progression = 2.585722% annually.
-Continuation path = 74.3985% of projected Chart C.
-THE CONSTANT corrected-wage counterfactual =
-100% weekly Chart C alignment.
-All post-2026 values are analytical scenario outputs,
-not official forecasts or legislated future rates.
-
-</div>
-
-
-<div class="sub" style="margin-top:10px">
-<strong>Verified growth basis:</strong>
-2016 Q3 Chart C = $955.90/week;
-2026 Q3 Chart C = $1,313.90/week.
-Observed 10-year CAGR = 3.232153%.
-This scenario applies exactly 80% of that rate =
-2.585722% annually.
-</div>
+<div class="tc-scenario-chart-wrap"><svg id="srChart" viewBox="0 0 1000 430" role="img" aria-label="Accumulated superannuation difference scenario"></svg></div>
+<div style="overflow-x:auto"><table class="whatleft-table"><thead><tr><th>Year</th><th>Lower wage</th><th>Comparison wage</th><th>Annual super difference after contribution tax</th><th>Accumulated difference</th></tr></thead><tbody id="srBody"></tbody></table></div>
+<div class="sub whatleft-note" id="srMethod">—</div>
+<div class="sub whatleft-note"><strong>Interpretation:</strong> the accumulated difference is the modelled value of the <em>difference in employer contributions</em>, not the worker's total super balance. Existing balances, insurance premiums, personal contributions, contribution caps, tax circumstances, fund-specific fees and investment outcomes are outside this simplified comparison.</div>
 </section>
 
+<style id="tc-super-retirement-style">
+#super-retirement-lab .super-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:14px}#super-retirement-lab .super-controls label{font-size:12px;color:#9fb0c8;font-weight:700}#super-retirement-lab .super-controls input,#super-retirement-lab .super-controls select{display:block;width:100%;margin-top:6px;padding:9px;border-radius:8px;background:#07182f;color:#fff;border:1px solid rgba(255,255,255,.15)}#srChart{width:100%;min-width:650px}
+</style>
+<script id="tc-super-retirement-script">
+(function(){
+function n(id){return Number(document.getElementById(id).value)||0} function money(x){return '$'+Number(x).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}
+function render(){
+ const low=n('srLowWage'), high=n('srHighWage'), sg=n('srSG')/100, years=Math.max(1,Math.round(n('srYears'))), wg=n('srWageGrowth')/100, ret=n('srReturn')/100, fees=n('srFees')/100, tax=n('srTax')/100;
+ const netr=ret-fees, gap=high-low, firstAnnual=gap*52*sg, firstNet=firstAnnual*(1-tax); let bal=0, rows=[], pts=[];
+ for(let y=1;y<=years;y++){const factor=Math.pow(1+wg,y-1), annualNet=firstNet*factor; bal=bal*(1+netr)+annualNet; pts.push({y,b:bal}); if(y===1||y===5||y===10||y===20||y===30||y===40||y===years)rows.push([y,low*factor,high*factor,annualNet,bal]);}
+ document.getElementById('srWageGap').textContent=money(gap)+'/wk'; document.getElementById('srAnnualWageGap').textContent=money(gap*52)+'/year'; document.getElementById('srSuperGap').textContent=money(gap*sg)+'/wk'; document.getElementById('srAnnualSuperGap').textContent=money(firstAnnual)+'/year first year'; document.getElementById('srNetContribution').textContent=money(firstNet)+'/yr'; document.getElementById('srFutureGap').textContent=money(bal); document.getElementById('srFutureSub').textContent='after '+years+' years under selected assumptions';
+ document.getElementById('srBody').innerHTML=rows.map(r=>'<tr><td>'+r[0]+'</td><td>'+money(r[1])+'/wk</td><td>'+money(r[2])+'/wk</td><td>'+money(r[3])+'</td><td>'+money(r[4])+'</td></tr>').join('');
+ document.getElementById('srMethod').innerHTML='<strong>Method:</strong> weekly wage difference × 52 × '+(sg*100).toFixed(1)+'% employer super × (1 − '+(tax*100).toFixed(1)+'% contributions tax), then compounded annually at '+(ret*100).toFixed(1)+'% nominal return less '+(fees*100).toFixed(1)+'% fees. Both wage bases grow at '+(wg*100).toFixed(1)+'% a year.';
+ const svg=document.getElementById('srChart'),W=1000,H=430,L=82,R=30,T=25,B=55,max=Math.max(1,...pts.map(p=>p.b))*1.08,x=y=>L+(y-1)*(W-L-R)/Math.max(1,years-1),yy=v=>T+(max-v)*(H-T-B)/max; let out=''; for(let i=0;i<=4;i++){let v=max*i/4,Y=yy(v);out+='<line x1="'+L+'" y1="'+Y+'" x2="'+(W-R)+'" y2="'+Y+'" stroke="rgba(255,255,255,.12)"/><text x="'+(L-10)+'" y="'+(Y+4)+'" text-anchor="end" fill="#9fb0c8" font-size="12">$'+Math.round(v).toLocaleString()+'</text>';} out+='<path d="'+pts.map((p,i)=>(i?'L':'M')+x(p.y).toFixed(1)+' '+yy(p.b).toFixed(1)).join(' ')+'" fill="none" stroke="currentColor" stroke-width="4" class="cyan"/>'; [1,Math.min(10,years),Math.min(20,years),Math.min(30,years),years].filter((v,i,a)=>a.indexOf(v)===i).forEach(v=>{out+='<text x="'+x(v)+'" y="'+(H-20)+'" text-anchor="middle" fill="#9fb0c8" font-size="12">'+v+'y</text>';}); svg.innerHTML=out;
+}
+['srLowWage','srHighWage','srSG','srYears','srWageGrowth','srReturn','srFees','srTax'].forEach(id=>{const e=document.getElementById(id);if(e)e.addEventListener('input',render);}); render();
+})();
+</script>
+
+<section class="card" id="welfare-relativity-lab">
+<div class="title">ACOSS &amp; WELFARE RELATIVITY LABORATORY</div>
+<div class="tc-explainer"><strong>COMPARE METHODS — DO NOT CONFLATE THEM.</strong> This panel places current official payment observations beside ACOSS's independent adequacy proposal and THE CONSTANT's historical-relativity calculation. Similar numerical results do not establish common methodology or causation.</div>
+<div class="four welfare-grid">
+  <div class="stat"><div class="lab">JobSeeker — current total</div><div class="val red">$416.85/wk</div><div class="sub">$833.70/fortnight • 20 Sep 2026</div></div>
+  <div class="stat"><div class="lab">Single pension — current</div><div class="val purple">$618.85/wk</div><div class="sub">$1,237.70/fortnight • 20 Sep 2026</div></div>
+  <div class="stat"><div class="lab">ACOSS proposal</div><div class="val gold">≥ $618/wk</div><div class="sub">independent pension-parity proposal</div></div>
+  <div class="stat"><div class="lab">THE CONSTANT result</div><div class="val cyan">$616.54/wk</div><div class="sub">45.645% × current Chart C</div></div>
+</div>
+<div class="welfare-controls">
+<label>Test weekly support $<input id="wrSupport" type="number" min="0" step="0.01" value="416.85"></label>
+<label>Comparison<select id="wrPreset"><option value="416.85">Current JobSeeker total</option><option value="618">ACOSS ≥$618 proposal</option><option value="616.54">THE CONSTANT historical relativity</option><option value="618.85">Current single pension</option><option value="custom">Custom</option></select></label>
+</div>
+<div class="three"><div class="stat"><div class="lab">Support ÷ NMW</div><div class="val" id="wrNmw">—</div></div><div class="stat"><div class="lab">Support ÷ Chart C</div><div class="val" id="wrChart">—</div></div><div class="stat"><div class="lab">Gap to NMW</div><div class="val" id="wrGap">—</div></div></div>
+<div style="overflow-x:auto"><table class="whatleft-table"><thead><tr><th>Measure</th><th>$/week</th><th>% NMW</th><th>% Chart C</th><th>Classification</th></tr></thead><tbody id="wrBody"></tbody></table></div>
+<div class="sub whatleft-note"><strong>Current-rate distinction:</strong> DSS Ministers announced $833.70/fortnight for a single JobSeeker recipient from 20 September 2026. Services Australia's rate table separately lists $824.90 as the maximum JobSeeker payment rate. Live preserves both fields instead of silently treating them as identical.</div>
+<div class="sub whatleft-note"><strong>Independent convergence:</strong> ACOSS's ≥$618/week proposal and THE CONSTANT's $616.54/week historical-relativity result differ by $1.46/week (about 0.24%). This numerical closeness is a comparison result, not evidence that either method generated the other.</div>
+</section>
+
+<section class="card" id="scenario-igr-lab">
+<div class="title">SCENARIO &amp; INTERGENERATIONAL LABORATORY</div>
+<div class="tc-explainer"><strong>SCENARIO / COUNTERFACTUAL — not a forecast of Fair Work Commission decisions.</strong> Test how alternative wage-to-Chart-C relationships behave over 10, 20, 30 or 40 years. The relationship and growth assumptions are always visible. Use the price-basis switch before comparing these nominal paths with real living-standard projections.</div>
+
+<div class="scenario-controls">
+<label>Relationship<select id="igrRatio"><option value="0.72">~72% empirical post-break reference</option><option value="0.743985" selected>74.3985% current 2026 Q4 observation</option><option value="0.934641">93.4641% 2000 Q2 preservation counterfactual</option><option value="1">100% Chart C alignment</option><option value="custom">Custom</option></select></label>
+<label id="igrCustomWrap" style="display:none">Custom %<input id="igrCustom" type="number" min="1" max="150" step="0.01" value="80"></label>
+<label>Horizon<select id="igrHorizon"><option>10</option><option>20</option><option>30</option><option selected>40</option></select></label>
+<label>Chart C annual growth %<input id="igrGrowth" type="number" min="-10" max="20" step="0.000001" value="2.585722"></label>
+<label>Price basis<select id="igrBasis"><option value="nominal" selected>Nominal dollars</option><option value="real">Real 2026 dollars</option></select></label>
+<label id="igrInflationWrap" style="display:none">Inflation / deflator %<input id="igrInflation" type="number" min="-5" max="20" step="0.1" value="2.5"></label>
+</div>
+
+<div class="three" style="margin-top:14px"><div class="stat"><div class="lab">Endpoint Chart C</div><div class="val gold" id="igrChartEnd">—</div><div class="sub" id="igrChartSub">—</div></div><div class="stat"><div class="lab">Endpoint Wage</div><div class="val cyan" id="igrWageEnd">—</div><div class="sub" id="igrRatioSub">—</div></div><div class="stat"><div class="lab">Endpoint Difference</div><div class="val red" id="igrGapEnd">—</div><div class="sub" id="igrGapAnnual">—</div></div></div>
+<div class="tc-scenario-chart-wrap"><svg id="igrScenarioChart" viewBox="0 0 1000 500" role="img" aria-label="Interactive Chart C and wage relationship scenario"></svg></div>
+<div class="tc-scenario-legend"><span class="gold">● Chart C</span> <span class="cyan">● selected wage relationship</span></div>
+<div class="sub" id="igrMethod"></div>
+<div class="sub" style="margin-top:8px"><strong>Evidence separation:</strong> ~72% is an empirical post-break reference; 74.3985% is the observed 2026 Q4 ratio; 93.4641% is the immediate pre-rupture preservation counterfactual; 100% is THE CONSTANT alignment scenario. None is presented as an official government target.</div>
+<div class="sub" style="margin-top:8px"><strong>IGR comparison safeguard:</strong> a nominal Chart C scenario and a real per-capita income projection are not directly comparable. Select <em>Real 2026 dollars</em> and supply an explicit deflator assumption before making a common-price-basis comparison.</div>
+</section>
+
+<div id="journey-test" class="tc-anchor" aria-hidden="true"></div>
+<section class="card" id="what-is-left-lab">
+<div class="title">LECI / WHAT IS LEFT?</div>
+<div class="tc-explainer"><strong>SCENARIO / CASH-BUDGET TEST.</strong> Test a weekly income against an explicit essential-cost basket. These cash-cost inputs are THE CONSTANT assumptions, not ABS official prices. Change any input to test a different household case. Results are gross, before income tax and Medicare.</div>
+<div class="whatleft-controls">
+<label>Income benchmark<select id="wlIncome"><option value="1004.90">National Minimum Wage — $1,004.90</option><option value="1350.70">100% Chart C — $1,350.70</option><option value="1297.16">2036 Live 74.3985% scenario — $1,297.16</option><option value="custom">Custom weekly income</option></select></label>
+<label id="wlCustomWrap" style="display:none">Custom income $/wk<input id="wlCustomIncome" type="number" min="0" step="1" value="1004.90"></label>
+<label>Rent / housing $/wk<input id="wlRent" type="number" min="0" step="1" value="650"></label>
+<label>Electricity<input id="wlElectricity" type="number" min="0" step="1" value="46.15"></label>
+<label>Gas<input id="wlGas" type="number" min="0" step="1" value="17.31"></label>
+<label>Water / sewerage<input id="wlWater" type="number" min="0" step="1" value="17.31"></label>
+<label>Food<input id="wlFood" type="number" min="0" step="1" value="180"></label>
+<label>Transport<input id="wlTransport" type="number" min="0" step="1" value="100"></label>
+<label>Health / medicines<input id="wlHealth" type="number" min="0" step="1" value="30"></label>
+<label>Insurance<input id="wlInsurance" type="number" min="0" step="1" value="25"></label>
+<label>Household necessities<input id="wlHousehold" type="number" min="0" step="1" value="40"></label>
+<label>Phone / internet<input id="wlPhone" type="number" min="0" step="1" value="25"></label>
+<label>Clothing / personal care<input id="wlClothing" type="number" min="0" step="1" value="20"></label>
+</div>
+<div class="three"><div class="stat"><div class="lab">Essential Basket</div><div class="val gold" id="wlBasket">—</div><div class="sub">weekly cash assumptions</div></div><div class="stat"><div class="lab">Essential Burden</div><div class="val purple" id="wlBurden">—</div><div class="sub">basket ÷ gross income</div></div><div class="stat"><div class="lab">WHAT IS LEFT</div><div class="val cyan" id="wlLeft">—</div><div class="sub" id="wlLeftAnnual">—</div></div></div>
+<div style="overflow-x:auto"><table class="whatleft-table"><thead><tr><th>Component</th><th>$/week</th><th>% of income</th></tr></thead><tbody id="wlBody"></tbody></table></div>
+<div class="sub whatleft-note" id="wlHousingShare">—</div>
+<div class="sub whatleft-note"><strong>Stress-test example:</strong> select the 2036 Live scenario and set rent to $800/week to examine the previously discussed housing case. $800 is an assumption, not a rent forecast.</div>
+<div class="sub whatleft-note"><strong>Evidence separation:</strong> the income benchmark may be an official observation or scenario depending on selection; the cost basket is user-editable modelling. This panel does not label the basket as an ABS cost-of-living measure.</div>
+</section>
+
+<style id="tc-welfare-relativity-style">
+#welfare-relativity-lab .welfare-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:14px 0}.welfare-controls{display:flex;flex-wrap:wrap;gap:12px;margin:14px 0}.welfare-controls label{display:flex;flex-direction:column;gap:5px;min-width:220px}.welfare-controls input,.welfare-controls select{background:#07182f;color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:9px}@media(max-width:850px){#welfare-relativity-lab .welfare-grid{grid-template-columns:1fr 1fr}}@media(max-width:520px){#welfare-relativity-lab .welfare-grid{grid-template-columns:1fr}}
+</style>
 <style id="tc-ten-year-scenario-style">
 
 .tc-scenario-chart-wrap {
@@ -1940,6 +2025,29 @@ color:#51cf66;
 
 </style>
 
+<script id="tc-welfare-relativity-script">
+(function(){
+function anchors(){const c=window.TC_LIVE_CURRENT||{};return {NMW:Number(c.minimum_wage_weekly||1004.90),CC:Number(c.chart_c_weekly||1350.70)};}
+const rows=[
+ ['Current JobSeeker total',416.85,'OFFICIAL OBSERVATION'],
+ ['Current single pension',618.85,'OFFICIAL OBSERVATION'],
+ ['ACOSS proposal',618.00,'INDEPENDENT PROPOSAL'],
+ ['THE CONSTANT historical relativity',616.54,'DERIVED CALCULATION']
+];
+function money(x){return '$'+Number(x).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
+function pct2(x){return Number(x).toFixed(2)+'%';}
+function render(){
+ const input=document.getElementById('wrSupport'); if(!input)return;
+ const v=Math.max(0,Number(input.value)||0), a=anchors(), NMW=a.NMW, CC=a.CC;
+ document.getElementById('wrNmw').textContent=pct2(v/NMW*100);
+ document.getElementById('wrChart').textContent=pct2(v/CC*100);
+ document.getElementById('wrGap').textContent=money(NMW-v)+'/wk';
+ document.getElementById('wrBody').innerHTML=rows.map(r=>'<tr><td>'+r[0]+'</td><td>'+money(r[1])+'</td><td>'+pct2(r[1]/NMW*100)+'</td><td>'+pct2(r[1]/CC*100)+'</td><td>'+r[2]+'</td></tr>').join('');
+}
+const preset=document.getElementById('wrPreset'), input=document.getElementById('wrSupport');
+if(preset&&input){preset.addEventListener('change',()=>{if(preset.value!=='custom'){input.value=preset.value;}render();});input.addEventListener('input',()=>{preset.value='custom';render();});render();}
+})();
+</script>
 <script id="tc-ten-year-scenario-script">
 
 (function() {
@@ -2326,7 +2434,40 @@ It provides the data needed to test it.
 <div class="sub" style="margin-top:8px">Scheduled daily at 10:00 AM and 10:00 PM Australia/Sydney (AEST/AEDT automatically).</div>
 </section>
 </aside></div>
-<footer class="footer">THE CONSTANT Live Official Monitor v5.7.0 · The clock is local to each viewer. Monitored official and independent-policy sources refresh at 10:00 AM and 10:00 PM Australia/Sydney time.</footer>
+
+<details class="card" id="fwc-nmw-readiness"><summary><strong>FWC / NMW UPDATE READINESS — TECHNICAL DETAIL</strong></summary><div class="eyebrow">FWC / NATIONAL MINIMUM WAGE READINESS</div><h2>Decision date ≠ effective date</h2><p>The Fair Work Commission announced the 2026 Annual Wage Review decision on <strong>2 June 2026</strong>. The National Minimum Wage is <strong>$1,004.90/week</strong> or <strong>$26.44/hour</strong> from <strong>1 July 2026</strong>. Live treats an announced future rate as forthcoming and does not replace the legally current NMW until its operative/effective date.</p><div class="grid"><div class="stat"><div class="lab">Current NMW</div><div class="val">$1,004.90/wk</div><div class="sub">$26.44/hour · 38 hours</div></div><div class="stat"><div class="lab">Decision</div><div class="val">2 Jun 2026</div><div class="sub">[2026] FWCFB 3500</div></div><div class="stat"><div class="lab">Effective</div><div class="val">1 Jul 2026</div><div class="sub">National Minimum Wage Order 2026</div></div></div><p class="sub"><strong>Validation safeguard:</strong> claims, submissions, draft determinations, award-specific classifications and media commentary cannot overwrite the NMW. A validated effective NMW propagates to the ratio, gap, live cycle, scenarios, super, welfare, What Is Left, audit trail and synchronized state. The frozen 128-quarter publication dataset remains separately controlled.</p></details>
+<details id="cpi-release-readiness" class="section"><summary><strong>CPI UPDATE READINESS — TECHNICAL DETAIL</strong></summary><section class="card" style="max-width:1180px;margin:1rem auto">
+<h2>CPI RELEASE READINESS</h2>
+<p><strong>Next ABS CPI:</strong> August 2026 · 30 September 2026 · 11:30am AEST. Live will accept a new month only after its own annual CPI observation parses and validates; it will not carry July's 3.5% rate into August.</p>
+<p class="muted">A validated CPI update propagates to Australia Now, CPI comparison/archive, nominal-real context, LECI context, source health, release timing and the audit trail. Failed validation retains the last verified release.</p>
+</section></details>
+<details class="card" id="chart-c-readiness"><summary><strong>CHART C UPDATE READINESS — TECHNICAL DETAIL</strong></summary><div class="eyebrow">CHART C / SERVICES AUSTRALIA READINESS</div><h2>Official cut-off → derived Chart C → full propagation</h2><p>The official input is the single pension/DSP income-test cessation point. THE CONSTANT derives the weekly Chart C measure by dividing that fortnightly cut-off by two. Payment rates, assets-test limits, transitional rates and couple cut-offs are excluded.</p><div class="grid"><div class="stat"><div class="lab">Official cut-off</div><div class="val">$2,701.40/fn</div><div class="sub">Effective 20 Sep 2026</div></div><div class="stat"><div class="lab">Derived Chart C</div><div class="val">$1,350.70/wk</div><div class="sub">$2,701.40 ÷ 2</div></div><div class="stat"><div class="lab">Update cycles</div><div class="val">20 Mar · 20 Sep</div><div class="sub">Release-aware monitoring</div></div></div><p class="sub">A validated current update recalculates the ratio, gap, welfare and scenario modules. It does not silently rewrite the frozen 128-quarter publication dataset; historical extension remains subject to the publication verification workflow.</p></details>
+<details id="pre-release-audit" class="card"><summary><strong>FULL-SYSTEM PRE-RELEASE AUDIT — TECHNICAL DETAIL</strong></summary> style="margin-top:18px">
+<h2>FULL-SYSTEM PRE-RELEASE AUDIT</h2>
+<p class="sub">Deployment-candidate integrity check: synchronized core values, official-source baselines, visitor persistence and audit plumbing. An ATTENTION result is surfaced rather than hidden.</p>
+<div id="preReleaseAuditBody" class="grid"></div>
+</details>
+<script>
+(async function tcPreReleaseAudit(){
+ const box=document.getElementById('preReleaseAuditBody'); if(!box)return;
+ try{const r=await fetch('/api/pre-release-audit',{cache:'no-store'}); if(!r.ok)throw new Error('HTTP '+r.status); const d=await r.json();
+ box.innerHTML=(d.checks||[]).map(x=>`<div class="stat"><div class="lab">${x.check}</div><div class="val ${x.status==='PASS'?'green':'orange'}">${x.status}</div><div class="sub">${x.detail}</div></div>`).join('');
+ }catch(e){box.innerHTML=`<div class="stat"><div class="lab">Audit endpoint</div><div class="val orange">ATTENTION</div><div class="sub">${e.message}</div></div>`;}
+})();
+</script>
+
+<section class="panel" id="provenance-classification" data-stage="test">
+<h2>PRODUCTION DATA PROVENANCE</h2>
+<p class="sub">Every visible figure belongs to one evidence class. This prevents live observations, historical evidence, external benchmarks and scenarios from being read as though they were the same kind of number.</p>
+<div class="grid four">
+<div class="stat"><div class="lab">LIVE OFFICIAL</div><div class="sub">Current NMW, official Chart C cut-off, CPI, Labour Force and RBA observations after source validation.</div></div>
+<div class="stat"><div class="lab">FROZEN HISTORICAL</div><div class="sub">Publication-quarter observations and structural-break reference points. Live updates do not rewrite the frozen 128-quarter record.</div></div>
+<div class="stat"><div class="lab">DERIVED / TESTED</div><div class="sub">Ratios, gaps, annualisations, weekly Chart C conversion and statistical results calculated from identified inputs.</div></div>
+<div class="stat"><div class="lab">EXTERNAL / SCENARIO</div><div class="sub">ACOSS and other external benchmarks remain attributed; THE CONSTANT counterfactuals, projections and user assumptions remain explicitly scenarios.</div></div>
+</div>
+<p class="sub"><strong>Reading rule:</strong> a larger or newer number is not automatically stronger evidence. Check its evidence class, reference period, source and calculation before interpreting it.</p>
+</section>
+<footer class="footer">THE CONSTANT Live v9.7.3 · PRODUCTION LOCK · Viewer-local clock · Official sources monitored hourly by default, with five-minute release-window checks. Last verified observations are retained when validation fails.</footer>
 </div></div>
 <script>
 const money=v=>v==null?'—':'$'+Number(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -2335,6 +2476,15 @@ const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replac
 function clock(){document.getElementById('clock').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'})}
 function draw(s){
  const c=s.core||{},o=s.official||{},f=s.forward||{};
+ const anLm=s.labour_market||{};
+ const setTxt=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
+ setTxt("an-mw",money(c.minimum_wage_weekly)); setTxt("an-cc",money(c.chart_c_weekly)); setTxt("an-ratio",pct(c.ratio_pct)); setTxt("an-gap",money(c.weekly_gap));
+ setTxt("an-cpi",pct(o.cpi_annual_pct)); setTxt("an-cpi-ref",o.cpi_reference_period||"—");
+ setTxt("an-employment",anLm.employment_persons==null?"—":Number(anLm.employment_persons).toLocaleString()); setTxt("an-labour-ref",anLm.reference_period||"—");
+ setTxt("an-labour-rates",(anLm.unemployment_rate_pct==null?"—":pct(anLm.unemployment_rate_pct))+" / "+(anLm.participation_rate_pct==null?"—":pct(anLm.participation_rate_pct)));
+ setTxt("an-cash",pct((s.rba_policy||{}).cash_rate_pct ?? o.cash_rate_pct));
+ const ss=s.source_status_summary||{}; const att=Number(ss.ATTENTION||ss.attention||0);
+ setTxt("an-freshness",(s.last_check?"Last source check: "+s.last_check+". ":"")+(att?att+" source(s) require attention; last verified values retained.":"No source-attention state reported in the current snapshot."));
  document.getElementById("mw").textContent=money(c.minimum_wage_weekly);document.getElementById("cc").textContent=money(c.chart_c_fortnightly);document.getElementById("ratio").textContent=pct(c.ratio_pct);document.getElementById("gap").textContent=money(c.weekly_gap);
  document.getElementById("cpi2").textContent=pct(o.cpi_annual_pct);
  document.getElementById("talkgap").textContent=pct(100-(c.ratio_pct||0));
@@ -2381,9 +2531,24 @@ document.getElementById("employmentlevel").textContent=
     lm.employment_persons==null?'—':
     Number(lm.employment_persons).toLocaleString();
 
+document.getElementById("fulltimeemployment").textContent=
+    lm.full_time_employment_persons==null?'—':
+    Number(lm.full_time_employment_persons).toLocaleString();
+
+document.getElementById("parttimeemployment").textContent=
+    lm.part_time_employment_persons==null?'—':
+    Number(lm.part_time_employment_persons).toLocaleString();
+
+document.getElementById("labourmeta").textContent=
+    'Reference period: '+(lm.reference_period||'—')+' · '+
+    (lm.last_verified||lm.automatic_parser_status||'Awaiting verification');
+
+document.getElementById("hourslevel").textContent=
+    lm.monthly_hours_worked_millions==null?'—':Number(lm.monthly_hours_worked_millions).toLocaleString()+'m';
+
 document.getElementById("hourschange").textContent=
-    lm.hours_worked_change_pct==null?'—':
-    pct(lm.hours_worked_change_pct);
+    lm.hours_worked_change_pct==null?'monthly change —':
+    'monthly change '+pct(lm.hours_worked_change_pct)+(lm.hours_worked_change_millions==null?'':' · '+Number(lm.hours_worked_change_millions).toLocaleString()+'m hours');
 
 document.getElementById("emppop").textContent=
     lm.employment_population_ratio_pct==null?'—':
@@ -2496,7 +2661,7 @@ document.getElementById("correctedremaining").textContent=
  const ua=s.union_award_monitor||{};
  document.getElementById("unionactive").innerHTML=claimTable(ua.active||[],'No union/award claim detected in the last 30 days.');
  document.getElementById("unionarchive").innerHTML=claimTable(ua.archive||[],'No archived items within the last seven years.');
- let sh='';Object.entries(s.sources||{}).forEach(([n,i])=>{let cls='ok',lab='OK';if(i.error){
+ let sh='';Object.entries(s.sources||{}).forEach(([n,i])=>{let cls='ok',lab=i.validation_status||'CURRENT';if(lab==='ATTENTION — LAST VERIFIED RETAINED'){cls='err';}else if(lab==='NEW RELEASE DETECTED'||lab==='VALIDATING'){cls='warn';}else if(lab==='UPDATED'){cls='ok';}else if(i.error){
     const e=String(i.error||'').toLowerCase();
 
     const temporary=
@@ -2509,15 +2674,15 @@ document.getElementById("correctedremaining").textContent=
 
     if(temporary){
         cls='warn';
-        lab='TEMPORARY';
+        if(!i.validation_status) lab='TEMPORARY';
     }else{
         cls='err';
-        lab='ERROR';
+        if(!i.validation_status) lab='ERROR';
     }
 
 }else if(i.warning){
     cls='warn';
-    lab='TEMPORARY';
+    if(!i.validation_status) lab='TEMPORARY';
 }const retained=retainedSourceSummary(n,s);
 
 sh+=`
@@ -2527,6 +2692,7 @@ sh+=`
 <span>${esc(n)}</span>
 <span class="${cls}">${lab}</span>
 </div>
+${i.status_detail ? `<div class="sub" style="margin-top:3px">${esc(i.status_detail)}</div>` : ''}
 
 ${
     (i.warning || (i.error && cls==="warn"))
@@ -3325,15 +3491,19 @@ async function pull(){try{const r=await fetch('/api/state',{cache:'no-store'});i
 clock();setInterval(clock,1000);pull();setInterval(pull,15000);
 
 async function registerVisit(){
+  const el=document.getElementById("visitcount");
+  const st=document.getElementById("visitstorage");
   try{
-    const r=await fetch("/api/visit",{method:"POST",credentials:"same-origin"});
-    if(!r.ok) return;
+    const r=await fetch("/api/visit",{method:"POST",credentials:"same-origin",cache:"no-store"});
+    if(!r.ok) throw new Error("HTTP "+r.status);
     const v=await r.json();
-    const el=document.getElementById("visitcount");
     if(el) el.textContent=Number(v.total_visits||0).toLocaleString();
-    const st=document.getElementById("visitstorage");
-    if(st) st.textContent=(v.storage==="persistent" ? "Lifetime count stored persistently" : "Counter running in local fallback mode");
-  }catch(e){}
+    if(st) st.textContent=(v.storage==="persistent" ? "persistent" : "local fallback");
+  }catch(e){
+    if(el) el.textContent="ERR";
+    if(st) st.textContent="counter unavailable";
+    console.error("THE CONSTANT visitor counter failed",e);
+  }
 }
 registerVisit();
 
@@ -3354,4 +3524,357 @@ registerVisit();
     <span id="correctedremaining"></span>
 </div>
 
+
+<div id="release-monitor-box" style="position:fixed;right:12px;bottom:12px;z-index:50;background:#0b1f33;color:#fff;padding:8px 11px;border-radius:8px;font:12px/1.35 system-ui;box-shadow:0 2px 12px #0003;max-width:310px">Release monitor: <span id="release-monitor-mode">loading…</span></div>
+<script>
+(function(){
+ async function releaseMonitor(){
+  try{const r=await fetch('/api/state',{cache:'no-store'});if(!r.ok)return;const s=await r.json();const m=s.release_monitor||{};const el=document.getElementById('release-monitor-mode');if(!el)return;
+  const active=(m.active_sources||[]); const next=(m.next_expected||[]);
+  if(active.length){el.textContent='HIGH-FREQUENCY · '+active.join(', ')+' · every '+Math.round((m.poll_seconds||300)/60)+' min';}
+  else if(next.length){el.textContent='NORMAL · next: '+(next[0].source||'scheduled release')+' · '+(next[0].start||'');}
+  else{el.textContent='NORMAL · hourly · no configured release window pending';}
+   const box=document.getElementById('nextreleases');
+   if(box){
+     if(!next.length){box.innerHTML='<div class="sub">No future release currently detected. Normal hourly monitoring continues.</div>';}
+     else{box.innerHTML=next.map(x=>{const when=x.expected_release||x.start||'';return '<div class="source" style="margin:8px 0;padding:9px;border:1px solid #d9e2ea;border-radius:8px"><strong>'+esc(x.source||'Official release')+'</strong><br><span class="sub">Expected: '+esc(when)+' · '+esc(x.status||'scheduled')+'</span></div>';}).join('');}
+   }
+   const cv=document.getElementById('calendarverified');
+   if(cv){const c=s.release_calendar||{};cv.textContent='Calendar last refreshed: '+(c.last_calendar_refresh||'not yet')+(c.calendar_errors&&c.calendar_errors.length?' · some calendar sources retained after fetch errors':'');}
+  }catch(e){const el=document.getElementById('release-monitor-mode');if(el)el.textContent='status unavailable';}
+ }
+ releaseMonitor();setInterval(releaseMonitor,60000);
+})();
+</script>
+
+<script>
+(function(){
+ let evidence=null, metric='ratio_pct';
+ const labels={ratio_pct:'NMW / Chart C ratio (%)',minimum_wage_weekly:'National Minimum Wage ($/week)',chart_c_weekly:'Chart C ($/week)',weekly_gap:'Weekly gap ($)',annualised_gap:'Annualised gap ($)'};
+ function n(v,d=2){return Number(v).toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d});}
+ function renderSelected(q){
+   if(!evidence)return; const x=evidence.observations.find(o=>o.quarter===q); if(!x)return;
+   document.getElementById('evidence-selected').innerHTML=
+    '<div class="stat"><div class="lab">Quarter</div><div class="val cyan">'+x.quarter+'</div><div class="sub">OFFICIAL / DERIVED PUBLICATION OBSERVATION</div></div>'+ 
+    '<div class="stat"><div class="lab">National MW</div><div class="val cyan">$'+n(x.minimum_wage_weekly)+'</div><div class="sub">per week</div></div>'+ 
+    '<div class="stat"><div class="lab">Chart C</div><div class="val gold">$'+n(x.chart_c_weekly)+'</div><div class="sub">$'+n(x.chart_c_fortnightly)+' per fortnight</div></div>'+ 
+    '<div class="stat"><div class="lab">Ratio / Gap</div><div class="val red">'+n(x.ratio_pct,4)+'%</div><div class="sub">$'+n(x.weekly_gap)+' weekly gap</div></div>';
+ }
+ function renderChart(){
+   if(!evidence)return; const a=evidence.observations, W=1000,H=300,p=42;
+   const vals=a.map(x=>Number(x[metric])); let lo=Math.min(...vals), hi=Math.max(...vals); if(hi===lo){hi=lo+1}
+   const x=i=>p+i*(W-2*p)/(a.length-1), y=v=>H-p-(v-lo)*(H-2*p)/(hi-lo);
+   const pts=vals.map((v,i)=>x(i).toFixed(1)+','+y(v).toFixed(1)).join(' ');
+   const iQ2=a.findIndex(o=>o.quarter==='2000 Q2'), iQ3=a.findIndex(o=>o.quarter==='2000 Q3');
+   document.getElementById('evidence-chart').innerHTML='<div class="sub" style="margin-bottom:5px">'+labels[metric]+'</div><svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+labels[metric]+' across 128 quarters" style="width:100%;height:auto;background:#fff;border:1px solid #d9e2ea;border-radius:8px">'+
+    '<line x1="'+p+'" y1="'+(H-p)+'" x2="'+(W-p)+'" y2="'+(H-p)+'" stroke="#9aa8b5"/>'+ 
+    '<line x1="'+x(iQ2)+'" y1="'+p+'" x2="'+x(iQ2)+'" y2="'+(H-p)+'" stroke="#999" stroke-dasharray="5 5"/>'+ 
+    '<line x1="'+x(iQ3)+'" y1="'+p+'" x2="'+x(iQ3)+'" y2="'+(H-p)+'" stroke="#999" stroke-dasharray="5 5"/>'+ 
+    '<polyline fill="none" stroke="currentColor" stroke-width="3" points="'+pts+'"/>'+ 
+    '<text x="'+p+'" y="'+(H-12)+'" font-size="13">1995 Q1</text><text x="'+(W-p-58)+'" y="'+(H-12)+'" font-size="13">2026 Q4</text>'+ 
+    '<text x="'+(x(iQ2)-22)+'" y="'+(p-8)+'" font-size="12">2000 Q2</text><text x="'+(x(iQ3)+5)+'" y="'+(p+8)+'" font-size="12">Q3 break</text>'+ 
+    '<text x="8" y="'+(p+4)+'" font-size="12">'+n(hi,metric==='ratio_pct'?2:0)+'</text><text x="8" y="'+(H-p)+'" font-size="12">'+n(lo,metric==='ratio_pct'?2:0)+'</text></svg>';
+ }
+ async function loadEvidence(){
+   const st=document.getElementById('evidence-status'), controls=document.getElementById('evidence-controls');
+   try{const r=await fetch('/api/evidence',{cache:'no-store'}); if(!r.ok)throw new Error('HTTP '+r.status); const d=await r.json();
+    if(!d.verified){st.innerHTML='<strong>DATASET '+(d.status||'NOT LOADED')+'</strong> — '+(d.message||'Evidence Explorer disabled.'); document.getElementById('evidence-chart').innerHTML='<div class="sub">No historical chart is rendered until the frozen publication dataset passes verification.</div>'; const land=document.getElementById('evidence-landing'); if(land)land.innerHTML='<div class="sub"><strong>Historical landing view withheld.</strong> The frozen 128-quarter dataset must pass SHA-256, sequence and checkpoint verification before observations are rendered.</div>'; return;}
+    evidence=d; st.innerHTML='<strong>VERIFIED PUBLICATION DATASET ✓</strong> — '+d.rows+' quarters · SHA-256 verified'; controls.style.display='flex';
+    const byq=Object.fromEntries(d.observations.map(o=>[o.quarter,o]));
+    const q2=byq['2000 Q2'], q3=byq['2000 Q3'], end=byq['2026 Q4'];
+    const preMean=89.8936, postMean=71.6328;
+    const land=document.getElementById('evidence-landing');
+    if(land&&q2&&q3&&end){land.innerHTML=
+      '<div class="stat"><div class="lab">Immediate pre-break</div><div class="val cyan">'+n(q2.ratio_pct,4)+'%</div><div class="sub">2000 Q2 · $'+n(q2.minimum_wage_weekly)+' / $'+n(q2.chart_c_weekly)+'</div></div>'+
+      '<div class="stat"><div class="lab">Structural boundary</div><div class="val red">'+n(q3.ratio_pct,4)+'%</div><div class="sub">2000 Q3 · weekly gap $'+n(q3.weekly_gap)+'</div></div>'+
+      '<div class="stat"><div class="lab">Pre / post means</div><div class="val gold" style="font-size:20px">'+preMean.toFixed(4)+'% → '+postMean.toFixed(4)+'%</div><div class="sub">1995 Q1–2000 Q2 / 2000 Q3–2026 Q4</div></div>'+
+      '<div class="stat"><div class="lab">Latest endpoint</div><div class="val purple">'+n(end.ratio_pct,4)+'%</div><div class="sub">2026 Q4 · gap $'+n(end.weekly_gap)+'/week</div></div>';
+    }
+    const sel=document.getElementById('evidence-quarter'); sel.innerHTML=d.observations.map(o=>'<option>'+o.quarter+'</option>').join(''); sel.value='2000 Q3';
+    sel.onchange=()=>renderSelected(sel.value); document.querySelectorAll('[data-evmetric]').forEach(b=>b.onclick=()=>{metric=b.dataset.evmetric;renderChart();});
+    renderChart(); renderSelected(sel.value); document.getElementById('evidence-method').textContent='Dataset: '+d.filename+' · SHA-256: '+d.actual_sha256+' · No interpolation or manuscript-table fallback permitted.';
+   }catch(e){st.textContent='Evidence API unavailable — '+e.message;}
+ }
+ loadEvidence();
+})();
+</script>
+
+<script>
+(function(){
+ const money=v=>'$'+Number(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+ async function loadLiveCycle2026(){
+  const sum=document.getElementById('live-cycle-2026-summary'), move=document.getElementById('live-cycle-2026-movement'), method=document.getElementById('live-cycle-2026-method');
+  if(!sum)return;
+  try{
+   const r=await fetch('/api/live-cycle-2026',{cache:'no-store'}); if(!r.ok)throw new Error('HTTP '+r.status); const d=await r.json();
+   const card=(x,label,note)=>'<div class="stat"><div class="lab">'+label+'</div><div class="val cyan">'+Number(x.ratio_pct).toFixed(4)+'%</div><div class="sub">NMW '+money(x.nmw_weekly)+' · Chart C '+money(x.chart_c_weekly)+'<br>'+note+'</div></div>';
+   sum.innerHTML=card(d.q2,'Q2 — before reset','starting observation')+card(d.q3,'Q3 — July wage reset','ratio catch-up')+card(d.q4,'Q4 — September indexation','latest endpoint');
+   move.innerHTML='<div class="stat"><div class="lab">July catch-up</div><div class="val gold">+'+Number(d.july_catch_up_pp).toFixed(4)+' pp</div><div class="sub">Q2 → Q3</div></div>'+
+    '<div class="stat"><div class="lab">September erosion</div><div class="val red">'+Number(d.september_erosion_pp).toFixed(4)+' pp</div><div class="sub">Q3 → Q4</div></div>'+
+    '<div class="stat"><div class="lab">July improvement eroded</div><div class="val red">'+Number(d.july_improvement_eroded_pct).toFixed(2)+'%</div><div class="sub">by the Q4 observation</div></div>'+
+    '<div class="stat"><div class="lab">July improvement retained</div><div class="val cyan">'+Number(d.july_improvement_retained_pct).toFixed(2)+'%</div><div class="sub">Q2 → Q4 net improvement</div></div>';
+   method.innerHTML='<strong>How to read it:</strong> '+d.interpretation+'<br><br><strong>Safeguard:</strong> '+d.safeguard;
+  }catch(e){sum.innerHTML='<div class="sub">2026 live-cycle API unavailable — '+e.message+'</div>';}
+ }
+ loadLiveCycle2026();
+})();
+</script>
+
+<script>
+(function(){
+ async function loadStructuralEvidence(){
+  const sum=document.getElementById('structural-summary'), tests=document.getElementById('structural-tests'), cyc=document.getElementById('annual-cycle'), safe=document.getElementById('structural-safeguard');
+  if(!sum)return;
+  try{
+   const r=await fetch('/api/structural-evidence',{cache:'no-store'}); if(!r.ok)throw new Error('HTTP '+r.status); const d=await r.json(), p=d.post_break||{};
+   sum.innerHTML=
+    '<div class="stat"><div class="lab">Chow — 2000 Q3</div><div class="val red">F 699.1563</div><div class="sub">p ≈ 3.00 × 10⁻⁶⁸</div></div>'+
+    '<div class="stat"><div class="lab">HAC Wald — 2000 Q3</div><div class="val red">F 489.9285</div><div class="sub">p ≈ 1.35 × 10⁻⁵⁹</div></div>'+
+    '<div class="stat"><div class="lab">Post-break mean</div><div class="val cyan">'+Number(p.mean_ratio_pct).toFixed(4)+'%</div><div class="sub">2000 Q3–2026 Q4 · '+p.observations+' observations</div></div>'+
+    '<div class="stat"><div class="lab">Proportional β</div><div class="val gold">'+Number(p.beta).toFixed(6)+'</div><div class="sub">HAC 95% CI '+Number(p.hac_ci_low).toFixed(6)+'–'+Number(p.hac_ci_high).toFixed(6)+'</div></div>';
+   tests.innerHTML='<div class="sub" style="margin-bottom:7px"><strong>Break-aware checks</strong></div>'+d.break_tests.map(x=>'<div style="padding:8px 0;border-top:1px solid #d9e2ea"><strong>'+x.test+'</strong> · '+x.boundary+' · '+x.statistic+' · p '+x.p_value+'</div>').join('')+'<div class="sub" style="margin-top:8px">β = 0.72 test: p = '+Number(p.beta_072_p).toFixed(4)+'. '+p.interpretation+'</div>';
+   const a=d.annual_cycle||{};
+   cyc.innerHTML='<div class="tc-explainer"><strong>Annual reset/indexation cycle — '+a.complete_cycles_2010_2025+'/16.</strong> '+a.interpretation+'</div>';
+   safe.innerHTML='<strong>Interpretive safeguard:</strong> '+d.safeguard;
+  }catch(e){sum.innerHTML='<div class="sub">Structural evidence API unavailable — '+e.message+'</div>';}
+ }
+ loadStructuralEvidence();
+})();
+
+function tcMoney(x){return '$'+Number(x).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
+function renderIgrLab(){
+ const sel=document.getElementById('igrRatio'); if(!sel)return;
+ const custom=sel.value==='custom'; document.getElementById('igrCustomWrap').style.display=custom?'':'none';
+ const basis=document.getElementById('igrBasis').value; document.getElementById('igrInflationWrap').style.display=basis==='real'?'':'none';
+ let ratio=custom?Number(document.getElementById('igrCustom').value)/100:Number(sel.value);
+ let years=Number(document.getElementById('igrHorizon').value), g=Number(document.getElementById('igrGrowth').value)/100;
+ let infl=Number(document.getElementById('igrInflation').value)/100, base=Number(window.TC_LIVE_CURRENT?.chart_c_weekly||1350.70), pts=[];
+ if(!isFinite(ratio)||!isFinite(years)||!isFinite(g)||ratio<=0)return;
+ for(let y=0;y<=years;y++){let c=base*Math.pow(1+g,y); if(basis==='real')c/=Math.pow(1+infl,y); pts.push({y,c,w:c*ratio});}
+ let e=pts[pts.length-1], gap=e.c-e.w;
+ document.getElementById('igrChartEnd').textContent=tcMoney(e.c); document.getElementById('igrWageEnd').textContent=tcMoney(e.w); document.getElementById('igrGapEnd').textContent=tcMoney(gap);
+ document.getElementById('igrChartSub').textContent=years+'-year endpoint · '+(basis==='real'?'real 2026 dollars':'nominal dollars');
+ document.getElementById('igrRatioSub').textContent=(ratio*100).toFixed(4).replace(/0+$/,'').replace(/\.$/,'')+'% of Chart C'; document.getElementById('igrGapAnnual').textContent=tcMoney(gap*52)+' per year';
+ document.getElementById('igrMethod').innerHTML='<strong>Method:</strong> current verified Chart C '+tcMoney(base)+'/week × (1 + '+(g*100).toFixed(6)+'%)<sup>t</sup>; wage = '+(ratio*100).toFixed(4)+'% of Chart C.'+(basis==='real'?' Nominal values are deflated by '+(infl*100).toFixed(2)+'% a year into 2026-dollar terms.':' Values remain nominal; no inflation adjustment is applied.');
+ const svg=document.getElementById('igrScenarioChart'), W=1000,H=500,L=80,R=30,T=30,B=65, max=Math.max(...pts.map(p=>p.c))*1.06;
+ const x=i=>L+(W-L-R)*i/(pts.length-1||1), y=v=>T+(H-T-B)*(1-v/max), path=k=>pts.map((p,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(p[k]).toFixed(1)).join(' ');
+ let grid=''; for(let i=0;i<=4;i++){let v=max*i/4, yy=y(v);grid+=`<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}" stroke="rgba(255,255,255,.12)"/><text x="${L-10}" y="${yy+5}" text-anchor="end" fill="#9fb0c8" font-size="18">$${Math.round(v).toLocaleString()}</text>`;}
+ svg.innerHTML=grid+`<line x1="${L}" y1="${H-B}" x2="${W-R}" y2="${H-B}" stroke="rgba(255,255,255,.3)"/><path d="${path('c')}" fill="none" stroke="#f3c64e" stroke-width="5"/><path d="${path('w')}" fill="none" stroke="#4fd4ff" stroke-width="5"/><text x="${L}" y="${H-20}" fill="#9fb0c8" font-size="18">2026</text><text x="${W-R}" y="${H-20}" text-anchor="end" fill="#9fb0c8" font-size="18">${2026+years}</text>`;
+}
+['igrRatio','igrCustom','igrHorizon','igrGrowth','igrBasis','igrInflation'].forEach(id=>{document.addEventListener('change',e=>{if(e.target&&e.target.id===id)renderIgrLab();});document.addEventListener('input',e=>{if(e.target&&e.target.id===id)renderIgrLab();});});
+window.addEventListener('load',renderIgrLab);
+</script>
+
+\n<script id="tc-what-left-js">
+(function(){
+ const ids=['wlIncome','wlCustomIncome','wlRent','wlElectricity','wlGas','wlWater','wlFood','wlTransport','wlHealth','wlInsurance','wlHousehold','wlPhone','wlClothing'];
+ const comps=[['Rent / housing','wlRent'],['Electricity','wlElectricity'],['Gas','wlGas'],['Water / sewerage','wlWater'],['Food','wlFood'],['Transport','wlTransport'],['Health / medicines','wlHealth'],['Insurance','wlInsurance'],['Household necessities','wlHousehold'],['Phone / internet','wlPhone'],['Clothing / personal care','wlClothing']];
+ const money=n=>new Intl.NumberFormat('en-AU',{style:'currency',currency:'AUD',minimumFractionDigits:2}).format(n);
+ function n(id){return Math.max(0,Number(document.getElementById(id).value)||0)}
+ function calc(){
+   const sel=document.getElementById('wlIncome'); document.getElementById('wlCustomWrap').style.display=sel.value==='custom'?'block':'none';
+   const income=sel.value==='custom'?n('wlCustomIncome'):Number(sel.value);
+   const vals=comps.map(([label,id])=>[label,n(id)]), basket=vals.reduce((a,x)=>a+x[1],0), left=income-basket, burden=income?basket/income*100:0;
+   document.getElementById('wlBasket').textContent=money(basket)+'/wk'; document.getElementById('wlBurden').textContent=burden.toFixed(2)+'%';
+   const leftEl=document.getElementById('wlLeft'); leftEl.textContent=(left<0?'−':'')+money(Math.abs(left))+'/wk'; leftEl.className='val '+(left<0?'red':'cyan');
+   document.getElementById('wlLeftAnnual').textContent=(left<0?'annual deficit ':'annual remainder ')+(left<0?'−':'')+money(Math.abs(left*52));
+   document.getElementById('wlBody').innerHTML=vals.map(([label,v])=>'<tr><td>'+label+'</td><td>'+money(v)+'</td><td>'+(income?v/income*100:0).toFixed(2)+'%</td></tr>').join('');
+   const rent=n('wlRent'); document.getElementById('wlHousingShare').innerHTML='<strong>Housing share:</strong> '+(income?rent/income*100:0).toFixed(2)+'% of selected gross weekly income. After housing alone: '+money(income-rent)+'.';
+ }
+ ids.forEach(id=>{const e=document.getElementById(id); if(e){e.addEventListener('input',calc);e.addEventListener('change',calc)}}); calc();
+})();
+
+async function loadInstitutionalTimeline(){
+  const box=document.getElementById('institutionalTimeline'); if(!box) return;
+  try{
+    const r=await fetch('/api/institutional-timeline'); if(!r.ok) throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    const label={official:'OFFICIAL RECORD',empirical:'EMPIRICAL MARKER',institutional:'INSTITUTIONAL CONTEXT'};
+    box.innerHTML=(d.events||[]).map(e=>`<div class="event" style="padding:14px 0"><div class="row"><strong>${e.date} — ${e.title}</strong><span class="claimtag">${label[e.type]||e.type}</span></div><div class="sub" style="font-size:11px;margin-top:7px;line-height:1.55">${e.detail}</div></div>`).join('');
+  }catch(err){box.innerHTML='<div class="err">Timeline unavailable — existing verified dashboard data retained.</div>';}
+}
+loadInstitutionalTimeline();
+</script>\n
+<script>
+(function(){
+ async function loadRepro(){
+  const s=document.getElementById('repro-status'),m=document.getElementById('repro-method'),h=document.getElementById('repro-hierarchy'); if(!s)return;
+  try{const r=await fetch('/api/reproducibility',{cache:'no-store'}); if(!r.ok)throw new Error('HTTP '+r.status); const d=await r.json(),x=d.dataset||{};
+   const ok=x.verified;
+   s.innerHTML='<div class="stat"><div class="lab">Publication dataset</div><div class="val '+(ok?'cyan':'red')+'">'+(ok?'VERIFIED ✓':(x.status||'NOT LOADED'))+'</div><div class="sub">'+(x.rows||0)+' / 128 quarters</div></div>'+
+    '<div class="stat"><div class="lab">Coverage</div><div class="val gold">'+x.coverage+'</div><div class="sub">frozen First Edition evidence</div></div>'+
+    '<div class="stat"><div class="lab">Integrity gate</div><div class="val purple">SHA-256</div><div class="sub">sequence + checkpoints also required</div></div>'+
+    '<div class="stat"><div class="lab">Live version</div><div class="val cyan">v'+d.version+'</div><div class="sub">reproducibility centre</div></div>';
+   m.innerHTML='<strong>Required input:</strong> '+d.reproduction.required_input+'<br><strong>Expected SHA-256:</strong> <code style="overflow-wrap:anywhere">'+x.expected_sha256+'</code><br><strong>Actual SHA-256:</strong> <code style="overflow-wrap:anywhere">'+(x.actual_sha256||'not available')+'</code><br><strong>Verification:</strong> '+x.verification_rule+'<br><strong>Replication principle:</strong> '+d.reproduction.principle;
+   h.innerHTML=d.evidence_hierarchy.map((z,i)=>'<span class="claimtag" style="display:inline-block;margin:4px">'+(i+1)+'. '+z+'</span>').join('');
+  }catch(e){s.innerHTML='<div class="sub">Reproducibility API unavailable — '+e.message+'</div>';}
+ }
+ loadRepro();
+})();
+</script>
+
+<script>
+(function(){
+ const esc=v=>String(v??'—').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const fmt=v=>typeof v==='number'?new Intl.NumberFormat('en-AU',{maximumFractionDigits:4}).format(v):esc(v);
+ async function loadAudit(){
+  const sum=document.getElementById('audit-summary'), box=document.getElementById('audit-events'); if(!sum||!box)return;
+  try{const r=await fetch('/api/audit-trail',{cache:'no-store'}); if(!r.ok)throw new Error('HTTP '+r.status); const d=await r.json(), es=d.events||[];
+   const latest=es[0];
+   sum.innerHTML='<div class="stat"><div class="lab">Verified updates shown</div><div class="val cyan">'+es.length+'</div><div class="sub">latest first</div></div>'+
+    '<div class="stat"><div class="lab">Latest source</div><div class="val gold" style="font-size:17px">'+esc(latest?latest.source:'No update yet')+'</div><div class="sub">'+esc(latest?latest.validated_at:'waiting for first validated change')+'</div></div>'+
+    '<div class="stat"><div class="lab">Log type</div><div class="val purple" style="font-size:18px">APPEND-ONLY</div><div class="sub">'+esc(d.immutable_log)+'</div></div>'+
+    '<div class="stat"><div class="lab">Failure rule</div><div class="val cyan" style="font-size:17px">RETAIN VERIFIED</div><div class="sub">no bad overwrite</div></div>';
+   if(!es.length){box.innerHTML='<div class="sub">No validated source revision has been recorded in this deployment yet. The trail will populate automatically when an official-source value passes validation and changes the substantive state.</div>';return;}
+   box.innerHTML=es.slice(0,20).map(e=>'<details class="event" style="padding:12px 0"><summary><strong>'+esc(e.source)+'</strong> — '+esc(e.validated_at)+' <span class="claimtag">'+esc(e.status)+'</span></summary><div class="sub" style="margin-top:8px">'+(e.changes||[]).map(c=>'<div><code>'+esc(c.path)+'</code>: <strong>'+fmt(c.old)+'</strong> → <strong>'+fmt(c.new)+'</strong></div>').join('')+'<div style="margin-top:6px"><strong>Affected:</strong> '+esc((e.affected_calculations||[]).join(', '))+'</div></div></details>').join('');
+  }catch(e){sum.innerHTML='<div class="sub">Audit API unavailable — '+esc(e.message)+'</div>';}
+ }
+ loadAudit(); setInterval(loadAudit,60000);
+})();
+</script>
+
+
+<script id="tc-alert-recovery-js">
+async function tcLoadAlerts(){
+ const sum=document.getElementById('alert-summary'), box=document.getElementById('alert-events'), rule=document.getElementById('alert-rule'); if(!sum||!box)return;
+ try{const r=await fetch('/api/alerts',{cache:'no-store'}); if(!r.ok)throw new Error('HTTP '+r.status); const d=await r.json();
+  const stat=(l,v,sub)=>`<div class="stat"><div class="lab">${l}</div><div class="val">${v}</div><div class="sub">${sub}</div></div>`;
+  sum.innerHTML=stat('Active alerts',d.alert_count||0,'operational, not data revisions')+stat('Attention',d.attention_count||0,'last verified retained')+stat('Release due',d.release_due_count||0,'accelerated checking')+stat('Stale warnings',d.warning_count||0,'source freshness');
+  const es=d.alerts||[]; box.innerHTML=es.length?es.map(a=>`<div class="source"><div class="row"><span>${esc(a.source||'Source')}</span><span class="${a.severity==='attention'?'err':'warn'}">${String(a.type||'alert').replaceAll('_',' ').toUpperCase()}</span></div><div class="sub" style="margin-top:4px">${esc(a.message||'')}</div><div class="sub" style="margin-top:3px">${esc(a.action||'')}</div>${a.last_verified?`<div class="sub">Last successful access: ${esc(a.last_verified)}</div>`:''}</div>`).join(''):'<div class="source"><div class="row"><span>Operational status</span><span class="ok">CLEAR</span></div><div class="sub">No source-failure, stale-feed or release-window alerts are active.</div></div>';
+  if(rule)rule.textContent=d.recovery_rule||rule.textContent;
+ }catch(e){sum.innerHTML='<div class="stat"><div class="lab">Alert service</div><div class="val red">ATTENTION</div><div class="sub">'+esc(String(e))+'</div></div>'; box.innerHTML='<div class="sub">The alert endpoint itself could not be read. Existing verified economic values are not changed by this UI failure.</div>';}
+}
+tcLoadAlerts(); setInterval(tcLoadAlerts,60000);
+</script>
+
+
+<style id="tc-evidence-depth-style">
+.tc-depthbar{position:sticky;top:0;z-index:40;display:flex;gap:.65rem;align-items:center;justify-content:center;padding:.55rem .8rem;background:rgba(10,14,22,.94);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.12)}
+.tc-depthbar button{border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:.45rem .8rem;background:transparent;color:inherit;cursor:pointer}.tc-depthbar button.active{background:#fff;color:#111}
+.tc-depth-note{font-size:.82rem;opacity:.75}.tc-advanced{display:none}.tc-economist .tc-advanced{display:block}.tc-economist .tc-beginner-only{display:none}
+.tc-method-card{margin:1rem auto;max-width:1180px;padding:1rem 1.1rem;border:1px solid rgba(255,255,255,.14);border-radius:14px;background:rgba(255,255,255,.035)}
+.tc-method-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.8rem}.tc-method-grid>div{padding:.8rem;border:1px solid rgba(255,255,255,.1);border-radius:10px}
+</style>
+<div class="tc-depthbar" role="group" aria-label="Evidence depth">
+  <span><strong>Evidence depth</strong></span>
+  <button id="tc-beginner-mode" type="button">Explain it</button>
+  <button id="tc-economist-mode" type="button">Economist view</button>
+  <span class="tc-depth-note">Same data. Different depth.</span>
+</div>
+<section class="tc-method-card tc-advanced" id="economist-evidence-key">
+ <h2>ECONOMIST EVIDENCE KEY</h2>
+ <div class="tc-method-grid">
+  <div><strong>Observed</strong><br>Official source values displayed without changing their substantive meaning.</div>
+  <div><strong>Derived</strong><br>Arithmetic from observed inputs, including Ratio = 100 × NMW ÷ Chart C and Gap = Chart C − NMW.</div>
+  <div><strong>Tested</strong><br>Publication diagnostics, including structural-break statistics and post-break coefficient estimates, shown with their specification.</div>
+  <div><strong>Scenario</strong><br>Counterfactual or user-selected assumptions. These are not official forecasts.</div>
+ </div>
+ <p><strong>Interpretive safeguard:</strong> timing, association and statistical persistence do not by themselves establish institutional intent or causation. Use the provenance and reproducibility panels to inspect the underlying evidence.</p>
+</section>
+<script id="tc-evidence-depth-js">
+(function(){
+ const root=document.documentElement, b=document.getElementById('tc-beginner-mode'), e=document.getElementById('tc-economist-mode');
+ function setMode(mode){
+   const econ=mode==='economist'; root.classList.toggle('tc-economist',econ); root.classList.toggle('tc-beginner',!econ);
+   b.classList.toggle('active',!econ); e.classList.toggle('active',econ); b.setAttribute('aria-pressed',String(!econ)); e.setAttribute('aria-pressed',String(econ));
+   try{localStorage.setItem('tcEvidenceDepth',mode)}catch(_){}
+ }
+ b.addEventListener('click',()=>setMode('beginner')); e.addEventListener('click',()=>setMode('economist'));
+ let saved='beginner'; try{saved=localStorage.getItem('tcEvidenceDepth')||'beginner'}catch(_){} setMode(saved);
+})();
+</script>
+
+
+
+<style id="tc-price-basis-style">
+.tc-pricebar{position:sticky;top:48px;z-index:39;display:flex;gap:.65rem;align-items:center;justify-content:center;flex-wrap:wrap;padding:.5rem .8rem;background:rgba(7,17,31,.95);border-bottom:1px solid rgba(255,255,255,.1);backdrop-filter:blur(10px)}
+.tc-pricebar button{border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:.42rem .78rem;background:transparent;color:inherit;cursor:pointer}.tc-pricebar button.active{background:#00c8ff;color:#06111e;border-color:#00c8ff;font-weight:850}.tc-price-note{font-size:.78rem;color:rgba(255,255,255,.58)}
+.tc-price-card{margin:1rem auto;max-width:1180px;padding:1rem 1.1rem;border:1px solid rgba(0,200,255,.18);border-radius:14px;background:rgba(0,200,255,.035)}.tc-price-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.7rem}.tc-price-grid label{font-size:11px;color:rgba(255,255,255,.62);font-weight:800}.tc-price-grid input{display:block;width:100%;margin-top:5px;padding:8px;border-radius:8px;background:#07182f;color:#fff;border:1px solid rgba(255,255,255,.15)}
+</style>
+<div class="tc-pricebar" role="group" aria-label="Price basis">
+ <span><strong>Price basis</strong></span><button id="tcNominalMode" type="button">Nominal</button><button id="tcRealMode" type="button">Real 2026 $</button><span class="tc-price-note" id="tcPriceNote">Observed dollar values are shown in the dollars of their recorded period.</span>
+</div>
+<section class="tc-price-card tc-advanced" id="price-basis-method">
+ <h2>NOMINAL ↔ REAL ANALYTICAL LAYER</h2>
+ <p id="tcPriceExplanation">Nominal mode preserves recorded dollar values. A larger nominal wage or Chart C value does not by itself establish an improvement in purchasing power.</p>
+ <div class="tc-price-grid">
+  <label>Example nominal amount ($)<input id="tcRealAmount" type="number" value="1743.52" step="0.01"></label>
+  <label>Years after 2026<input id="tcRealYears" type="number" value="10" min="0" max="80" step="1"></label>
+  <label>Annual inflation / deflator (%)<input id="tcRealInflation" type="number" value="2.50" min="0" max="20" step="0.05"></label>
+  <div class="stat"><div class="lab">Equivalent 2026 dollars</div><div class="val cyan" id="tcRealResult">—</div><div class="sub">nominal ÷ (1 + inflation)<sup>years</sup></div></div>
+ </div>
+ <p class="sub"><strong>Safeguard:</strong> the global switch does not silently rewrite official historical observations. It changes compatible scenario modules and analytical interpretation only. Source observations remain traceable in their original nominal units.</p>
+</section>
+<script id="tc-price-basis-js">
+(()=>{const n=document.getElementById('tcNominalMode'),r=document.getElementById('tcRealMode'),note=document.getElementById('tcPriceNote'),exp=document.getElementById('tcPriceExplanation'),amt=document.getElementById('tcRealAmount'),yrs=document.getElementById('tcRealYears'),inf=document.getElementById('tcRealInflation'),out=document.getElementById('tcRealResult');
+ const money=x=>new Intl.NumberFormat('en-AU',{style:'currency',currency:'AUD',minimumFractionDigits:2}).format(x);
+ function calc(){const a=Number(amt.value)||0,y=Math.max(0,Number(yrs.value)||0),i=Math.max(0,Number(inf.value)||0)/100;out.textContent=money(a/Math.pow(1+i,y));}
+ function set(mode){const real=mode==='real';n.classList.toggle('active',!real);r.classList.toggle('active',real);n.setAttribute('aria-pressed',String(!real));r.setAttribute('aria-pressed',String(real));document.documentElement.dataset.priceBasis=mode;note.textContent=real?'Compatible scenarios are expressed in constant 2026 dollars; observed source values remain nominal.':'Observed dollar values are shown in the dollars of their recorded period.';exp.textContent=real?'Real mode removes the assumed general price change from compatible future scenarios so dollar growth is not mistaken for purchasing-power growth.':'Nominal mode preserves recorded dollar values. A larger nominal wage or Chart C value does not by itself establish an improvement in purchasing power.';
+  const igr=document.getElementById('igrBasis');if(igr){igr.value=real?'real':'nominal';igr.dispatchEvent(new Event('change',{bubbles:true}));} try{localStorage.setItem('tcPriceBasis',mode)}catch(_){} calc();}
+ n.addEventListener('click',()=>set('nominal'));r.addEventListener('click',()=>set('real'));[amt,yrs,inf].forEach(x=>x.addEventListener('input',calc));let saved='nominal';try{saved=localStorage.getItem('tcPriceBasis')||'nominal'}catch(_){}set(saved);
+})();
+</script>
+
+<script id="tc-journey-js">
+(()=>{const links=[...document.querySelectorAll('#research-journey a[data-journey]')];const targets=['see','understand','test'].map(k=>document.getElementById('journey-'+k));function setActive(){let best=0;targets.forEach((el,i)=>{if(el&&el.getBoundingClientRect().top<=150)best=i});links.forEach((a,i)=>a.classList.toggle('active',i===best));}links.forEach(a=>a.addEventListener('click',()=>{links.forEach(x=>x.classList.remove('active'));a.classList.add('active')}));addEventListener('scroll',setActive,{passive:true});setActive();})();
+</script>
+
+<script id="tc-source-release-intelligence-js">
+(function(){
+ const escSR=v=>String(v??'—').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ function cls(v){v=String(v||'');return /ATTENTION|ERROR|FAIL/.test(v)?'tc-src-err':/WARNING|DUE|VALIDATING|DETECTED|AWAITING/.test(v)?'tc-src-warn':'tc-src-ok'}
+ function fmtDate(v){if(!v)return 'Not currently detected';try{return new Date(v).toLocaleString([], {dateStyle:'medium',timeStyle:'short'})}catch(e){return v}}
+ async function loadSourceRelease(){
+  const sum=document.getElementById('src-release-summary'), grid=document.getElementById('src-release-grid'), note=document.getElementById('src-release-note'); if(!grid)return;
+  try{
+   const r=await fetch('/api/source-release-intelligence',{cache:'no-store'}); if(!r.ok)throw new Error('HTTP '+r.status); const d=await r.json();
+   sum.textContent='Monitoring cadence: '+Math.round((d.poll_seconds||3600)/60)+' minutes · Sydney release calendar last refreshed: '+(d.calendar_last_refreshed?fmtDate(d.calendar_last_refreshed):'not yet');
+   let h=['Source','Latest verified period','Health','Monitoring','Next expected release'].map(x=>'<div class="tc-src-cell tc-src-head">'+x+'</div>').join('');
+   (d.sources||[]).forEach(x=>{h+=
+    '<div class="tc-src-cell tc-src-name" data-label="Source">'+escSR(x.source)+'</div>'+ 
+    '<div class="tc-src-cell" data-label="Latest verified period">'+escSR(x.latest_verified_period||'—')+'<div class="tc-src-muted">Last success: '+escSR(x.last_success||'not yet')+'</div></div>'+ 
+    '<div class="tc-src-cell '+cls(x.health)+'" data-label="Health">'+escSR(x.health) +(x.validation_problem?'<div class="tc-src-muted">'+escSR(x.validation_problem)+'</div>':'')+'</div>'+ 
+    '<div class="tc-src-cell '+cls(x.monitoring_state)+'" data-label="Monitoring">'+escSR(x.monitoring_state)+'</div>'+ 
+    '<div class="tc-src-cell" data-label="Next release">'+escSR(fmtDate(x.next_expected_release))+(x.release_status?'<div class="tc-src-muted">'+escSR(x.release_status)+'</div>':'')+'</div>';});
+   grid.innerHTML=h; note.textContent=(d.calendar_errors&&d.calendar_errors.length?'Some calendar pages could not be refreshed; previously verified dates are retained. ':'')+(d.principle||'');
+  }catch(e){sum.textContent='Source intelligence temporarily unavailable.';grid.innerHTML='<div class="tc-src-cell tc-src-err">Control-panel fetch failed. Existing verified economic observations remain unchanged.</div>';}
+ }
+ loadSourceRelease(); setInterval(loadSourceRelease,60000);
+})();
+</script>
+<script id="tc-next-release-timing-js">
+(function(){
+ const E=v=>String(v??'—').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const when=v=>{if(!v)return 'Not currently detected';try{return new Date(v).toLocaleString([], {dateStyle:'medium',timeStyle:'short'})}catch(_){return v}};
+ function countdown(sec){if(sec===null||sec===undefined)return 'Awaiting calendar';sec=Math.max(0,Math.floor(sec));const d=Math.floor(sec/86400),h=Math.floor(sec%86400/3600),m=Math.floor(sec%3600/60);if(d)return d+'d '+h+'h '+m+'m';if(h)return h+'h '+m+'m';return m+'m';}
+ let model=null,loadedAt=0;
+ function render(){const g=document.getElementById('tc-release-strip-grid');if(!g||!model)return;const elapsed=Math.floor((Date.now()-loadedAt)/1000);g.innerHTML=(model.sources||[]).map(x=>{const sec=x.seconds_until_release==null?null:Math.max(0,x.seconds_until_release-elapsed);const due=x.monitoring_state==='RELEASE DUE',att=/ATTENTION|FAIL|ERROR/.test(x.health||'');return `<div class="tc-release-tile ${due?'tc-release-due':''} ${att?'tc-release-attn':''}"><div class="tc-release-name">${E(x.source)}</div><div class="tc-release-count">${E(due?'RELEASE WINDOW':countdown(sec))}</div><div class="tc-release-meta">Expected: ${E(when(x.next_expected_release))}<br>Last checked: ${E(when(x.last_checked))}<br>Check cadence: ${Math.round((x.poll_seconds||3600)/60)} min · ${E(x.monitoring_state||'NORMAL')}</div></div>`}).join('');}
+ async function load(){const s=document.getElementById('tc-release-strip-summary'),n=document.getElementById('tc-release-strip-note');try{const r=await fetch('/api/next-release-timing',{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);model=await r.json();loadedAt=Date.now();s.textContent='Release clock: '+when(model.generated_at)+' · '+model.timezone;n.textContent=model.principle||'';render();}catch(e){s.textContent='Release timing temporarily unavailable.';n.textContent='Verified economic observations remain unchanged.';}}
+ load();setInterval(render,30000);setInterval(load,60000);
+})();
+</script>
+
+
+<script id="tc-update-integrity-v85">
+(function(){
+ const money=n=>'$'+Number(n).toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2});
+ async function sync(){
+  try{
+   const r=await fetch('/api/update-integrity',{cache:'no-store'}); if(!r.ok)throw new Error('HTTP '+r.status);
+   const d=await r.json(), c=d.current||{}; window.TC_LIVE_CURRENT=c;
+   // Only replace scenario defaults while they still equal the prior verified defaults. User edits win.
+   const low=document.getElementById('srLowWage'), high=document.getElementById('srHighWage');
+   if(low && (!low.dataset.userEdited || low.dataset.userEdited==='0')) low.value=Number(c.minimum_wage_weekly||1004.90).toFixed(2);
+   if(high && (!high.dataset.userEdited || high.dataset.userEdited==='0')) high.value=Number(c.chart_c_weekly||1350.70).toFixed(2);
+   const sel=document.getElementById('wlIncome');
+   if(sel){const a=sel.options[0],b=sel.options[1]; a.value=Number(c.minimum_wage_weekly||1004.90).toFixed(2);a.text='National Minimum Wage — '+money(c.minimum_wage_weekly||1004.90);b.value=Number(c.chart_c_weekly||1350.70).toFixed(2);b.text='100% Chart C — '+money(c.chart_c_weekly||1350.70);}
+   if(typeof renderIgrLab==='function')renderIgrLab();
+   const wr=document.getElementById('wrSupport'); if(wr)wr.dispatchEvent(new Event('input',{bubbles:true}));
+   ['srLowWage','srHighWage'].forEach(id=>{const e=document.getElementById(id);if(e)e.dispatchEvent(new Event('input',{bubbles:true}));});
+  }catch(e){console.warn('v8.5 propagation integrity sync:',e.message);}
+ }
+ ['srLowWage','srHighWage'].forEach(id=>document.addEventListener('input',e=>{if(e.target&&e.target.id===id)e.target.dataset.userEdited='1';}));
+ window.addEventListener('load',sync); setInterval(sync,60000);
+})();
+</script>
 </body></html>

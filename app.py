@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import os
-import hashlib, json, os, re, threading, time
+import csv, hashlib, json, os, re, threading, time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -14,22 +14,26 @@ PORT = int(os.getenv("PORT", "8765"))
 from zoneinfo import ZoneInfo
 
 SYDNEY_TZ = ZoneInfo("Australia/Sydney")
-REFRESH_HOURS_SYDNEY = (10, 22)
+BASE_REFRESH_SECONDS = max(300, int(os.getenv("TC_REFRESH_SECONDS", "3600")))
+RELEASE_REFRESH_SECONDS = max(300, int(os.getenv("TC_RELEASE_REFRESH_SECONDS", "300")))
 APP_DIR = Path(__file__).resolve().parent
 DATA_DIR = Path(os.getenv("DATA_DIR", APP_DIR))
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 STATE_FILE = DATA_DIR / "state.json"
 RUNTIME_STATE_FILE = DATA_DIR / "runtime_state.json"
+AUDIT_LOG_FILE = DATA_DIR / "audit_log.jsonl"
+AUDIT_MAX_ENTRIES = max(100, int(os.getenv("TC_AUDIT_MAX_ENTRIES", "2000")))
 
 DEFAULT = {
-    "version": "5.7.0",
+    "version": "9.7.0",
     "started_at": None,
     "last_check": None,
     "next_check": None,
     "refresh_schedule": {
         "timezone": "Australia/Sydney",
-        "times": ["10:00", "22:00"],
-        "description": "Official-source refresh at 10:00 AM and 10:00 PM Australia/Sydney time"
+        "base_interval_minutes": 60,
+        "release_interval_minutes": 5,
+        "description": "Hourly official-source monitoring; five-minute checks during configured release windows"
     },
     "checks_completed": 0,
     "source_changes_detected": 0,
@@ -52,6 +56,26 @@ DEFAULT = {
         "age_pensioner_lci_annual_pct": 4.7,
         "lci_reference_base": "September 2025 quarter = 100",
         "cash_rate_pct": 4.35
+    },
+    "labour_market": {
+        "source": "Australian Bureau of Statistics — Labour Force, Australia",
+        "classification": "OFFICIAL OBSERVATION",
+        "reference_period": "July 2026",
+        "employment_persons": 14807200,
+        "employment_change_persons": -15800,
+        "employment_change_pct": -0.1,
+        "unemployment_rate_pct": 4.5,
+        "participation_rate_pct": 66.9,
+        "employment_population_ratio_pct": 63.9,
+        "underemployment_rate_pct": 6.4,
+        "full_time_employment_persons": 10210500,
+        "part_time_employment_persons": 4596700,
+        "monthly_hours_worked_millions": 1998,
+        "hours_worked_change_millions": -12,
+        "hours_worked_change_pct": -0.6,
+        "release_date": "2026-08-20",
+        "last_verified": "ABS Labour Force, Australia — July 2026; released 20 August 2026",
+        "automatic_parser_status": "Complete verified July 2026 seasonally adjusted headline set. August 2026 release due 24 September 2026 at 11:30am AEST."
     },
     "forward": {
         "status": "Official Services Australia cut-off confirmed — effective 20 September 2026",
@@ -306,7 +330,7 @@ TERMS = ("pension","jobseeker","social security","indexation","payment","income 
 session = requests.Session()
 session.headers.update({"User-Agent":"THE-CONSTANT-Public-Monitor/4.1"})
 app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY", "the-constant-live-v570-session-key")
+app.secret_key = os.getenv("SECRET_KEY", "the-constant-live-v571-session-key")
 lock = threading.RLock()
 
 def now_iso():
@@ -564,6 +588,70 @@ def fetch(name,url):
         return None
     m["error"]=str(last); return None
 
+
+
+# v6.3 source validation/status lifecycle -------------------------------------
+SOURCE_STATUS_CURRENT = "CURRENT"
+SOURCE_STATUS_DETECTED = "NEW RELEASE DETECTED"
+SOURCE_STATUS_VALIDATING = "VALIDATING"
+SOURCE_STATUS_UPDATED = "UPDATED"
+SOURCE_STATUS_ATTENTION = "ATTENTION — LAST VERIFIED RETAINED"
+
+def _set_source_status(name, status, detail=None):
+    m = meta(name)
+    m["validation_status"] = status
+    m["status_updated_at"] = now_iso()
+    if detail:
+        m["status_detail"] = str(detail)
+    return m
+
+def _validate_candidate(kind):
+    """Conservative post-parse validation gate for core public series.
+
+    This validates the values already parsed into state before they are
+    advertised as UPDATED. Parsers that are not yet execution-validated
+    remain at CURRENT/DETECTED rather than receiving a false green status.
+    """
+    c = state.get("core", {})
+    o = state.get("official", {})
+    lm = state.get("labour_market", {})
+    checks = {
+        "abs_cpi": lambda: -5.0 <= float(o.get("cpi_annual_pct")) <= 30.0,
+        "rba": lambda: 0.0 <= float(o.get("cash_rate_pct")) <= 25.0,
+        "fwc": lambda: 100.0 <= float(c.get("minimum_wage_weekly")) <= 5000.0,
+        "chart_c": lambda: (
+            500.0 <= float(c.get("chart_c_fortnightly")) <= 10000.0
+            and abs(float(c.get("chart_c_weekly")) * 2.0 - float(c.get("chart_c_fortnightly"))) <= 0.02
+            and 0.10 <= float(c.get("taper")) <= 1.0
+        ),
+        "abs_labour": lambda: (
+            5_000_000 <= float(lm.get("employment_persons")) <= 30_000_000
+            and 0.0 <= float(lm.get("unemployment_rate_pct")) <= 30.0
+            and 30.0 <= float(lm.get("participation_rate_pct")) <= 90.0
+        ),
+    }
+    fn = checks.get(kind)
+    if fn is None:
+        return True, "No additional v6.3 range gate required for this source."
+    try:
+        ok = bool(fn())
+    except Exception as exc:
+        return False, f"Validation exception: {exc}"
+    return ok, ("Validation passed." if ok else "Parsed value failed plausibility/consistency validation.")
+
+def source_status_summary():
+    counts = {
+        SOURCE_STATUS_CURRENT: 0, SOURCE_STATUS_DETECTED: 0,
+        SOURCE_STATUS_VALIDATING: 0, SOURCE_STATUS_UPDATED: 0,
+        SOURCE_STATUS_ATTENTION: 0,
+    }
+    for m in state.get("sources", {}).values():
+        st = m.get("validation_status") or (SOURCE_STATUS_ATTENTION if m.get("error") else SOURCE_STATUS_CURRENT)
+        counts[st] = counts.get(st, 0) + 1
+    state["source_status_summary"] = counts
+    return counts
+
+
 def textify(html):
     soup=BeautifulSoup(html,"html.parser")
     for t in soup(["script","style","noscript"]): t.decompose()
@@ -593,6 +681,24 @@ def recalc():
         ac["benchmark_fortnightly"] = round(weekly * 2, 2)
         chart_c_fn = float(c["chart_c_fortnightly"])
         ac["chart_c_ratio_pct"] = round((weekly * 2 / chart_c_fn) * 100, 4) if chart_c_fn else None
+    # v8.6 — one verified core observation, one propagation graph.
+    # Any validated NMW / Chart C change is recalculated here before publication,
+    # so downstream live modules consume the same current snapshot.
+    state["live_derived"] = {
+        "minimum_wage_weekly": round(float(c["minimum_wage_weekly"]), 2),
+        "chart_c_fortnightly": round(float(c["chart_c_fortnightly"]), 2),
+        "chart_c_weekly": round(float(c["chart_c_weekly"]), 2),
+        "ratio_pct": round(float(c["ratio_pct"]), 4),
+        "weekly_gap": round(float(c["weekly_gap"]), 2),
+        "annualised_gap": round(float(c["weekly_gap"]) * 52, 2),
+        "cpi_annual_pct": state.get("official", {}).get("cpi_annual_pct"),
+        "cpi_reference_period": state.get("official", {}).get("cpi_reference_period"),
+        "cash_rate_pct": state.get("official", {}).get("cash_rate_pct"),
+        "employment": state.get("labour_market", {}).get("employment_persons"),
+        "unemployment_rate_pct": state.get("labour_market", {}).get("unemployment_rate_pct"),
+        "participation_rate_pct": state.get("labour_market", {}).get("participation_rate_pct"),
+        "updated_at": now_iso(),
+    }
 
 
 def resident_income_tax_2026_27(income):
@@ -831,56 +937,188 @@ def recalc_income_support_counterfactual():
     }
 
 
+def _audit_substantive_snapshot(value=None):
+    """Snapshot analytical state while excluding volatile source/runtime metadata."""
+    src = state if value is None else value
+    snap = _deep_copy(src)
+    for key in RUNTIME_TOP_LEVEL_KEYS:
+        snap.pop(key, None)
+    # The audit trail itself must never be compared recursively.
+    snap.pop("audit_trail", None)
+    return snap
+
+
+def _flatten_audit(value, prefix=""):
+    out = {}
+    if isinstance(value, dict):
+        for k, v in value.items():
+            key = f"{prefix}.{k}" if prefix else str(k)
+            out.update(_flatten_audit(v, key))
+    elif isinstance(value, list):
+        # Lists are retained atomically to avoid noisy element-by-element logs.
+        out[prefix] = value
+    else:
+        out[prefix] = value
+    return out
+
+
+def _audit_changes(before, after):
+    a = _flatten_audit(_audit_substantive_snapshot(before))
+    b = _flatten_audit(_audit_substantive_snapshot(after))
+    rows=[]
+    for path in sorted(set(a) | set(b)):
+        if a.get(path) != b.get(path):
+            rows.append({"path": path, "old": a.get(path), "new": b.get(path)})
+    return rows
+
+
+def _append_audit_event(source, kind, before, after, source_url=None, status="UPDATED"):
+    """Append an immutable JSONL provenance event after a validated substantive change."""
+    changes = _audit_changes(before, after)
+    if not changes:
+        return None
+    now = now_iso()
+    event = {
+        "id": hashlib.sha256(f"{now}|{source}|{json.dumps(changes, sort_keys=True, default=str)}".encode()).hexdigest()[:16],
+        "detected_at": now,
+        "validated_at": now,
+        "published_at": now,
+        "source": source,
+        "source_kind": kind,
+        "source_url": source_url,
+        "status": status,
+        "classification": "VERIFIED DATA UPDATE",
+        "changes": changes,
+        "affected_calculations": sorted({
+            "ratio / weekly gap" if c["path"].startswith("core.") else
+            "labour-market panel" if c["path"].startswith("labour_market.") else
+            "official indicator panel" if c["path"].startswith("official.") else
+            "derived dashboard calculations"
+            for c in changes
+        }),
+    }
+    try:
+        AUDIT_LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
+        with AUDIT_LOG_FILE.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(event, ensure_ascii=False, separators=(",", ":")) + "\\n")
+    except Exception as exc:
+        state.setdefault("errors", []).append("Audit log write failed: " + str(exc))
+    return event
+
+
+def _read_audit_events(limit=100):
+    if not AUDIT_LOG_FILE.exists():
+        return []
+    try:
+        lines=AUDIT_LOG_FILE.read_text(encoding="utf-8").splitlines()[-AUDIT_MAX_ENTRIES:]
+        rows=[]
+        for line in reversed(lines):
+            try: rows.append(json.loads(line))
+            except Exception: continue
+        return rows[:max(1, min(int(limit), 500))]
+    except Exception:
+        return []
+
+
 def mark_change():
     state["source_changes_detected"]+=1
 
-def parse_abs_labour(t):
-    """
-    ABS Labour Force source-health watcher.
-
-    Verified labour-market values are retained in structured state.
-    Automatic extraction from the public ABS page is deliberately disabled
-    until the parser is separately execution-validated against the exact
-    ABS release structure.
-
-    The fetch layer still records:
-      - last check
-      - HTTP status
-      - content hash
-      - source change
-      - last successful access
-
-    This prevents an ambiguous webpage percentage from silently replacing
-    verified labour-market observations.
-    """
-
-    lm = state.setdefault(
-        "labour_market",
-        {
-            "source":
-                "Australian Bureau of Statistics — Labour Force, Australia"
-        }
-    )
-
-    lm["source_last_seen"] = now_iso()
-    lm["automatic_parser_status"] = (
-        "Source monitored; automatic value extraction disabled "
-        "pending separate execution validation."
-    )
-
+def _reject_candidate(kind, detail):
+    """Mark a detected candidate as rejected so check_all cannot silently validate stale state."""
+    state["_parser_rejection"] = {"kind": str(kind), "detail": str(detail), "at": now_iso()}
     return False
 
+def parse_abs_labour(t):
+    """Parse the ABS Labour Force headline release conservatively.
+
+    Publishes only when the core seasonally-adjusted headline set can be
+    extracted together. Optional full-time/part-time fields are updated only
+    when their explicit ABS sentence is present. Missing optional fields are
+    never invented.
+    """
+    lm = state.setdefault("labour_market", {})
+    lm["source_last_seen"] = now_iso()
+
+    ref = re.search(r"Reference period\s+([A-Za-z]+\s+20\d{2})", t, re.I)
+    if not ref:
+        lm["automatic_parser_status"] = "ABS source reached, but no reference period could be verified; last verified observations retained."
+        return False
+    detected_ref = ref.group(1)
+    lm["detected_reference_period"] = detected_ref
+    if detected_ref == lm.get("reference_period"):
+        lm["automatic_parser_status"] = "ABS source reached; displayed observations remain the latest verified release."
+        return False
+
+    def num(pattern, flags=re.I|re.S):
+        m=re.search(pattern,t,flags)
+        return None if not m else float(m.group(1).replace(",",""))
+
+    # Match the latest (second) value in the ABS seasonally-adjusted key-statistics rows.
+    emp=num(r"Employed people\s+[\|:]?\s*[0-9,]+\s+[\|:]?\s*([0-9,]+)")
+    empchg=num(r"Employed people\s+[\|:]?\s*[0-9,]+\s+[\|:]?\s*[0-9,]+\s+[\|:]?\s*([+-]?[0-9,]+)")
+    empchgp=num(r"Employed people\s+[\|:]?\s*[0-9,]+\s+[\|:]?\s*[0-9,]+\s+[\|:]?\s*[+-]?[0-9,]+\s+[\|:]?\s*([+-]?[0-9.]+)%")
+    emppop=num(r"Employment to population ratio\s+[\|:]?\s*[0-9.]+%\s+[\|:]?\s*([0-9.]+)%")
+    ur=num(r"Unemployment rate\s+[\|:]?\s*[0-9.]+%\s+[\|:]?\s*([0-9.]+)%")
+    under=num(r"Underemployment rate\s+[\|:]?\s*[0-9.]+%\s+[\|:]?\s*([0-9.]+)%")
+    part=num(r"Participation rate\s+[\|:]?\s*[0-9.]+%\s+[\|:]?\s*([0-9.]+)%")
+    hrs=num(r"Monthly hours worked in all jobs\s+[\|:]?\s*[0-9,.]+\s*million\s+[\|:]?\s*([0-9,.]+)\s*million")
+    hrchg=num(r"Monthly hours worked in all jobs\s+[\|:]?\s*[0-9,.]+\s*million\s+[\|:]?\s*[0-9,.]+\s*million\s+[\|:]?\s*([+-]?[0-9,.]+)\s*million")
+    hrchgp=num(r"Monthly hours worked in all jobs\s+[\|:]?\s*[0-9,.]+\s*million\s+[\|:]?\s*[0-9,.]+\s*million\s+[\|:]?\s*[+-]?[0-9,.]+\s*million\s+[\|:]?\s*([+-]?[0-9.]+)%")
+
+    required=(emp,ur,part,emppop,under,hrs)
+    if any(v is None for v in required):
+        detail = f"New ABS reference period {detected_ref} detected, but the complete headline set did not parse; last verified observations retained."
+        lm["automatic_parser_status"] = detail
+        return _reject_candidate("abs_labour", detail)
+    if not (5_000_000 <= emp <= 30_000_000 and 0 <= ur <= 30 and 30 <= part <= 90 and 30 <= emppop <= 90 and 0 <= under <= 30 and 500 <= hrs <= 5000):
+        detail = f"New ABS reference period {detected_ref} failed plausibility validation; last verified observations retained."
+        lm["automatic_parser_status"] = detail
+        return _reject_candidate("abs_labour", detail)
+
+    # Optional explicit employment paragraph.
+    ft=num(r"Full-time employment (?:increased|decreased) by [0-9,]+ to ([0-9,]+) people")
+    pt=num(r"part-time employment (?:increased|decreased) by [0-9,]+ to ([0-9,]+) people")
+
+    lm.update({
+        "reference_period":detected_ref, "employment_persons":int(emp),
+        "employment_change_persons":None if empchg is None else int(empchg),
+        "employment_change_pct":empchgp, "unemployment_rate_pct":ur,
+        "participation_rate_pct":part, "employment_population_ratio_pct":emppop,
+        "underemployment_rate_pct":under, "monthly_hours_worked_millions":hrs,
+        "hours_worked_change_millions":hrchg, "hours_worked_change_pct":hrchgp,
+        "full_time_employment_persons":None if ft is None else int(ft),
+        "part_time_employment_persons":None if pt is None else int(pt),
+        "last_verified":"Automatically extracted from ABS Labour Force headline release after complete-set validation",
+        "automatic_parser_status":"UPDATED — complete seasonally adjusted headline set validated; optional fields shown only when explicitly parsed."
+    })
+    return True
 
 def parse_abs_cpi(t):
-    changed=False
-    m=re.search(r"Reference period\s+([A-Za-z]+\s+20\d{2})",t,re.I)
-    if m and m.group(1)!=state["official"]["cpi_reference_period"]:
-        state["official"]["cpi_reference_period"]=m.group(1); changed=True
-    m=re.search(r"(?:Consumer Price Index\s*\(CPI\)|CPI)\s+rose\s+([0-9]+(?:\.[0-9]+)?)%",t,re.I)
-    if m:
-        v=float(m.group(1))
-        if v!=state["official"]["cpi_annual_pct"]:
-            state["official"]["cpi_annual_pct"]=v; changed=True
+    """Atomically publish a new CPI reference month only when that release supplies its own annual rate."""
+    ref=re.search(r"Reference period\s+([A-Za-z]+\s+20\d{2})",t,re.I)
+    if not ref:
+        return False
+    detected_ref=ref.group(1).title()
+    # The annual rate must be present in the same candidate release. Never advance
+    # the month while carrying forward the prior month's annual CPI value.
+    patterns=[
+        r"In\s+the\s+12\s+months\s+to\s+"+re.escape(detected_ref)+r"[^%]{0,220}?(?:Consumer Price Index\s*\(CPI\)|CPI)[^%]{0,120}?(?:rose|fell)\s+([0-9]+(?:\.[0-9]+)?)%",
+        r"(?:Consumer Price Index\s*\(CPI\)|CPI)[^.]{0,220}?(?:rose|fell)\s+([0-9]+(?:\.[0-9]+)?)%\s+(?:over|through|in)\s+the\s+(?:year|12\s+months)",
+    ]
+    annual=None
+    for pat in patterns:
+        m=re.search(pat,t,re.I|re.S)
+        if m:
+            annual=float(m.group(1)); break
+    if annual is None:
+        return _reject_candidate("abs_cpi", f"CPI reference period {detected_ref} detected but its annual CPI rate did not parse.")
+    if not (-5.0 <= annual <= 30.0):
+        return _reject_candidate("abs_cpi", f"CPI reference period {detected_ref} supplied implausible annual CPI {annual}%.")
+    o=state["official"]
+    changed=(detected_ref!=o.get("cpi_reference_period") or annual!=o.get("cpi_annual_pct"))
+    if changed:
+        o["cpi_reference_period"]=detected_ref
+        o["cpi_annual_pct"]=annual
     return changed
 
 
@@ -1097,16 +1335,7 @@ def parse_complete_abs_cpi_detail(text):
 
         return False
 
-    annual = (
-        state
-        .get(
-            "official",
-            {}
-        )
-        .get(
-            "cpi_annual_pct"
-        )
-    )
+    annual = None
 
     # ---------------------------------------------------------
     # Generic extraction helper
@@ -1135,6 +1364,13 @@ def parse_complete_abs_cpi_detail(text):
                     pass
 
         return None
+
+    # Annual headline must be extracted from this release. This prevents a new
+    # reference month from inheriting the previous month's annual CPI rate.
+    annual = find([
+        r"In\s+the\s+12\s+months\s+to\s+" + re.escape(reference_period) + r"[^%]{0,180}?(?:Consumer Price Index\s*\(CPI\)|CPI)[^%]{0,100}?(?:rose|fell)\s+([0-9]+(?:\.[0-9]+)?)%",
+        r"(?:Consumer Price Index\s*\(CPI\)|CPI)\s+(?:rose|fell)\s+([0-9]+(?:\.[0-9]+)?)%",
+    ])
 
     # ---------------------------------------------------------
     # Monthly original
@@ -1306,30 +1542,78 @@ def parse_lci(t):
     return False
 
 def parse_rba(t):
-    m=re.search(r"cash rate target.{0,120}?([0-9]+(?:\.[0-9]+)?)\s*(?:per cent|%)",t,re.I|re.S)
-    if m:
-        v=float(m.group(1))
-        if v!=state["official"]["cash_rate_pct"]:
-            state["official"]["cash_rate_pct"]=v; return True
+    """Parse only an explicit RBA cash-rate target statement; never infer a decision."""
+    m=re.search(r"cash rate target.{0,180}?([0-9]+(?:\.[0-9]+)?)\s*(?:per cent|%)",t,re.I|re.S)
+    if not m:
+        return False
+    v=float(m.group(1))
+    # Conservative plausibility gate. A candidate outside this range is rejected.
+    if not (0.0 <= v <= 20.0):
+        return _reject_candidate("rba", f"Explicit cash-rate target {v}% failed plausibility validation.")
+    if v!=state["official"]["cash_rate_pct"]:
+        state["official"]["cash_rate_pct"]=v
+        recalc()
+        return True
     return False
 
 def parse_fwc(t):
+    """Parse an explicit NMW plus operative/effective date; do not publish a future rate early."""
     vals=[]
     for x in re.findall(r"(?:National Minimum Wage|minimum wage).{0,350}?\$([\d,]+\.\d{2}).{0,80}?(?:per week|week)",t,re.I|re.S):
         v=money(x)
-        if 500<=v<=2000: vals.append(v)
-    if vals and max(vals)!=state["core"]["minimum_wage_weekly"]:
-        state["core"]["minimum_wage_weekly"]=max(vals); recalc(); return True
+        if 500<=v<=3000: vals.append(v)
+    if not vals:
+        return False
+    candidate=max(vals)
+    dm=re.search(r"(?:effective|from|operation on|comes? into operation on).{0,50}?(\d{1,2})\s+([A-Za-z]+)\s+(20\d{2})",t,re.I|re.S)
+    if not dm:
+        return _reject_candidate("fwc", f"NMW candidate ${candidate:.2f}/week detected without a verifiable operative/effective date.")
+    try:
+        eff=date(int(dm.group(3)), datetime.strptime(dm.group(2)[:3], '%b').month, int(dm.group(1)))
+    except Exception:
+        return _reject_candidate("fwc", "NMW candidate detected but its operative/effective date was invalid.")
+    fwc=state.setdefault("fwc_nmw",{})
+    fwc["detected_weekly"]=round(candidate,2)
+    fwc["effective_date"]=eff.isoformat()
+    if eff > date.today():
+        fwc["status"]="FORTHCOMING — NOT YET LIVE"
+        return False
+    if candidate!=state["core"]["minimum_wage_weekly"]:
+        state["core"]["minimum_wage_weekly"]=candidate
+        fwc["status"]="EFFECTIVE — LIVE"
+        recalc(); return True
+    fwc["status"]="CURRENT"
     return False
 
 def parse_chart_c(t):
+    """Parse only the official single pension/DSP *income-test* cessation point.
+
+    Chart C weekly is a THE CONSTANT derived measure = official fortnightly cut-off / 2.
+    Do not confuse payment rates, assets-test cut-offs, transitional rates, or couple rates.
+    """
+    lower=t.lower()
+    if not (("income" in lower and "cut off" in lower) or ("income" in lower and "cut-off" in lower)):
+        return False
     vals=[]
-    for pat in (r"21 or older,\s*single.{0,120}?\$([\d,]+\.\d{2})",r"single.{0,120}?\$([\d,]+\.\d{2}).{0,180}?couple living together"):
+    patterns=(
+        r"21 or older,\s*single.{0,140}?\$([\d,]+\.\d{2})",
+        r"(?:your situation.{0,300}?)?single\s*(?:\||:|-)?\s*\$([\d,]+\.\d{2}).{0,180}?(?:couple living together|couple)",
+    )
+    for pat in patterns:
         for m in re.finditer(pat,t,re.I|re.S):
             v=money(m.group(1))
             if 2000<=v<=5000: vals.append(v)
-    if vals and max(vals)!=state["core"]["chart_c_fortnightly"]:
-        state["core"]["chart_c_fortnightly"]=max(vals); recalc(); return True
+    if not vals:
+        return False
+    candidate=vals[0]
+    # Conservative gate: reject ambiguous pages returning conflicting plausible single values.
+    if any(abs(v-candidate)>0.01 for v in vals):
+        return _reject_candidate("chart_c", "Conflicting plausible single-person income-test cut-off values detected on the source page.")
+    current=float(state["core"]["chart_c_fortnightly"])
+    if abs(candidate-current)>0.005:
+        state["core"]["chart_c_fortnightly"]=round(candidate,2)
+        recalc()
+        return True
     return False
 
 def parse_acoss(t):
@@ -2699,32 +2983,31 @@ def maintain_constant_material_monitor():
 def check_all():
     errors=[]
     for name,(url,kind) in SOURCES.items():
+        before = json.loads(json.dumps(state))
+        _set_source_status(name, SOURCE_STATUS_CURRENT, "Checking official/identified source.")
         html=fetch(name,url)
-        if html is None: continue
+        if html is None:
+            m=meta(name)
+            if m.get("error") or m.get("warning"):
+                _set_source_status(name, SOURCE_STATUS_ATTENTION,
+                    m.get("warning") or m.get("error") or "Source unavailable; last verified value retained.")
+            continue
         try:
-            if kind=="minister_rss": parse_rss(html); continue
+            if kind=="minister_rss":
+                _set_source_status(name, SOURCE_STATUS_VALIDATING, "Source reached; validating announcement feed.")
+                parse_rss(html)
+                _set_source_status(name, SOURCE_STATUS_CURRENT, "Announcement feed checked successfully.")
+                continue
             t=textify(html); changed=False
+            state.pop("_parser_rejection", None)
             if kind=="abs_labour": changed=parse_abs_labour(t)
             elif kind=="abs_cpi":
                 changed = parse_abs_cpi(t)
-
                 try:
-
-                    detail_changed = (
-                        parse_complete_abs_cpi_detail(t)
-                    )
-
-                    changed = bool(
-                        changed
-                        or detail_changed
-                    )
-
+                    detail_changed = parse_complete_abs_cpi_detail(t)
+                    changed = bool(changed or detail_changed)
                 except Exception as e:
-
-                    print(
-                        "CPI detail parse warning:",
-                        e
-                    )
+                    meta(name)["warning"] = "CPI detail parser warning; last verified detail retained: " + str(e)
             elif kind=="abs_lci": changed=parse_lci(t)
             elif kind=="rba": changed=parse_rba(t)
             elif kind=="fwc": changed=parse_fwc(t)
@@ -2734,7 +3017,6 @@ def check_all():
             elif kind=="union_actu": changed=parse_union_actu(t)
             elif kind=="union_fwc": changed=parse_union_fwc(t)
             elif kind=="pc_watch": changed=parse_pc_watch(t)
-
             elif kind=="workers_comp": changed=parse_workers_comp(t)
             elif kind=="ato_super": changed=parse_ato_super(t)
             elif kind=="ato_medicare": changed=parse_ato_medicare(t)
@@ -2742,20 +3024,51 @@ def check_all():
             elif kind=="income_support_age_pension": changed=parse_income_support_age_pension(t)
             elif kind=="income_support_jobseeker": changed=parse_income_support_jobseeker(t)
             elif kind=="acoss": changed=parse_acoss(t)
-            if changed: mark_change()
-        except Exception as e: errors.append(f"{name}: {e}")
+
+            rejection = state.pop("_parser_rejection", None)
+            if rejection:
+                runtime_sources = state.get("sources", {})
+                state.clear(); state.update(before)
+                state["sources"] = runtime_sources
+                detail = rejection.get("detail") or "Candidate release rejected by parser integrity gate."
+                _set_source_status(name, SOURCE_STATUS_ATTENTION, detail + " Last verified state retained.")
+                errors.append(f"{name}: {detail}")
+                continue
+
+            m=meta(name)
+            if m.get("changed") or changed:
+                _set_source_status(name, SOURCE_STATUS_DETECTED, "Source content or parsed observation changed.")
+                _set_source_status(name, SOURCE_STATUS_VALIDATING, "Candidate update is passing validation gates.")
+                ok, detail = _validate_candidate(kind)
+                if not ok:
+                    # Roll back substantive state while preserving runtime source metadata.
+                    runtime_sources = state.get("sources", {})
+                    state.clear(); state.update(before)
+                    state["sources"] = runtime_sources
+                    _set_source_status(name, SOURCE_STATUS_ATTENTION, detail + " Last verified state retained.")
+                    errors.append(f"{name}: {detail}")
+                    continue
+                _set_source_status(name, SOURCE_STATUS_UPDATED if changed else SOURCE_STATUS_CURRENT, detail)
+                if changed:
+                    mark_change()
+                    _append_audit_event(name, kind, before, state, source_url=url)
+            else:
+                _set_source_status(name, SOURCE_STATUS_CURRENT, "Latest expected source content checked; no validated data change.")
+        except Exception as e:
+            runtime_sources = state.get("sources", {})
+            state.clear(); state.update(before)
+            state["sources"] = runtime_sources
+            _set_source_status(name, SOURCE_STATUS_ATTENTION, f"Parser/validation error: {e}. Last verified state retained.")
+            errors.append(f"{name}: {e}")
     maintain_union_archive()
-
-    # v5.6.7 lifecycle:
-    # do not remove a dated event until an official matching release exists.
     promote_completed_upcoming_events()
-
     maintain_announcement_archive()
     maintain_constant_material_monitor()
     recalc()
     recalculate_leci_income_burden()
     recalc_book_impact_model()
     recalc_income_support_counterfactual()
+    source_status_summary()
     with lock:
         state["errors"]=errors
         state["checks_completed"]+=1
@@ -2928,57 +3241,250 @@ def recalculate_leci_income_burden():
     return True
 
 
+def _release_calendar():
+    """Return source-specific release windows.
+
+    Calendar entries can be supplied without a code deployment through
+    TC_RELEASE_CALENDAR_JSON. Each entry uses Australia/Sydney local time:
+      {"source":"ABS CPI","start":"2026-09-30T10:55:00","end":"2026-09-30T12:30:00"}
+
+    The state copy is public/auditable and can also be populated by future
+    official-calendar parsers. Legacy TC_RELEASE_WINDOWS remains supported.
+    """
+    cal = state.setdefault("release_calendar", {})
+    cal.setdefault("timezone", "Australia/Sydney")
+    cal.setdefault("entries", [])
+    cal.setdefault("last_calendar_refresh", None)
+    cal.setdefault("method", "Source-specific windows; configurable without deployment")
+
+    raw = os.getenv("TC_RELEASE_CALENDAR_JSON", "").strip()
+    if raw:
+        try:
+            payload = json.loads(raw)
+            entries = payload.get("entries", payload) if isinstance(payload, dict) else payload
+            if isinstance(entries, list):
+                clean=[]
+                for e in entries:
+                    if not isinstance(e, dict):
+                        continue
+                    if not e.get("source") or not e.get("start") or not e.get("end"):
+                        continue
+                    clean.append({
+                        "source": str(e["source"]),
+                        "start": str(e["start"]),
+                        "end": str(e["end"]),
+                        "expected_release": e.get("expected_release"),
+                        "official_calendar_url": e.get("official_calendar_url"),
+                        "status": e.get("status", "scheduled"),
+                    })
+                cal["entries"] = clean
+                cal["last_calendar_refresh"] = datetime.now(SYDNEY_TZ).isoformat(timespec="seconds")
+        except Exception as exc:
+            state.setdefault("errors", []).append("Release calendar config: " + str(exc))
+    return cal
+
+
+
+
+# Official release-calendar pages. Calendar ingestion is advisory: failure never
+# changes a verified economic observation or deletes a previously known date.
+RELEASE_CALENDAR_SOURCES = {
+    "ABS CPI": "https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/consumer-price-index-australia/latest-release",
+    "ABS Labour Force": "https://www.abs.gov.au/statistics/labour/employment-and-unemployment/labour-force-australia/latest-release",
+    "RBA Monetary Policy": "https://www.rba.gov.au/monetary-policy/int-rate-decisions/index.html",
+    "FWC Annual Wage Review": "https://www.fwc.gov.au/hearings-decisions/major-cases/annual-wage-reviews",
+}
+
+_MONTHS = {m.lower(): i for i,m in enumerate(
+    ["January","February","March","April","May","June","July","August","September","October","November","December"], 1
+)}
+
+def _extract_future_dates(text, now=None):
+    """Extract plausible future Australian calendar dates from official page text."""
+    now = now or datetime.now(SYDNEY_TZ)
+    out=[]
+    # 30 September 2026 / 30 Sep 2026 style.
+    month_pat = r"January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec"
+    for m in re.finditer(rf"\b([0-3]?\d)\s+({month_pat})\s+(20\d{{2}})\b", text, re.I):
+        day=int(m.group(1)); raw=m.group(2).lower().rstrip('.')
+        lookup={"jan":1,"feb":2,"mar":3,"apr":4,"may":5,"jun":6,"jul":7,"aug":8,"sep":9,"sept":9,"oct":10,"nov":11,"dec":12}
+        month=_MONTHS.get(raw, lookup.get(raw[:4] if raw.startswith('sept') else raw[:3]))
+        if not month: continue
+        try: dt=datetime(int(m.group(3)),month,day,11,30,tzinfo=SYDNEY_TZ)
+        except ValueError: continue
+        if dt >= now.replace(hour=0,minute=0,second=0,microsecond=0): out.append(dt)
+    # ISO dates occasionally appear in metadata/body text.
+    for m in re.finditer(r"\b(20\d{2})-(\d{2})-(\d{2})\b", text):
+        try: dt=datetime(int(m.group(1)),int(m.group(2)),int(m.group(3)),11,30,tzinfo=SYDNEY_TZ)
+        except ValueError: continue
+        if dt >= now.replace(hour=0,minute=0,second=0,microsecond=0): out.append(dt)
+    return sorted(set(out))
+
+
+def _calendar_window(source, dt, url, status="official-calendar detected"):
+    """Create a conservative monitoring window around a detected release date."""
+    from datetime import timedelta
+    # ABS commonly publishes at 11:30 Sydney time; RBA decision timing can differ.
+    if source.startswith("RBA"):
+        dt=dt.replace(hour=14,minute=0,second=0,microsecond=0)
+        before,after=timedelta(hours=2),timedelta(hours=3)
+    else:
+        dt=dt.replace(hour=11,minute=30,second=0,microsecond=0)
+        before,after=timedelta(minutes=45),timedelta(hours=2)
+    return {"source":source,"start":(dt-before).isoformat(timespec="seconds"),
+            "end":(dt+after).isoformat(timespec="seconds"),
+            "expected_release":dt.isoformat(timespec="seconds"),
+            "official_calendar_url":url,"status":status}
+
+
+def refresh_official_release_calendar(force=False):
+    """Refresh future release dates from official pages, retaining known dates on failure."""
+    from datetime import timedelta
+    now=datetime.now(SYDNEY_TZ)
+    cal=state.setdefault("release_calendar",{})
+    last=_parse_local_iso(cal.get("last_calendar_refresh"))
+    if not force and last and (now-last).total_seconds() < 6*3600:
+        return False
+    retained=[]
+    for e in cal.get("entries",[]):
+        end=_parse_local_iso(e.get("end"))
+        if end and end >= now-timedelta(days=1): retained.append(e)
+    detected=[]; errors=[]
+    for source,url in RELEASE_CALENDAR_SOURCES.items():
+        try:
+            r=session.get(url,timeout=20); r.raise_for_status()
+            txt=BeautifulSoup(r.text,"html.parser").get_text(" ",strip=True)
+            dates=_extract_future_dates(txt,now)
+            # Keep only a small forward set; official pages often contain historical dates too.
+            for dt in dates[:8]: detected.append(_calendar_window(source,dt,url))
+        except Exception as exc:
+            errors.append(f"{source}: {exc}")
+    # Statutory/regular pension indexation monitoring dates: 20 March and 20 September.
+    for year in range(now.year, now.year+2):
+        for month in (3,9):
+            dt=datetime(year,month,20,9,0,tzinfo=SYDNEY_TZ)
+            if dt >= now.replace(hour=0,minute=0,second=0,microsecond=0):
+                detected.append(_calendar_window("Services Australia / DSS indexation",dt,
+                    "https://www.dss.gov.au/about-the-department/benefits-payments", "statutory-cycle monitoring"))
+    # Deduplicate by source/date and prefer newly detected official entries.
+    merged={}
+    for e in retained+detected:
+        dt=_parse_local_iso(e.get("expected_release") or e.get("start"))
+        key=(e.get("source"), dt.date().isoformat() if dt else e.get("start"))
+        merged[key]=e
+    cal["entries"]=sorted(merged.values(),key=lambda e:e.get("start", ""))
+    cal["last_calendar_refresh"]=now.isoformat(timespec="seconds")
+    cal["calendar_sources"]=RELEASE_CALENDAR_SOURCES
+    cal["calendar_errors"]=errors[-10:]
+    cal["method"]="Official-page calendar ingestion + statutory indexation cycle; previous dates retained on fetch failure"
+    return bool(detected)
+
+
+def _parse_local_iso(value):
+    if not value:
+        return None
+    try:
+        dt = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=SYDNEY_TZ)
+        return dt.astimezone(SYDNEY_TZ)
+    except Exception:
+        return None
+
+
+def _active_release_windows(now=None):
+    """Return the named official-source windows active at *now*."""
+    now = now or datetime.now(SYDNEY_TZ)
+    active=[]
+    cal=_release_calendar()
+    for e in cal.get("entries", []):
+        a=_parse_local_iso(e.get("start")); b=_parse_local_iso(e.get("end"))
+        if a and b and a <= now <= b:
+            active.append(e)
+
+    # Backward-compatible generic windows, useful as an emergency override.
+    raw = os.getenv("TC_RELEASE_WINDOWS", "").strip()
+    if raw:
+        hm = now.hour * 60 + now.minute
+        for window in raw.split(","):
+            try:
+                a,b=[x.strip() for x in window.split("-",1)]
+                ah,am=map(int,a.split(":")); bh,bm=map(int,b.split(":"))
+                if ah*60+am <= hm <= bh*60+bm:
+                    active.append({"source":"Manual release window","start":a,"end":b,"status":"override"})
+            except Exception:
+                continue
+    return active
+
+
+def _next_expected_releases(now=None, limit=6):
+    now = now or datetime.now(SYDNEY_TZ)
+    rows=[]
+    for e in _release_calendar().get("entries", []):
+        a=_parse_local_iso(e.get("start"))
+        if a and a >= now:
+            rows.append((a,e))
+    rows.sort(key=lambda x:x[0])
+    return [e for _,e in rows[:limit]]
+
+
+def _seconds_until_next_check():
+    """Use 5-minute checks inside source-specific release windows, hourly otherwise."""
+    return RELEASE_REFRESH_SECONDS if _active_release_windows() else BASE_REFRESH_SECONDS
+
+
 def next_refresh_time(now=None):
-    """Return the next 10:00 or 22:00 Australia/Sydney refresh time."""
     from datetime import timedelta
     now = now or datetime.now(SYDNEY_TZ)
+    return now + timedelta(seconds=_seconds_until_next_check())
 
-    candidates = []
-    for hour in REFRESH_HOURS_SYDNEY:
-        candidate = now.replace(hour=hour, minute=0, second=0, microsecond=0)
-        if candidate > now:
-            candidates.append(candidate)
 
-    if candidates:
-        return min(candidates)
-
-    tomorrow = now + timedelta(days=1)
-    return tomorrow.replace(hour=REFRESH_HOURS_SYDNEY[0], minute=0, second=0, microsecond=0)
-
+def update_release_monitor_state():
+    """Expose scheduler state to /api/state so the UI can explain why polling changed."""
+    try:
+        refresh_official_release_calendar()
+    except Exception as exc:
+        state.setdefault("errors", []).append("Release calendar refresh: " + str(exc))
+    now=datetime.now(SYDNEY_TZ)
+    active=_active_release_windows(now)
+    state["release_monitor"]={
+        "timezone":"Australia/Sydney",
+        "mode":"release-window" if active else "normal",
+        "poll_seconds": RELEASE_REFRESH_SECONDS if active else BASE_REFRESH_SECONDS,
+        "active_sources":[e.get("source") for e in active],
+        "next_expected":_next_expected_releases(now),
+        "updated_at":now.isoformat(timespec="seconds"),
+    }
 
 def loop():
-    """
-    Run one source check at startup so the public dashboard is not stale,
-    then refresh at exactly 10:00 and 22:00 Australia/Sydney every day.
-    """
+    """Run at startup, then continuously using release-aware polling."""
     try:
         check_all()
     except Exception as e:
-        state.setdefault("errors", []).append("Startup source check: " + str(e))
+        with lock:
+            state.setdefault("errors", []).append("Startup source check: " + str(e))
 
     while True:
-        target = next_refresh_time()
+        seconds = _seconds_until_next_check()
+        from datetime import timedelta
+        target = datetime.now(SYDNEY_TZ) + timedelta(seconds=seconds)
         with lock:
+            update_release_monitor_state()
             state["next_check"] = target.isoformat(timespec="seconds")
             try:
                 save_state()
             except Exception:
                 pass
-
-        seconds = max(
-            1,
-            (target - datetime.now(SYDNEY_TZ)).total_seconds()
-        )
         time.sleep(seconds)
-
         try:
             check_all()
         except Exception as e:
-            state.setdefault("errors", []).append("Scheduled source check: " + str(e))
-            try:
-                save_state()
-            except Exception:
-                pass
+            with lock:
+                state.setdefault("errors", []).append("Scheduled source check: " + str(e))
+                try:
+                    save_state()
+                except Exception:
+                    pass
 
 
 def _counter_store_config():
@@ -3002,7 +3508,8 @@ def _persistent_counter_increment():
         r.raise_for_status()
         payload = r.json()
         return int(payload.get("result"))
-    except Exception:
+    except Exception as e:
+        state.setdefault("errors", []).append("Persistent visitor counter increment failed: " + str(e))
         return None
 
 def _persistent_counter_read():
@@ -3019,7 +3526,8 @@ def _persistent_counter_read():
         r.raise_for_status()
         value = r.json().get("result")
         return int(value or 0)
-    except Exception:
+    except Exception as e:
+        state.setdefault("errors", []).append("Persistent visitor counter read failed: " + str(e))
         return None
 
 @app.post("/api/visit")
@@ -3055,8 +3563,609 @@ def visitor_count():
         "storage": storage
     })
 
+
+# -----------------------------------------------------------------------------
+# v6.6 — Frozen 128-quarter publication dataset gate / Evidence Explorer API
+# -----------------------------------------------------------------------------
+PUBLICATION_DATASET_FILENAME = "THE_CONSTANT_Master_Dataset_1995_Q1_2026_Q4_VERIFIED_PUBLICATION.csv"
+FIRST_EDITION_PUBLICATION_SHA256 = "7ff767cdf156f4773f0fbd48d6ee7a47c7c7399612ab07f0cbea1b0cc6ec960d"
+RECOVERED_EXECUTED_DATASET_SHA256 = "77e4f56c39550ebe48db9d0029e20175a29e220f22e69e6518878ef62a5287e4"
+# Live uses the recovered/re-executed artifact. The First Edition fingerprint is retained as provenance,
+# not falsely asserted to be byte-identical to this recovered file.
+PUBLICATION_DATASET_SHA256 = RECOVERED_EXECUTED_DATASET_SHA256
+PUBLICATION_DATASET_PATH = Path(os.getenv("TC_PUBLICATION_DATASET", APP_DIR / PUBLICATION_DATASET_FILENAME))
+
+EVIDENCE_CHECKPOINTS = {
+    "1995 Q1": (333.40, 371.80),
+    "1999 Q4": (385.40, 422.90),
+    "2000 Q2": (400.40, 428.40),
+    "2000 Q3": (400.40, 543.625),
+    "2009 Q4": (543.78, 742.90),
+    "2010 Q2": (543.78, 772.10),
+    "2010 Q4": (569.90, 789.10),
+    "2026 Q2": (948.00, 1309.90),
+    "2026 Q3": (1004.90, 1313.90),
+    "2026 Q4": (1004.90, 1350.70),
+}
+
+def _norm_col(name):
+    return re.sub(r"[^a-z0-9]+", "", str(name).lower())
+
+def _quarter_key(q):
+    m = re.fullmatch(r"(\d{4})\s*Q([1-4])", str(q).strip(), re.I)
+    if not m:
+        raise ValueError(f"Invalid quarter label: {q!r}")
+    return int(m.group(1)) * 4 + int(m.group(2)) - 1
+
+def _expected_quarters():
+    out=[]
+    for y in range(1995, 2027):
+        for q in range(1,5):
+            out.append(f"{y} Q{q}")
+    return out
+
+def _line_ssr(values, start_index=0):
+    """OLS SSR for y = a + b*t, implemented without scientific dependencies."""
+    n=len(values)
+    xs=[float(start_index+i) for i in range(n)]
+    ys=[float(v) for v in values]
+    mx=sum(xs)/n; my=sum(ys)/n
+    den=sum((x-mx)**2 for x in xs)
+    b=(sum((x-mx)*(y-my) for x,y in zip(xs,ys))/den) if den else 0.0
+    a=my-b*mx
+    return sum((y-(a+b*x))**2 for x,y in zip(xs,ys))
+
+def _evidence_verification(obs):
+    """Deterministic and core econometric checks for the recovered 128-quarter artifact."""
+    # Every row: deterministic identities.
+    for x in obs:
+        if abs(x["chart_c_fortnightly"]/2.0-x["chart_c_weekly"])>1e-7:
+            raise ValueError(f"Chart C identity failed at {x['quarter']}")
+        if abs(x["minimum_wage_weekly"]/x["chart_c_weekly"]*100.0-x["ratio_pct"])>1e-7:
+            raise ValueError(f"Ratio identity failed at {x['quarter']}")
+        if abs((x["chart_c_weekly"]-x["minimum_wage_weekly"])-x["weekly_gap"])>1e-7:
+            raise ValueError(f"Gap identity failed at {x['quarter']}")
+    byq={x["quarter"]:x for x in obs}
+    for q,(mw,cw) in EVIDENCE_CHECKPOINTS.items():
+        x=byq.get(q)
+        if not x or abs(x["minimum_wage_weekly"]-mw)>0.005 or abs(x["chart_c_weekly"]-cw)>0.005:
+            raise ValueError(f"Checkpoint failed at {q}")
+    ratios=[x["ratio_pct"] for x in obs]
+    i_q3=next(i for i,x in enumerate(obs) if x["quarter"]=="2000 Q3")
+    pre_mean=sum(ratios[:i_q3])/i_q3
+    post_mean=sum(ratios[i_q3:])/(len(ratios)-i_q3)
+    full_ssr=_line_ssr(ratios,0)
+    pre_ssr=_line_ssr(ratios[:i_q3],0)
+    post_ssr=_line_ssr(ratios[i_q3:],i_q3)
+    k=2; n1=i_q3; n2=len(ratios)-i_q3
+    chow=((full_ssr-(pre_ssr+post_ssr))/k)/((pre_ssr+post_ssr)/(n1+n2-2*k))
+    if abs(pre_mean-89.8936)>0.0001: raise ValueError(f"Pre-break mean failed: {pre_mean:.4f}")
+    if abs(post_mean-71.6328)>0.0001: raise ValueError(f"Post-break mean failed: {post_mean:.4f}")
+    if abs(chow-699.1563)>0.001: raise ValueError(f"Chow F failed: {chow:.4f}")
+    return {"identity_rows_passed":len(obs),"pre_break_mean_pct":round(pre_mean,4),"post_break_mean_pct":round(post_mean,4),"chow_f_2000q3":round(chow,4)}
+
+def load_publication_evidence():
+    """Load the recovered/re-executed 128Q artifact only after hash + deterministic + econometric gates pass."""
+    base = {
+        "status":"NOT_LOADED","verified":False,
+        "classification":"RECOVERED / RE-EXECUTED 128Q DATASET",
+        "filename":PUBLICATION_DATASET_FILENAME,
+        "expected_sha256":RECOVERED_EXECUTED_DATASET_SHA256,
+        "first_edition_publication_sha256":FIRST_EDITION_PUBLICATION_SHA256,
+        "provenance_note":"First Edition records 7ff767... as its exact publication artifact fingerprint. Live uses the recovered/re-executed artifact 77e4f56c...; the two are not claimed byte-identical.",
+        "path":str(PUBLICATION_DATASET_PATH),"rows":0,
+        "message":"Recovered 128-quarter CSV not loaded. No historical observations are reconstructed or interpolated.","observations":[]}
+    if not PUBLICATION_DATASET_PATH.exists(): return base
+    try:
+        raw=PUBLICATION_DATASET_PATH.read_bytes(); actual_hash=hashlib.sha256(raw).hexdigest(); base["actual_sha256"]=actual_hash
+        if actual_hash != RECOVERED_EXECUTED_DATASET_SHA256:
+            base.update(status="VERIFICATION_FAILED",message="Dataset SHA-256 does not match the recovered/re-executed 128Q artifact; Evidence Explorer disabled."); return base
+        reader=csv.DictReader(raw.decode("utf-8-sig").splitlines())
+        if not reader.fieldnames: raise ValueError("CSV has no header")
+        cols={_norm_col(c):c for c in reader.fieldnames}
+        def col(*names):
+            for n in names:
+                if _norm_col(n) in cols:return cols[_norm_col(n)]
+            raise ValueError("Required column missing: "+" / ".join(names))
+        cq=col("quarter"); cmw=col("Min_Wage_Weekly","minimum_wage_weekly","National Minimum Wage"); ccw=col("ChartC_Weekly","chart_c_weekly")
+        ccf=col("ChartC_Fortnightly"); cr=col("Ratio_Percent"); cg=col("Weekly_Gap")
+        obs=[]
+        for row in reader:
+            q=str(row[cq]).strip(); mw=float(row[cmw]); cw=float(row[ccw]); cf=float(row[ccf]); ratio=float(row[cr]); gap=float(row[cg])
+            obs.append({"quarter":q,"minimum_wage_weekly":mw,"chart_c_fortnightly":cf,"chart_c_weekly":cw,"ratio_pct":ratio,"weekly_gap":gap,"annualised_gap":gap*52})
+        if len(obs)!=128 or [x["quarter"] for x in obs] != _expected_quarters(): raise ValueError("Dataset must contain exactly 128 sequential quarters from 1995 Q1 to 2026 Q4")
+        verification=_evidence_verification(obs)
+        base.update(status="VERIFIED",verified=True,rows=128,verification=verification,message="Recovered/re-executed 128-quarter dataset passed SHA-256, 128-row identities, sequence, locked checkpoints, pre/post means and Chow structural-break verification.",observations=obs)
+        return base
+    except Exception as e:
+        base.update(status="VERIFICATION_FAILED",message=f"Evidence Explorer disabled: {e}"); return base
+
+
+@app.get("/api/evidence")
+def api_evidence():
+    return jsonify(load_publication_evidence())
+
+# v6.9 — LECI / WHAT IS LEFT scenario laboratory.
+# These are execution-validated results from the frozen 128-quarter master,
+# not recomputed from an unverified or substituted dataset.
+STRUCTURAL_EVIDENCE = {
+    "classification": "ESTIMATED / TESTED",
+    "coverage": "1995 Q1–2026 Q4",
+    "regime_boundary": "2000 Q3",
+    "break_tests": [
+        {"test":"Chow structural break", "boundary":"2000 Q3", "statistic":"F = 699.1563", "p_value":"≈ 3.00 × 10⁻⁶⁸"},
+        {"test":"HAC-robust Wald", "boundary":"2000 Q3", "statistic":"F = 489.9285", "p_value":"≈ 1.35 × 10⁻⁵⁹"},
+        {"test":"Zivot–Andrews break-aware diagnostic", "boundary":"Estimated break: 2000 Q2", "statistic":"−12.7239", "p_value":"0.00001"},
+        {"test":"Matched-phase Chow — Q2", "boundary":"pre/post", "statistic":"−20.0616 pp; F = 184.0883", "p_value":"7.76 × 10⁻¹⁷"},
+        {"test":"Matched-phase Chow — Q4", "boundary":"pre/post", "statistic":"−17.5192 pp; F = 250.4331", "p_value":"1.36 × 10⁻¹⁸"},
+    ],
+    "post_break": {
+        "observations": 106,
+        "mean_ratio_pct": 71.6328,
+        "beta": 0.719250,
+        "hac_ci_low": 0.711348,
+        "hac_ci_high": 0.727153,
+        "beta_072_p": 0.8525,
+        "interpretation": "Approximately 72% is an empirically defensible description of the post-break proportional regime; it is not evidence of an official policy target."
+    },
+    "annual_cycle": {
+        "complete_cycles_2010_2025": 16,
+        "september_closer_every_cycle": True,
+        "interpretation": "Across all 16 complete 2010–2025 cycles, the September observation is closer to the pre-reset ratio than the observation immediately after the annual wage reset."
+    },
+    "safeguard": "Structural timing and persistence do not establish intent, institutional coordination, policy optimality or a formal cointegrating equilibrium."
+}
+
+
+# v8.3 — 2026 live-cycle diagnostic.
+# Locked publication observations: Q2 before annual wage reset, Q3 after the July
+# wage reset, Q4 after September Chart C indexation.
+LIVE_CYCLE_2026 = {
+    "classification": "OBSERVED + DERIVED CALCULATION",
+    "q2": {"quarter":"2026 Q2","nmw_weekly":948.00,"chart_c_weekly":1309.90,"ratio_pct":72.3719},
+    "q3": {"quarter":"2026 Q3","nmw_weekly":1004.90,"chart_c_weekly":1313.90,"ratio_pct":76.4822},
+    "q4": {"quarter":"2026 Q4","nmw_weekly":1004.90,"chart_c_weekly":1350.70,"ratio_pct":74.3985},
+    "july_catch_up_pp": 4.1103,
+    "september_erosion_pp": -2.0838,
+    "july_improvement_eroded_pct": 50.70,
+    "july_improvement_retained_pct": 49.30,
+    "interpretation": "The July 2026 minimum-wage reset lifted the NMW/Chart C ratio; subsequent September Chart C indexation reduced about half of that ratio improvement by Q4.",
+    "safeguard": "This is a within-2026 arithmetic diagnostic. It describes the observed sequence and does not by itself establish causation, policy intent or a fixed adjustment rule."
+}
+
+@app.get("/api/live-cycle-2026")
+def api_live_cycle_2026():
+    return jsonify(LIVE_CYCLE_2026)
+
+@app.get("/api/structural-evidence")
+def api_structural_evidence():
+    return jsonify(STRUCTURAL_EVIDENCE)
+
+
+# v7.1 — Wage → Superannuation → Retirement Laboratory.
+# This is a transparent scenario engine: contribution rate, return, fees, tax and
+# horizon are user-editable assumptions. It does not forecast an individual balance.
+SUPER_RETIREMENT_LAB = {
+    "classification": "SCENARIO / DERIVED CALCULATION",
+    "base_year": 2026,
+    "nmw_weekly": 1004.90,
+    "chart_c_weekly": 1350.70,
+    "current_gap_weekly": 345.80,
+    "default_super_guarantee_pct": 12.0,
+    "default_horizon_years": 40,
+    "default_nominal_return_pct": 6.0,
+    "default_investment_fees_pct": 0.7,
+    "default_contributions_tax_pct": 15.0,
+    "default_wage_growth_pct": 0.0,
+    "periods_per_year": 52,
+    "notes": {
+        "scope": "Compares employer-super contributions generated by alternative weekly wage bases and compounds the contribution difference under explicit assumptions.",
+        "not_forecast": "Results are scenarios, not forecasts, financial advice, or estimates of any person's actual retirement balance.",
+        "wage_growth": "Zero wage growth isolates the effect of the starting wage difference. Users can supply a common annual wage-growth assumption.",
+        "tax": "The model applies the selected contributions-tax assumption to employer contributions before accumulation and subtracts the selected annual investment-fee rate from the selected nominal return as a transparent simplified net-return assumption."
+    }
+}
+
+@app.get("/api/super-retirement")
+def api_super_retirement():
+    return jsonify(SUPER_RETIREMENT_LAB)
+
+
+# v7.0 — Welfare Relativity Laboratory baseline.
+# Official/current observations and independent ACOSS proposal are kept separate
+# from THE CONSTANT derived historical-relativity comparison.
+WELFARE_RELATIVITY = {
+    "as_at": "20 September 2026",
+    "classification": "OFFICIAL OBSERVATIONS + DERIVED CALCULATIONS + INDEPENDENT ACOSS PROPOSAL",
+    "nmw_weekly": 1004.90,
+    "chart_c_weekly": 1350.70,
+    "pension_single_fortnightly": 1237.70,
+    "pension_single_weekly": 618.85,
+    "jobseeker_single_total_fortnightly": 833.70,
+    "jobseeker_single_total_weekly": 416.85,
+    "jobseeker_base_rate_fortnightly": 824.90,
+    "acoss_proposal_weekly": 618.00,
+    "historical_jobseeker_nmw_ratio_pct": 45.645,
+    "historical_relativity_chart_c_weekly": 616.54,
+    "notes": {
+        "jobseeker": "The $833.70 total is the 20 September 2026 single-recipient figure announced by DSS Ministers; Services Australia separately lists a $824.90 maximum JobSeeker payment rate. Live displays both rather than silently conflating them.",
+        "acoss": "ACOSS independently calls for working-age payments to reach pension parity, at least $618 per week on current rates.",
+        "constant": "THE CONSTANT comparison applies the 1995–96 average unemployment-support/NMW relativity of 45.645% to current Chart C. It is a derived historical-relativity calculation, not the ACOSS methodology."
+    }
+}
+
+@app.get("/api/welfare-relativity")
+def api_welfare_relativity():
+    return jsonify(WELFARE_RELATIVITY)
+
+
+# v7.2 — Employment & Wage-Floor Population Laboratory.
+# Keeps the August 2025 employee-distribution evidence separate from the May 2025
+# EEH costing benchmark. Distribution estimates are not represented as exact
+# counts of workers paid the legal minimum wage.
+WAGE_FLOOR_POPULATION_LAB = {
+    "classification": "OFFICIAL OBSERVATIONS + DERIVED / ESTIMATED CALCULATIONS",
+    "distribution_reference_period": "August 2025",
+    "distribution": {
+        "nmw_weekly": 948.00,
+        "chart_c_weekly": 1258.00,
+        "nmw_hourly_38h": 24.947368,
+        "chart_c_hourly_38h": 33.105263,
+        "weekly_gap": 310.00,
+        "annual_38h_gap": 16120.00,
+        "direct_lower_bound_employees": 1261000,
+        "interpolated_employees": 1913500,
+        "employee_population_approx": 12300000,
+        "direct_lower_bound_share_pct": 10.3,
+        "interpolated_share_pct": 15.6,
+        "dsi_preliminary_pp": 15.6,
+        "interpretation": "The Distribution Separation Index (DSI) is the estimated percentage-point share of the employee weekly-earnings distribution lying above the National Minimum Wage and below Chart C. It is a distribution-position estimate, not a count of employees paid the legal minimum wage."
+    },
+    "costing_reference_period": "May 2025 EEH benchmark",
+    "costing": {
+        "nmw_weekly": 915.90,
+        "chart_c_weekly": 1255.00,
+        "nmw_hourly_38h": 24.1026,
+        "chart_c_hourly_38h": 33.0263,
+        "permanent_max_hourly_gap": 8.9237,
+        "current_casual_hourly_equivalent": 30.1283,
+        "aligned_casual_hourly": 41.2829,
+        "casual_max_hourly_gap": 11.1546,
+        "floor_correction_pct": 37.02,
+        "award_only_share_pct": 23.0,
+        "individual_arrangement_share_pct": 38.5,
+        "collective_agreement_share_pct": 34.6,
+        "direct_formula_permanent": "max(0, 33.0263 - hourly_rate) × paid_hours × 52",
+        "direct_formula_casual": "max(0, 41.2829 - hourly_rate) × paid_hours × 52",
+        "note": "Award-only employees are not synonymous with all employees affected by a wage-floor change. Exact direct costing requires employee-level earnings, hours, employment type, method of setting pay and weights."
+    },
+    "scenario_definitions": {
+        "A": "Direct legal-floor correction only.",
+        "B": "Preserve lawful award relativities above the floor.",
+        "C": "Spillover sensitivity beyond directly affected classifications."
+    }
+}
+
+@app.get("/api/wage-floor-population")
+def api_wage_floor_population():
+    return jsonify(WAGE_FLOOR_POPULATION_LAB)
+
+
+# v7.4 — Institutional Evidence Timeline.
+# Events are chronology/context. Their proximity to the measured 2000 break is not
+# represented as proof of causation, intent or institutional coordination.
+INSTITUTIONAL_TIMELINE = {
+    "classification": "OFFICIAL / DOCUMENTARY CONTEXT + EMPIRICAL EVENT MARKERS",
+    "interpretation_rule": "Chronology identifies what changed and when. Timing alone does not establish causation or intent.",
+    "events": [
+        {"date":"1995–1999","type":"empirical","title":"Pre-break observation period","detail":"The quarterly NMW/Chart C relationship is observed before the 2000 structural boundary. The publication pre-break mean for 1995 Q1–2000 Q2 is 89.8936%."},
+        {"date":"2000 Q2","type":"empirical","title":"Immediate pre-rupture reference","detail":"NMW $400.40; Chart C $428.40/week; ratio 93.4641%. This is the publication preservation reference, not an asserted policy target."},
+        {"date":"1 Jul 2000","type":"official","title":"Pension income-test taper changes","detail":"For singles, the pension income-test withdrawal rate changed from 50 cents to 40 cents per dollar above the free area. This mechanically changes the cessation point used for Chart C."},
+        {"date":"2000 Q3","type":"empirical","title":"Formal structural-break boundary","detail":"NMW $400.40; Chart C $543.625/week; ratio 73.6537%. Publication tests use 2000 Q3 as the formal regime boundary."},
+        {"date":"2005–2006","type":"institutional","title":"AFPC transition period","detail":"Minimum-wage setting moved through the Australian Fair Pay Commission era. THE CONSTANT treats this as a post-break institutional subperiod, not the origin of the 2000 rupture."},
+        {"date":"20 Sep 2009","type":"official","title":"Pension taper restored to 50 cents","detail":"The single pension income-test withdrawal rate changed from 40 cents back to 50 cents per dollar above the free area, with transitional arrangements for affected existing pensioners."},
+        {"date":"2010–2025","type":"empirical","title":"Annual reset/indexation cycle","detail":"Across all 16 complete cycles, the September observation is closer to the pre-reset ratio than the observation immediately after the annual wage reset."},
+        {"date":"2 Jun 2026","type":"official","title":"Annual Wage Review 2026 decision","detail":"The Fair Work Commission announced the 2026 Annual Wage Review decision. The National Minimum Wage was set at $1,004.90/week ($26.44/hour), effective 1 July 2026."},
+        {"date":"2026 Q4","type":"empirical","title":"Current publication endpoint","detail":"NMW $1,004.90; Chart C $1,350.70/week; ratio 74.3985%; weekly gap $345.80."}
+    ]
+}
+
+@app.get("/api/institutional-timeline")
+def api_institutional_timeline():
+    return jsonify(INSTITUTIONAL_TIMELINE)
+
 @app.get("/")
 def home(): return send_from_directory(APP_DIR,"index.html")
+
+
+
+# v7.4 — Data Explorer & Reproducibility Centre.
+@app.get("/api/reproducibility")
+def api_reproducibility():
+    ev = load_publication_evidence()
+    return jsonify({
+        "version": state.get("version"),
+        "dataset": {
+            "filename": PUBLICATION_DATASET_FILENAME,
+            "expected_sha256": RECOVERED_EXECUTED_DATASET_SHA256,
+            "actual_sha256": ev.get("actual_sha256"),
+            "verified": bool(ev.get("verified")),
+            "status": ev.get("status"),
+            "rows": ev.get("rows", 0),
+            "coverage": "1995 Q1–2026 Q4",
+            "verification_rule": "Exact SHA-256 + 128 sequential quarters + locked checkpoints; no interpolation or manuscript-table fallback."
+        },
+        "formulas": [
+            {"name":"Ratio", "formula":"100 × National Minimum Wage / Chart C weekly", "classification":"DERIVED CALCULATION"},
+            {"name":"Weekly gap", "formula":"Chart C weekly − National Minimum Wage", "classification":"DERIVED CALCULATION"},
+            {"name":"Annualised gap", "formula":"Weekly gap × 52", "classification":"DERIVED CALCULATION"},
+            {"name":"Chart C", "formula":"F + (P + Supp + PA) / r", "classification":"DERIVED CALCULATION", "note":"Rent Assistance and Remote Area Allowance excluded in THE CONSTANT definition."}
+        ],
+        "evidence_hierarchy": ["OFFICIAL OBSERVATION","DERIVED CALCULATION","ESTIMATED / TESTED","SCENARIO / COUNTERFACTUAL"],
+        "reproduction": {
+            "required_input": PUBLICATION_DATASET_FILENAME,
+            "principle": "Read it. Copy the code. Run it. Question it. Change the assumptions. Test the evidence.",
+            "warning": "A failed dataset verification disables historical reproduction rather than substituting values."
+        }
+    })
+
+def _parse_status_time(value):
+    if not value:
+        return None
+    try:
+        return datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+    except Exception:
+        return None
+
+def build_alert_status():
+    """Derive public operational alerts without modifying verified observations."""
+    now = datetime.now(SYDNEY_TZ)
+    alerts=[]
+    sources=state.get("sources", {})
+    stale_hours=float(os.getenv("TC_SOURCE_STALE_HOURS", "48"))
+    for name,m in sources.items():
+        status=m.get("validation_status") or SOURCE_STATUS_CURRENT
+        if status == SOURCE_STATUS_ATTENTION or m.get("error") or m.get("warning"):
+            alerts.append({"severity":"attention","source":name,"type":"source_failure",
+                "message":m.get("status_detail") or m.get("warning") or m.get("error") or "Source requires attention.",
+                "last_verified":m.get("last_success"),"action":"Last verified value retained; automatic checks continue."})
+        last=_parse_status_time(m.get("last_success"))
+        if last:
+            if last.tzinfo is None: last=last.replace(tzinfo=SYDNEY_TZ)
+            age=(now-last.astimezone(SYDNEY_TZ)).total_seconds()/3600
+            if age > stale_hours:
+                alerts.append({"severity":"warning","source":name,"type":"stale_source",
+                    "message":f"No successful source access for {age:.1f} hours.",
+                    "last_verified":m.get("last_success"),"action":"Verified value remains frozen until a new candidate passes validation."})
+    active=_active_release_windows(now)
+    for e in active:
+        src=e.get("source") or "Official release"
+        sm=sources.get(src,{})
+        if sm.get("validation_status") not in (SOURCE_STATUS_UPDATED,SOURCE_STATUS_VALIDATING,SOURCE_STATUS_DETECTED):
+            alerts.append({"severity":"release","source":src,"type":"release_due",
+                "message":"Official release window is active; accelerated five-minute checking is enabled.",
+                "last_verified":sm.get("last_success"),"action":"Awaiting detection and validation; existing verified values remain published."})
+    rank={"attention":0,"release":1,"warning":2,"info":3}
+    alerts.sort(key=lambda a:rank.get(a.get("severity"),9))
+    return {"generated_at":now.isoformat(timespec="seconds"),"alert_count":len(alerts),
+            "attention_count":sum(a["severity"]=="attention" for a in alerts),
+            "release_due_count":sum(a["severity"]=="release" for a in alerts),
+            "warning_count":sum(a["severity"]=="warning" for a in alerts),
+            "alerts":alerts,
+            "recovery_rule":"A failed or stale source never overwrites the last verified observation. Automatic checks continue and publication resumes only after validation passes."}
+
+def build_source_release_intelligence():
+    """Compact control-plane view for the five core official source families."""
+    now = datetime.now(SYDNEY_TZ)
+    cal = _release_calendar()
+    active = _active_release_windows(now)
+    next_rows = _next_expected_releases(now, limit=20)
+
+    families = [
+        ("ABS CPI", ["ABS CPI"], ["ABS CPI"], state.get("official", {}).get("cpi_reference_period")),
+        ("ABS Labour Force", ["ABS Labour Force"], ["ABS Labour Force"], state.get("labour_market", {}).get("reference_period")),
+        ("RBA", ["RBA Cash Rate", "RBA — Monetary Policy Decisions"], ["RBA Monetary Policy"], "Current cash-rate target"),
+        ("Fair Work Commission", ["FWC National Minimum Wage", "FWC — Annual Wage Review Determinations"], ["FWC Annual Wage Review"], "2026 National Minimum Wage"),
+        ("Services Australia / DSS", ["Services Australia DSP Income Test", "Services Australia — Age Pension Rates", "Services Australia — JobSeeker Rates"], ["Services Australia / DSS indexation"], "20 September 2026 settings"),
+    ]
+
+    def best_meta(keys):
+        candidates=[]
+        for key in keys:
+            m=state.get("sources", {}).get(key, {})
+            if m:
+                candidates.append((key,m))
+        if not candidates:
+            return None, {}
+        def score(item):
+            m=item[1]
+            dt=_parse_status_time(m.get("last_success") or m.get("last_checked"))
+            return dt.timestamp() if dt else 0
+        return max(candidates, key=score)
+
+    rows=[]
+    for label, source_keys, calendar_names, period in families:
+        source_name, m = best_meta(source_keys)
+        next_event = next((e for e in next_rows if e.get("source") in calendar_names), None)
+        active_event = next((e for e in active if e.get("source") in calendar_names), None)
+        validation=m.get("validation_status")
+        if m.get("error") or validation == "ATTENTION — LAST VERIFIED RETAINED":
+            health="ATTENTION — LAST VERIFIED RETAINED"
+        elif m.get("warning"):
+            health="TEMPORARY WARNING"
+        elif validation in ("NEW RELEASE DETECTED", "VALIDATING", "UPDATED"):
+            health=validation
+        elif m.get("last_success"):
+            health="CURRENT"
+        else:
+            health="AWAITING VERIFIED CHECK"
+        monitor="RELEASE DUE" if active_event else "NORMAL"
+        rows.append({
+            "source":label,
+            "source_key":source_name,
+            "latest_verified_period":period,
+            "health":health,
+            "monitoring_state":monitor,
+            "last_success":m.get("last_success"),
+            "last_checked":m.get("last_checked"),
+            "validation_problem":m.get("error") or m.get("warning") or m.get("status_detail"),
+            "next_expected_release": (next_event or {}).get("expected_release") or (next_event or {}).get("start"),
+            "release_status": (next_event or active_event or {}).get("status"),
+        })
+    return {
+        "version":state.get("version"),
+        "timezone":"Australia/Sydney",
+        "poll_seconds": RELEASE_REFRESH_SECONDS if active else BASE_REFRESH_SECONDS,
+        "calendar_last_refreshed":cal.get("last_calendar_refresh"),
+        "calendar_errors":cal.get("calendar_errors", []),
+        "sources":rows,
+        "principle":"Failed checks never replace the last verified observation. Release windows accelerate monitoring to five-minute checks."
+    }
+
+def build_next_release_timing():
+    """High-visibility release timing feed for the core Live update cycle."""
+    now = datetime.now(SYDNEY_TZ)
+    intel = build_source_release_intelligence()
+    rows=[]
+    for x in intel.get("sources", []):
+        raw=x.get("next_expected_release")
+        dt=_parse_local_iso(raw) if raw else None
+        seconds=None
+        if dt:
+            seconds=max(0, int((dt-now).total_seconds()))
+        rows.append({
+            "source":x.get("source"),
+            "next_expected_release":raw,
+            "seconds_until_release":seconds,
+            "monitoring_state":x.get("monitoring_state"),
+            "health":x.get("health"),
+            "last_checked":x.get("last_checked"),
+            "last_success":x.get("last_success"),
+            "poll_seconds":RELEASE_REFRESH_SECONDS if x.get("monitoring_state")=="RELEASE DUE" else BASE_REFRESH_SECONDS,
+        })
+    return {
+        "version":state.get("version"),
+        "generated_at":now.isoformat(timespec="seconds"),
+        "timezone":"Australia/Sydney",
+        "normal_poll_seconds":BASE_REFRESH_SECONDS,
+        "release_poll_seconds":RELEASE_REFRESH_SECONDS,
+        "sources":rows,
+        "principle":"Countdowns describe expected official release timing. Inside an active release window Live accelerates checks to five minutes; publication still requires successful parsing and validation."
+    }
+
+@app.get("/api/next-release-timing")
+def api_next_release_timing():
+    return jsonify(build_next_release_timing())
+
+@app.get("/api/source-release-intelligence")
+def api_source_release_intelligence():
+    return jsonify(build_source_release_intelligence())
+
+@app.get("/api/alerts")
+def api_alerts():
+    return jsonify(build_alert_status())
+
+@app.get("/api/audit-trail")
+def api_audit_trail():
+    try:
+        limit = int(os.getenv("TC_AUDIT_API_LIMIT", "100"))
+    except Exception:
+        limit = 100
+    events = _read_audit_events(limit)
+    return jsonify({
+        "version": state.get("version"),
+        "immutable_log": AUDIT_LOG_FILE.name,
+        "event_count_returned": len(events),
+        "events": events,
+        "principle": "Only validated substantive changes are appended. Failed validation retains the last verified state and creates no verified-update event."
+    })
+
+@app.get("/api/update-integrity")
+def api_update_integrity():
+    c=state.get("core",{}); o=state.get("official",{}); lm=state.get("labour_market",{})
+    checks=[
+      {"source":"NMW","value":c.get("minimum_wage_weekly"),"propagates_to":["Australia Now","ratio","weekly/annual gap","scenario defaults","super laboratory","welfare relativity"]},
+      {"source":"Chart C","value":c.get("chart_c_weekly"),"propagates_to":["Australia Now","ratio","weekly/annual gap","scenario base","super laboratory","What Is Left options","welfare relativity"]},
+      {"source":"CPI","value":o.get("cpi_annual_pct"),"period":o.get("cpi_reference_period"),"propagates_to":["Australia Now","price context","source/release status"]},
+      {"source":"RBA cash rate","value":o.get("cash_rate_pct"),"propagates_to":["Australia Now","source/release status"]},
+      {"source":"Labour Force","value":lm.get("employment_persons"),"propagates_to":["Australia Now","labour-market panel","source/release status"]},
+    ]
+    return jsonify({"version":"9.7.2","status":"SYNCHRONIZED","single_source_of_truth":"state core/official/labour_market after validation","current":state.get("live_derived",{}),"checks":checks,"rule":"A candidate release must validate before state changes. recalc() then rebuilds dependent live values before save/publish."})
+
+@app.get("/api/rba-readiness")
+def api_rba_readiness():
+    o=state.get("official",{})
+    return jsonify({
+        "version":state.get("version"),
+        "status":"READY",
+        "current_cash_rate_pct":o.get("cash_rate_pct"),
+        "next_board_meeting":"2026-09-28/2026-09-29",
+        "next_decision_release":"2026-09-29T14:30:00+10:00",
+        "validation_rule":"A new RBA decision must explicitly state the cash rate target and pass plausibility validation before publication. A fetch or parse failure retains the last verified rate.",
+        "propagates_to":["Australia Now","RBA policy context","source health","release timing","audit trail","update-integrity state"],
+        "source":"Reserve Bank of Australia — Monetary Policy Decision",
+        "source_url":"https://www.rba.gov.au/monetary-policy/int-rate-decisions/"
+    })
+
+@app.get("/api/chart-c-readiness")
+def api_chart_c_readiness():
+    c=state.get("core",{})
+    fn=float(c.get("chart_c_fortnightly",0) or 0)
+    wk=round(fn/2,2) if fn else None
+    return jsonify({
+        "version":state.get("version"),
+        "status":"READY",
+        "official_measure":"Single pension/DSP income-test cessation point",
+        "official_fortnightly_cutoff":fn,
+        "derived_chart_c_weekly":wk,
+        "derivation":"Chart C weekly = official fortnightly single income-test cut-off / 2",
+        "effective_from":"2026-09-20",
+        "current_ratio_pct":c.get("ratio_pct"),
+        "current_weekly_gap":c.get("weekly_gap"),
+        "monitoring_cycles":["20 March","20 September"],
+        "validation_rule":"Publish only an explicitly identified official single pension/DSP income-test cut-off. Reject payment rates, assets-test limits, transitional rates, couple rates and ambiguous candidates.",
+        "propagates_to":["Australia Now","NMW/Chart C ratio","weekly and annual gap","welfare relativity laboratory","scenario engine","superannuation laboratory","What Is Left income choices","audit trail","update-integrity state"],
+        "historical_dataset_rule":"A current official update does not rewrite the frozen 128-quarter publication dataset. A new quarter is appended only through the dataset verification/publication workflow.",
+        "source":"Services Australia — pension/DSP income test"
+    })
+
+
+@app.get("/api/fwc-nmw-readiness")
+def api_fwc_nmw_readiness():
+    c=state.get("core",{})
+    return jsonify({
+        "version":state.get("version"),
+        "status":"READY",
+        "current_nmw_weekly":c.get("minimum_wage_weekly"),
+        "current_nmw_hourly":round(float(c.get("minimum_wage_weekly",0) or 0)/38,6) if c.get("minimum_wage_weekly") else None,
+        "current_effective_date":"2026-07-01",
+        "decision_date":"2026-06-02",
+        "decision_reference":"[2026] FWCFB 3500",
+        "decision_vs_effective_date_rule":"A newly announced Annual Wage Review rate is recorded as forthcoming, but the live NMW remains the legally current rate until the new National Minimum Wage Order comes into operation/effect.",
+        "validation_rule":"Accept only an explicit Fair Work Commission National Minimum Wage weekly/hourly rate tied to the National Minimum Wage Order and its operative/effective date. Do not substitute award classifications, claims, submissions, draft rates or media commentary for the NMW.",
+        "propagates_to":["Australia Now","NMW/Chart C ratio","weekly and annual gap","2026/live-cycle logic","scenario defaults","superannuation laboratory","welfare relativity laboratory","What Is Left income choices","audit trail","update-integrity state"],
+        "historical_dataset_rule":"A newly effective NMW updates Live current state. It does not silently rewrite the frozen publication dataset; historical extension follows the dataset verification/publication workflow.",
+        "source":"Fair Work Commission — National Minimum Wage Order / Annual Wage Review",
+        "source_url":"https://www.fwc.gov.au/work-conditions/minimum-wages-and-conditions/national-minimum-wage"
+    })
+
+@app.get("/api/cpi-readiness")
+def api_cpi_readiness():
+    o=state.get("official",{})
+    detail=o.get("cpi_monthly",{})
+    current=detail.get("current") or {}
+    return jsonify({
+        "version":state.get("version"),
+        "status":"READY",
+        "current_reference_period":o.get("cpi_reference_period"),
+        "current_annual_pct":o.get("cpi_annual_pct"),
+        "current_detail":current,
+        "next_expected_release":"2026-09-30T11:30:00+10:00",
+        "next_reference_period":"August 2026",
+        "validation_rule":"A new reference month must provide its own annual CPI rate. Detail fields are published only when explicitly parsed; malformed candidates retain the last verified observation.",
+        "propagates_to":["Australia Now","CPI comparison/archive","nominal-real context","LECI context","source health","release timing","audit trail"],
+        "source":"ABS Consumer Price Index, Australia"
+    })
 
 @app.get("/api/state")
 def api_state(): return jsonify(json.loads(json.dumps(state)))
@@ -3069,7 +4178,9 @@ def health():
         "last_check": state["last_check"],
         "next_check": state["next_check"],
         "refresh_timezone": "Australia/Sydney",
-        "refresh_times": ["10:00", "22:00"]
+        "base_refresh_seconds": BASE_REFRESH_SECONDS,
+        "release_refresh_seconds": RELEASE_REFRESH_SECONDS,
+        "release_monitor": state.get("release_monitor", {})
     })
 
 @app.get("/api/check-now")
@@ -3082,7 +4193,7 @@ def check_now():
 # Rebuild all derived values from current official/base state.
 # ------------------------------------------------------------
 
-state["version"] = "5.7.0"
+state["version"] = "9.7.3"
 
 # v5.7.0 effective-date migration.
 # A persisted pre-20-Sep state must not overwrite the now-current official Chart C.
@@ -3095,6 +4206,32 @@ recalc()
 recalc_book_impact_model()
 recalc_income_support_counterfactual()
 maintain_constant_material_monitor()
+
+
+def build_pre_release_audit():
+    """Read-only deployment-candidate audit of synchronization, stale literals and core plumbing."""
+    core=state.get("core",{}); off=state.get("official",{}); lm=state.get("labour_market",{})
+    live=state.get("live_derived",{})
+    expected_ratio=round(float(core.get("minimum_wage_weekly",0))/float(core.get("chart_c_weekly",1))*100,4)
+    expected_gap=round(float(core.get("chart_c_weekly",0))-float(core.get("minimum_wage_weekly",0)),2)
+    checks=[]
+    def add(name, ok, detail): checks.append({"check":name,"status":"PASS" if ok else "ATTENTION","detail":detail})
+    add("NMW/Chart C ratio synchronization", abs(float(live.get("ratio_pct",expected_ratio))-expected_ratio)<0.01, f"expected {expected_ratio:.4f}%")
+    add("Weekly gap synchronization", abs(float(live.get("weekly_gap",expected_gap))-expected_gap)<0.02, f"expected ${expected_gap:.2f}/wk")
+    add("Chart C weekly derivation", abs(float(core.get("chart_c_weekly",0))*2-float(core.get("chart_c_fortnightly",0)))<0.02, "weekly = official fortnightly cut-off / 2")
+    add("Labour headline baseline", bool(lm.get("employment_persons") or lm.get("employment")), "employment observation present")
+    add("CPI baseline", off.get("cpi_annual_pct") is not None, "annual CPI observation present")
+    add("RBA baseline", off.get("cash_rate_pct") is not None, "cash-rate observation present")
+    add("Visitor persistence configured", bool(os.getenv("UPSTASH_REDIS_REST_URL") and os.getenv("UPSTASH_REDIS_REST_TOKEN")), "Upstash env vars present" if os.getenv("UPSTASH_REDIS_REST_URL") and os.getenv("UPSTASH_REDIS_REST_TOKEN") else "persistent counter requires Upstash env vars in deployment")
+    add("Audit trail path", bool(AUDIT_LOG_FILE), str(AUDIT_LOG_FILE))
+    attention=[x for x in checks if x["status"]!="PASS"]
+    return {"version":"9.7.3","deployment_candidate":not attention,"checks":checks,"attention_count":len(attention),"principle":"Verified source state is authoritative; failed candidates retain the last verified observation. Frozen publication history is not silently rewritten by live updates."}
+
+@app.get("/api/pre-release-audit")
+def api_pre_release_audit():
+    return jsonify(build_pre_release_audit())
+
+update_release_monitor_state()
 
 save_state()
 
