@@ -557,6 +557,99 @@ html{scroll-behavior:smooth;scroll-padding-top:92px}
 @media(max-width:760px){html{scroll-padding-top:72px}.tc-journey-nav,.tc-depth-controls{max-width:100%;overflow-x:auto}.tc-grid,.metric-grid,.cards{grid-template-columns:1fr!important}.tc-v94-status{font-size:.76rem}table{display:block;overflow-x:auto;white-space:nowrap}button,input,select{min-height:44px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
+
+<style id="tc-v974-public-simplified">
+/* Public-facing simplification: keep technical machinery, reduce visual dominance. */
+.tc-howto{display:none!important}
+.tc-v94-status{display:none!important}
+#current-verified{display:none!important}
+#release-monitor-box{display:none!important}
+.tc-journey{position:relative!important;background:transparent!important;border:0!important;padding:0!important;margin:10px auto 14px!important;max-width:980px}
+.tc-journey-grid{gap:7px}
+.tc-journey a{padding:8px 10px!important;background:rgba(255,255,255,.025);border-color:rgba(255,255,255,.07)!important;font-size:12px}
+.tc-journey small{font-size:10px}
+.header{border-bottom:0!important;padding:32px 0 18px!important;justify-content:center!important;text-align:center!important;position:relative}
+.header .logo{font-size:clamp(42px,9vw,74px)!important;letter-spacing:.02em;line-height:.95}
+.header .badge{margin-top:14px!important;font-size:10px!important}
+.tc-header-right{position:absolute;right:0;top:24px;gap:10px!important}
+.clock{font-size:18px!important}.clocklabel{font-size:9px!important}
+.tc-live-visits{font-size:9px!important}.tc-live-visits strong{font-size:14px!important}
+#australia-now{border-color:rgba(0,200,255,.22);background:linear-gradient(180deg,rgba(0,200,255,.055),rgba(255,255,255,.025));padding:26px!important}
+#australia-now>.title{font-size:13px;letter-spacing:.14em;color:#7ee5ff}
+#australia-now>.sub{font-size:12px;line-height:1.55;max-width:820px}
+#australia-now .four:first-of-type .stat{padding:20px 10px;background:rgba(255,255,255,.035)}
+#australia-now .four:first-of-type .val{font-size:clamp(27px,5vw,40px)}
+#australia-now .four:nth-of-type(2){opacity:.82}
+#australia-now .four:nth-of-type(2) .val{font-size:19px}
+.tc-rupture-hero{padding:28px!important;background:linear-gradient(135deg,rgba(255,212,59,.055),rgba(255,107,107,.04));border-color:rgba(255,255,255,.11)}
+.tc-rupture-hero .tc-kicker{font-size:11px;letter-spacing:.18em;font-weight:900;color:#7ee5ff;margin-bottom:8px}
+.tc-rupture-hero h2{font-size:clamp(24px,4vw,38px);line-height:1.12;margin:0;max-width:980px}
+.tc-plain-note{color:rgba(255,255,255,.58);font-size:12px;line-height:1.6;margin:16px 0 0}
+.tc-ops-collapsed>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;list-style:none}
+.tc-ops-collapsed>summary::-webkit-details-marker{display:none}
+.tc-ops-collapsed>summary strong{font-size:13px;letter-spacing:.06em}
+.tc-ops-collapsed>summary span{font-size:10px;color:rgba(255,255,255,.4);font-weight:500}
+#source-release-control{padding:16px 20px!important;background:rgba(255,255,255,.02)}
+#evidence-explorer-card{border-color:rgba(0,200,255,.18);padding:26px!important}
+#evidence-explorer-card>.title{font-size:16px;color:#7ee5ff}
+#structural-evidence-card,#repro-centre-card,#alert-recovery-card,#audit-trail-card{scroll-margin-top:20px}
+@media(max-width:700px){
+ .wrap{padding:12px!important}
+ .header{padding:24px 0 16px!important;display:block!important}
+ .tc-header-right{position:static!important;justify-content:center!important;margin-top:13px}
+ .tc-journey-grid{grid-template-columns:repeat(3,1fr)!important}
+ .tc-journey a{font-size:10px!important;padding:7px 4px!important}
+ .tc-journey small{display:none!important}
+ #australia-now,#evidence-explorer-card,.tc-rupture-hero{padding:18px!important}
+ #australia-now .four:first-of-type{grid-template-columns:repeat(2,1fr)!important}
+ #australia-now .four:nth-of-type(2){display:none!important}
+ .tc-rupture-hero .three{grid-template-columns:1fr!important}
+}
+</style>
+
+<style id="tc-v975-readability">
+/* v9.7.5 — public readability pass: larger secondary text + stronger contrast */
+:root{--tc-muted:#c7d6e6;--tc-muted-strong:#dbe7f3;--tc-accent-soft:#a9efff;}
+body{font-size:16px;line-height:1.55;}
+.title{font-size:17px!important;color:var(--tc-muted-strong)!important;line-height:1.35;}
+.lab{font-size:12px!important;color:var(--tc-muted)!important;letter-spacing:.04em;line-height:1.35;}
+.sub{font-size:13px!important;color:var(--tc-muted)!important;line-height:1.55;}
+.clocklabel{font-size:12px!important;color:var(--tc-muted)!important;}
+.tc-live-visits{font-size:12px!important;color:var(--tc-muted)!important;}
+.tc-live-visits .counter-status{font-size:11px!important;color:var(--tc-muted)!important;}
+.badge{font-size:12px!important;color:#8ef2a6!important;}
+.source,.event,.upcoming-event{font-size:13px!important;line-height:1.55;}
+.claimtable{font-size:13px!important;}
+.claimtable th{font-size:11px!important;color:var(--tc-muted)!important;}
+.claimtag{font-size:11px!important;color:var(--tc-accent-soft)!important;}
+.footer{font-size:12px!important;color:var(--tc-muted)!important;line-height:1.55;}
+.tc-plain-note{font-size:14px!important;color:var(--tc-muted-strong)!important;line-height:1.65;}
+.tc-journey a{font-size:13px!important;}
+.tc-journey small{font-size:12px!important;opacity:.9!important;}
+.tc-ops-collapsed>summary span{font-size:12px!important;color:var(--tc-muted)!important;}
+.tc-depth-note,.tc-price-note{font-size:13px!important;color:var(--tc-muted)!important;opacity:1!important;}
+.tc-price-grid label,.whatleft-controls label,.scenario-controls label,#wage-floor-population-lab .wf-controls label,#super-retirement-lab .super-controls label{font-size:13px!important;color:var(--tc-muted-strong)!important;}
+.tc-src-muted,.tc-release-meta{font-size:12px!important;color:var(--tc-muted)!important;}
+.tc-release-name{font-size:13px!important;}
+#source-release-control .tc-src-cell{font-size:13px!important;}
+#source-release-control .tc-src-head{color:var(--tc-muted)!important;}
+#australia-now>.sub{font-size:14px!important;color:var(--tc-muted-strong)!important;}
+#australia-now>.title{font-size:15px!important;}
+#evidence-explorer-card>.title{font-size:18px!important;}
+@media(max-width:760px){
+  body{font-size:17px;}
+  .wrap{padding:14px;}
+  .card{padding:19px;}
+  .title{font-size:18px!important;}
+  .lab{font-size:13px!important;}
+  .sub{font-size:14px!important;}
+  .val{font-size:24px;}
+  .tc-journey a{font-size:13px!important;padding:10px 7px!important;}
+  .tc-journey small{font-size:12px!important;}
+  .clock{font-size:20px!important}.clocklabel{font-size:12px!important;}
+  .footer{font-size:13px!important;}
+}
+</style>
 </head>
 <body>
 <a id="tc-v94-skip" href="#australia-now">Skip to current evidence</a>
@@ -630,18 +723,29 @@ html{scroll-behavior:smooth;scroll-padding-top:92px}
   <div class="tc-howto" style="margin-top:12px"><strong>Freshness & evidence:</strong> <span id="an-freshness">—</span><br><span class="sub">Official observations remain visible at their last verified values if a source or parser fails. Derived ratio and gap values are recalculated from the verified NMW and Chart C inputs.</span></div>
 </section>
 
+<section class="card tc-rupture-hero" id="rupture-at-a-glance">
+  <div class="tc-kicker">THE LONG-RUN FINDING</div>
+  <h2>The relationship changed sharply in 2000 — and did not return to its earlier range.</h2>
+  <div class="three" style="margin-top:16px">
+    <div class="stat"><div class="lab">2000 Q2 · immediate pre-break</div><div class="val gold">93.4641%</div><div class="sub">NMW ÷ Chart C</div></div>
+    <div class="stat"><div class="lab">2000 Q3</div><div class="val red">73.6537%</div><div class="sub">first quarter after the structural boundary</div></div>
+    <div class="stat"><div class="lab">2026 Q4</div><div class="val cyan">74.3985%</div><div class="sub">latest publication endpoint</div></div>
+  </div>
+  <p class="tc-plain-note">The chart below contains the full 128-quarter publication record. The statistical tests sit underneath the evidence rather than in front of it.</p>
+</section>
+
 <style>
 #source-release-control .tc-src-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr 1.4fr;gap:1px;background:#d9e2ea;border:1px solid #d9e2ea;border-radius:8px;overflow:hidden;margin-top:12px}
 #source-release-control .tc-src-cell{background:var(--card,#fff);padding:9px 10px;font-size:12px;min-width:0}.tc-src-head{font-weight:700;color:#789;letter-spacing:.04em;text-transform:uppercase}.tc-src-name{font-weight:700}.tc-src-ok{color:#20a464}.tc-src-warn{color:#d58b00}.tc-src-err{color:#d14b4b}.tc-src-muted{color:#789;font-size:11px;margin-top:3px}@media(max-width:800px){#source-release-control .tc-src-grid{display:block}#source-release-control .tc-src-head{display:none}#source-release-control .tc-src-cell{border-bottom:1px solid #e3e9ee}#source-release-control .tc-src-cell[data-label]:before{content:attr(data-label) ': ';font-weight:700;color:#789}}
 </style>
-<section class="card" id="source-release-control">
-  <div class="title">SOURCE HEALTH + RELEASE INTELLIGENCE</div>
+<details class="card tc-ops-collapsed" id="source-release-control"><summary><strong>LIVE DATA & SOURCE STATUS</strong><span>Technical monitoring details</span></summary>
+  <div class="title" style="margin-top:14px">SOURCE HEALTH + RELEASE INTELLIGENCE</div>
   <div class="tc-explainer"><strong>Primary operational control panel.</strong> Detailed source diagnostics and full calendars remain available below in collapsed technical panels so unique evidence is preserved without repeating the same status on the main reading path.</div>
   <div class="tc-explainer"><strong>Five core official source families, one control panel.</strong> See the latest verified period, source health, next expected release and current monitoring state. Release windows accelerate checks to five minutes; a failed fetch or validation never overwrites the last verified observation.</div>
   <div id="src-release-summary" class="sub" style="margin-top:10px">Loading source intelligence…</div>
   <div id="src-release-grid" class="tc-src-grid"></div>
   <div id="src-release-note" class="sub" style="margin-top:10px"></div>
-</section>
+</details>
 
 <section class="card" id="current-verified">
     <div class="title">CURRENT VERIFIED — 20 SEPTEMBER 2026</div>
@@ -2467,7 +2571,7 @@ It provides the data needed to test it.
 </div>
 <p class="sub"><strong>Reading rule:</strong> a larger or newer number is not automatically stronger evidence. Check its evidence class, reference period, source and calculation before interpreting it.</p>
 </section>
-<footer class="footer">THE CONSTANT Live v9.7.3 · PRODUCTION LOCK · Viewer-local clock · Official sources monitored hourly by default, with five-minute release-window checks. Last verified observations are retained when validation fails.</footer>
+<footer class="footer">THE CONSTANT Live v9.7.5 · PUBLIC SIMPLIFIED · Viewer-local clock · Official sources monitored hourly by default, with five-minute release-window checks. Last verified observations are retained when validation fails.</footer>
 </div></div>
 <script>
 const money=v=>v==null?'—':'$'+Number(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -3875,6 +3979,23 @@ tcLoadAlerts(); setInterval(tcLoadAlerts,60000);
  }
  ['srLowWage','srHighWage'].forEach(id=>document.addEventListener('input',e=>{if(e.target&&e.target.id===id)e.target.dataset.userEdited='1';}));
  window.addEventListener('load',sync); setInterval(sync,60000);
+})();
+</script>
+
+<script id="tc-v974-reading-order">
+(function(){
+  function reorder(){
+    const rupture=document.getElementById('rupture-at-a-glance');
+    const evidence=document.getElementById('evidence-explorer-card');
+    const cycle=document.getElementById('live-cycle-2026-card');
+    const ops=document.getElementById('source-release-control');
+    if(!rupture) return;
+    let anchor=rupture;
+    [evidence,cycle,ops].forEach(function(el){
+      if(el){ anchor.insertAdjacentElement('afterend',el); anchor=el; }
+    });
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',reorder); else reorder();
 })();
 </script>
 </body></html>
