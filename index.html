@@ -664,6 +664,16 @@ body{font-size:16px;line-height:1.55;}
 #next-release-strip summary{color:#dbe7f3!important;}
 #next-release-strip[open] summary{margin-bottom:10px;}
 </style>
+
+<style id="tc-reader-flow-977">
+#technical-status-warnings>summary,#wl-adjust-assumptions>summary{cursor:pointer;font-weight:900;letter-spacing:.02em}
+#technical-status-warnings[open]>summary,#wl-adjust-assumptions[open]>summary{margin-bottom:12px}
+#technical-status-warnings #alert-recovery-card,#technical-status-warnings #audit-trail-card{margin:14px 0;background:rgba(4,18,37,.55)}
+#scenario-igr-lab{border-color:rgba(255,212,59,.25)}
+#scenario-igr-lab>.title{color:#ffd43b}
+#wl-adjust-assumptions .whatleft-controls{margin-top:14px}
+@media(max-width:600px){#technical-status-warnings #alert-summary,#technical-status-warnings #audit-summary{grid-template-columns:1fr 1fr}#scenario-igr-lab .three{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 <a id="tc-v94-skip" href="#australia-now">Skip to current evidence</a>
@@ -1462,6 +1472,63 @@ weekly Chart C, wage/Chart C ratio and weekly gap.
 <div id="live-cycle-2026-method" class="tc-explainer" style="margin-top:12px"></div>
 </section>
 
+<section class="card" id="scenario-igr-lab">
+<div class="title">INTERGENERATIONAL REPORT — WAGE TRANSMISSION QUESTION</div>
+<div class="tc-explainer"><strong>Why this sits in the main evidence flow.</strong> Treasury's Intergenerational Report framework examines long-run growth through population, participation and productivity. THE CONSTANT adds a separate question for readers to test: how completely does long-run economic growth transmit to the statutory wage floor and household living standards?</div>
+<div class="three" style="margin-top:14px">
+<div class="stat"><div class="lab">TREASURY FRAMEWORK</div><div class="val cyan" style="font-size:19px">3Ps</div><div class="sub">Population · Participation · Productivity</div></div>
+<div class="stat"><div class="lab">THE CONSTANT QUESTION</div><div class="val gold" style="font-size:19px">WAGE TRANSMISSION</div><div class="sub">Does growth reach the wage floor?</div></div>
+<div class="stat"><div class="lab">COMPARISON RULE</div><div class="val purple" style="font-size:19px">LIKE WITH LIKE</div><div class="sub">Separate nominal scenarios from real living-standard measures</div></div>
+</div>
+<div class="tc-explainer" style="margin-top:14px"><strong>Scenario / counterfactual — not a forecast of Fair Work Commission decisions.</strong> Test alternative wage-to-Chart-C relationships over 10, 20, 30 or 40 years. The relationship and growth assumptions remain visible, and the real/nominal safeguard remains explicit.</div>
+
+<div class="scenario-controls">
+<label>Relationship<select id="igrRatio"><option value="0.72">~72% empirical post-break reference</option><option value="0.743985" selected>74.3985% current 2026 Q4 observation</option><option value="0.934641">93.4641% 2000 Q2 preservation counterfactual</option><option value="1">100% Chart C alignment</option><option value="custom">Custom</option></select></label>
+<label id="igrCustomWrap" style="display:none">Custom %<input id="igrCustom" type="number" min="1" max="150" step="0.01" value="80"></label>
+<label>Horizon<select id="igrHorizon"><option>10</option><option>20</option><option>30</option><option selected>40</option></select></label>
+<label>Chart C annual growth %<input id="igrGrowth" type="number" min="-10" max="20" step="0.000001" value="2.585722"></label>
+<label>Price basis<select id="igrBasis"><option value="nominal" selected>Nominal dollars</option><option value="real">Real 2026 dollars</option></select></label>
+<label id="igrInflationWrap" style="display:none">Inflation / deflator %<input id="igrInflation" type="number" min="-5" max="20" step="0.1" value="2.5"></label>
+</div>
+
+<div class="three" style="margin-top:14px"><div class="stat"><div class="lab">Endpoint Chart C</div><div class="val gold" id="igrChartEnd">—</div><div class="sub" id="igrChartSub">—</div></div><div class="stat"><div class="lab">Endpoint Wage</div><div class="val cyan" id="igrWageEnd">—</div><div class="sub" id="igrRatioSub">—</div></div><div class="stat"><div class="lab">Endpoint Difference</div><div class="val red" id="igrGapEnd">—</div><div class="sub" id="igrGapAnnual">—</div></div></div>
+<div class="tc-scenario-chart-wrap"><svg id="igrScenarioChart" viewBox="0 0 1000 500" role="img" aria-label="Interactive Chart C and wage relationship scenario"></svg></div>
+<div class="tc-scenario-legend"><span class="gold">● Chart C</span> <span class="cyan">● selected wage relationship</span></div>
+<div class="sub" id="igrMethod"></div>
+<div class="sub" style="margin-top:8px"><strong>Evidence separation:</strong> ~72% is an empirical post-break reference; 74.3985% is the observed 2026 Q4 ratio; 93.4641% is the immediate pre-rupture preservation counterfactual; 100% is THE CONSTANT alignment scenario. None is presented as an official government target.</div>
+<div class="sub" style="margin-top:8px"><strong>IGR comparison safeguard:</strong> a nominal Chart C scenario and a real per-capita income projection are not directly comparable. Select <em>Real 2026 dollars</em> and supply an explicit deflator assumption before making a common-price-basis comparison.</div>
+</section>
+
+<section class="card" id="what-is-left-lab">
+<div class="title">LECI / WHAT IS LEFT?</div>
+<div class="tc-explainer"><strong>Public result first.</strong> This panel shows the household cash-budget result before the editing controls. The basket is THE CONSTANT modelling, not an ABS official price measure. Open <em>Adjust assumptions</em> only if you want to test another household case.</div>
+
+<div class="three"><div class="stat"><div class="lab">Essential Basket</div><div class="val gold" id="wlBasket">—</div><div class="sub">weekly cash assumptions</div></div><div class="stat"><div class="lab">Essential Burden</div><div class="val purple" id="wlBurden">—</div><div class="sub">basket ÷ gross income</div></div><div class="stat"><div class="lab">WHAT IS LEFT</div><div class="val cyan" id="wlLeft">—</div><div class="sub" id="wlLeftAnnual">—</div></div></div>
+<div style="overflow-x:auto"><table class="whatleft-table"><thead><tr><th>Component</th><th>$/week</th><th>% of income</th></tr></thead><tbody id="wlBody"></tbody></table></div>
+<div class="sub whatleft-note" id="wlHousingShare">—</div>
+<div class="sub whatleft-note"><strong>Stress-test example:</strong> select the 2036 Live scenario and set rent to $800/week to examine the previously discussed housing case. $800 is an assumption, not a rent forecast.</div>
+<div class="sub whatleft-note"><strong>Evidence separation:</strong> the income benchmark may be an official observation or scenario depending on selection; the cost basket is user-editable modelling. This panel does not label the basket as an ABS cost-of-living measure.</div>
+
+<details id="wl-adjust-assumptions" style="margin-top:18px"><summary><strong>Adjust assumptions</strong></summary>
+<div class="tc-explainer" style="margin-top:12px"><strong>Edit the household test.</strong> Change the income benchmark or any weekly cost below. Results update immediately and remain gross, before income tax and Medicare.</div>
+<div class="whatleft-controls">
+<label>Income benchmark<select id="wlIncome"><option value="1004.90">National Minimum Wage — $1,004.90</option><option value="1350.70">100% Chart C — $1,350.70</option><option value="1297.16">2036 Live 74.3985% scenario — $1,297.16</option><option value="custom">Custom weekly income</option></select></label>
+<label id="wlCustomWrap" style="display:none">Custom income $/wk<input id="wlCustomIncome" type="number" min="0" step="1" value="1004.90"></label>
+<label>Rent / housing $/wk<input id="wlRent" type="number" min="0" step="1" value="650"></label>
+<label>Electricity<input id="wlElectricity" type="number" min="0" step="1" value="46.15"></label>
+<label>Gas<input id="wlGas" type="number" min="0" step="1" value="17.31"></label>
+<label>Water / sewerage<input id="wlWater" type="number" min="0" step="1" value="17.31"></label>
+<label>Food<input id="wlFood" type="number" min="0" step="1" value="180"></label>
+<label>Transport<input id="wlTransport" type="number" min="0" step="1" value="100"></label>
+<label>Health / medicines<input id="wlHealth" type="number" min="0" step="1" value="30"></label>
+<label>Insurance<input id="wlInsurance" type="number" min="0" step="1" value="25"></label>
+<label>Household necessities<input id="wlHousehold" type="number" min="0" step="1" value="40"></label>
+<label>Phone / internet<input id="wlPhone" type="number" min="0" step="1" value="25"></label>
+<label>Clothing / personal care<input id="wlClothing" type="number" min="0" step="1" value="20"></label>
+</div>
+</details>
+</section>
+
 <section class="card" id="structural-evidence-card">
 <div class="title">STRUCTURAL EVIDENCE — WHAT THE 128 QUARTERS TEST</div>
 <div class="tc-explainer"><strong>Estimated / tested evidence.</strong> These results are kept separate from the raw quarterly observations. They test whether the relationship changed at the 2000 boundary and describe the lower post-break regime; they do not establish policy intent.</div>
@@ -1487,21 +1554,9 @@ weekly Chart C, wage/Chart C ratio and weekly gap.
 </section>
 
 
-<section class="card" id="alert-recovery-card">
-<div class="title">LIVE ALERTS & FAILURE RECOVERY</div>
-<div class="tc-explainer"><strong>Verified data is protected.</strong> This panel surfaces source failures, stale feeds and active release windows. A failed scrape, malformed release or validation failure cannot replace the last verified observation; automatic checking continues until a valid candidate is available.</div>
-<div id="alert-summary" class="four" style="margin-top:12px"><div class="sub">Loading operational alerts…</div></div>
-<div id="alert-events" style="margin-top:12px"></div>
-<details style="margin-top:12px"><summary><strong>Recovery rule</strong></summary><div id="alert-rule" class="sub" style="margin-top:10px;line-height:1.65">Detect → parse → validate. Only a validated candidate may publish. Failure → retain last verified → flag visibly → retry automatically.</div></details>
-</section>
 
-<section class="card" id="audit-trail-card">
-<div class="title">WHAT CHANGED? — VERSIONED AUDIT TRAIL</div>
-<div class="tc-explainer"><strong>Automatic does not mean invisible.</strong> Every validated substantive update is appended to a provenance log showing the source, old value, new value, detection/validation time and the calculations affected. Failed validation does not overwrite the last verified observation.</div>
-<div id="audit-summary" class="four" style="margin-top:12px"><div class="sub">Loading audit trail…</div></div>
-<div id="audit-events" style="margin-top:12px"></div>
-<details style="margin-top:12px"><summary><strong>How the audit trail works</strong></summary><div class="sub" style="margin-top:10px;line-height:1.65">Source → detect → parse → validate → append audit event → recalculate → publish. The log is append-only JSONL. Runtime health checks that do not change a verified value are not presented as data revisions.</div></details>
-</section>
+
+
 
 <details class="card" id="next-releases-card"><summary><strong>DETAILED RELEASE CALENDAR & METHOD</strong></summary>
 <div class="title">NEXT EXPECTED OFFICIAL RELEASES</div>
@@ -2060,52 +2115,10 @@ function render(){
 <div class="sub whatleft-note"><strong>Independent convergence:</strong> ACOSS's ≥$618/week proposal and THE CONSTANT's $616.54/week historical-relativity result differ by $1.46/week (about 0.24%). This numerical closeness is a comparison result, not evidence that either method generated the other.</div>
 </section>
 
-<section class="card" id="scenario-igr-lab">
-<div class="title">SCENARIO &amp; INTERGENERATIONAL LABORATORY</div>
-<div class="tc-explainer"><strong>SCENARIO / COUNTERFACTUAL — not a forecast of Fair Work Commission decisions.</strong> Test how alternative wage-to-Chart-C relationships behave over 10, 20, 30 or 40 years. The relationship and growth assumptions are always visible. Use the price-basis switch before comparing these nominal paths with real living-standard projections.</div>
 
-<div class="scenario-controls">
-<label>Relationship<select id="igrRatio"><option value="0.72">~72% empirical post-break reference</option><option value="0.743985" selected>74.3985% current 2026 Q4 observation</option><option value="0.934641">93.4641% 2000 Q2 preservation counterfactual</option><option value="1">100% Chart C alignment</option><option value="custom">Custom</option></select></label>
-<label id="igrCustomWrap" style="display:none">Custom %<input id="igrCustom" type="number" min="1" max="150" step="0.01" value="80"></label>
-<label>Horizon<select id="igrHorizon"><option>10</option><option>20</option><option>30</option><option selected>40</option></select></label>
-<label>Chart C annual growth %<input id="igrGrowth" type="number" min="-10" max="20" step="0.000001" value="2.585722"></label>
-<label>Price basis<select id="igrBasis"><option value="nominal" selected>Nominal dollars</option><option value="real">Real 2026 dollars</option></select></label>
-<label id="igrInflationWrap" style="display:none">Inflation / deflator %<input id="igrInflation" type="number" min="-5" max="20" step="0.1" value="2.5"></label>
-</div>
-
-<div class="three" style="margin-top:14px"><div class="stat"><div class="lab">Endpoint Chart C</div><div class="val gold" id="igrChartEnd">—</div><div class="sub" id="igrChartSub">—</div></div><div class="stat"><div class="lab">Endpoint Wage</div><div class="val cyan" id="igrWageEnd">—</div><div class="sub" id="igrRatioSub">—</div></div><div class="stat"><div class="lab">Endpoint Difference</div><div class="val red" id="igrGapEnd">—</div><div class="sub" id="igrGapAnnual">—</div></div></div>
-<div class="tc-scenario-chart-wrap"><svg id="igrScenarioChart" viewBox="0 0 1000 500" role="img" aria-label="Interactive Chart C and wage relationship scenario"></svg></div>
-<div class="tc-scenario-legend"><span class="gold">● Chart C</span> <span class="cyan">● selected wage relationship</span></div>
-<div class="sub" id="igrMethod"></div>
-<div class="sub" style="margin-top:8px"><strong>Evidence separation:</strong> ~72% is an empirical post-break reference; 74.3985% is the observed 2026 Q4 ratio; 93.4641% is the immediate pre-rupture preservation counterfactual; 100% is THE CONSTANT alignment scenario. None is presented as an official government target.</div>
-<div class="sub" style="margin-top:8px"><strong>IGR comparison safeguard:</strong> a nominal Chart C scenario and a real per-capita income projection are not directly comparable. Select <em>Real 2026 dollars</em> and supply an explicit deflator assumption before making a common-price-basis comparison.</div>
-</section>
 
 <div id="journey-test" class="tc-anchor" aria-hidden="true"></div>
-<section class="card" id="what-is-left-lab">
-<div class="title">LECI / WHAT IS LEFT?</div>
-<div class="tc-explainer"><strong>SCENARIO / CASH-BUDGET TEST.</strong> Test a weekly income against an explicit essential-cost basket. These cash-cost inputs are THE CONSTANT assumptions, not ABS official prices. Change any input to test a different household case. Results are gross, before income tax and Medicare.</div>
-<div class="whatleft-controls">
-<label>Income benchmark<select id="wlIncome"><option value="1004.90">National Minimum Wage — $1,004.90</option><option value="1350.70">100% Chart C — $1,350.70</option><option value="1297.16">2036 Live 74.3985% scenario — $1,297.16</option><option value="custom">Custom weekly income</option></select></label>
-<label id="wlCustomWrap" style="display:none">Custom income $/wk<input id="wlCustomIncome" type="number" min="0" step="1" value="1004.90"></label>
-<label>Rent / housing $/wk<input id="wlRent" type="number" min="0" step="1" value="650"></label>
-<label>Electricity<input id="wlElectricity" type="number" min="0" step="1" value="46.15"></label>
-<label>Gas<input id="wlGas" type="number" min="0" step="1" value="17.31"></label>
-<label>Water / sewerage<input id="wlWater" type="number" min="0" step="1" value="17.31"></label>
-<label>Food<input id="wlFood" type="number" min="0" step="1" value="180"></label>
-<label>Transport<input id="wlTransport" type="number" min="0" step="1" value="100"></label>
-<label>Health / medicines<input id="wlHealth" type="number" min="0" step="1" value="30"></label>
-<label>Insurance<input id="wlInsurance" type="number" min="0" step="1" value="25"></label>
-<label>Household necessities<input id="wlHousehold" type="number" min="0" step="1" value="40"></label>
-<label>Phone / internet<input id="wlPhone" type="number" min="0" step="1" value="25"></label>
-<label>Clothing / personal care<input id="wlClothing" type="number" min="0" step="1" value="20"></label>
-</div>
-<div class="three"><div class="stat"><div class="lab">Essential Basket</div><div class="val gold" id="wlBasket">—</div><div class="sub">weekly cash assumptions</div></div><div class="stat"><div class="lab">Essential Burden</div><div class="val purple" id="wlBurden">—</div><div class="sub">basket ÷ gross income</div></div><div class="stat"><div class="lab">WHAT IS LEFT</div><div class="val cyan" id="wlLeft">—</div><div class="sub" id="wlLeftAnnual">—</div></div></div>
-<div style="overflow-x:auto"><table class="whatleft-table"><thead><tr><th>Component</th><th>$/week</th><th>% of income</th></tr></thead><tbody id="wlBody"></tbody></table></div>
-<div class="sub whatleft-note" id="wlHousingShare">—</div>
-<div class="sub whatleft-note"><strong>Stress-test example:</strong> select the 2036 Live scenario and set rent to $800/week to examine the previously discussed housing case. $800 is an assumption, not a rent forecast.</div>
-<div class="sub whatleft-note"><strong>Evidence separation:</strong> the income benchmark may be an official observation or scenario depending on selection; the cost basket is user-editable modelling. This panel does not label the basket as an ABS cost-of-living measure.</div>
-</section>
+
 
 <style id="tc-welfare-relativity-style">
 #welfare-relativity-lab .welfare-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:14px 0}.welfare-controls{display:flex;flex-wrap:wrap;gap:12px;margin:14px 0}.welfare-controls label{display:flex;flex-direction:column;gap:5px;min-width:220px}.welfare-controls input,.welfare-controls select{background:#07182f;color:#fff;border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:9px}@media(max-width:850px){#welfare-relativity-lab .welfare-grid{grid-template-columns:1fr 1fr}}@media(max-width:520px){#welfare-relativity-lab .welfare-grid{grid-template-columns:1fr}}
@@ -2553,6 +2566,26 @@ It provides the data needed to test it.
 </section>
 </aside></div>
 
+
+<details class="card" id="technical-status-warnings">
+<summary><strong>TECHNICAL STATUS &amp; WARNINGS</strong></summary>
+<div class="tc-explainer" style="margin-top:14px"><strong>Reader-optional operational record.</strong> THE CONSTANT keeps source failures, recovery rules and the versioned audit trail at the bottom so they do not interrupt the research narrative. If a source fails validation, the last verified value is retained.</div>
+<section class="card" id="alert-recovery-card">
+<div class="title">LIVE ALERTS & FAILURE RECOVERY</div>
+<div class="tc-explainer"><strong>Verified data is protected.</strong> This panel surfaces source failures, stale feeds and active release windows. A failed scrape, malformed release or validation failure cannot replace the last verified observation; automatic checking continues until a valid candidate is available.</div>
+<div id="alert-summary" class="four" style="margin-top:12px"><div class="sub">Loading operational alerts…</div></div>
+<div id="alert-events" style="margin-top:12px"></div>
+<details style="margin-top:12px"><summary><strong>Recovery rule</strong></summary><div id="alert-rule" class="sub" style="margin-top:10px;line-height:1.65">Detect → parse → validate. Only a validated candidate may publish. Failure → retain last verified → flag visibly → retry automatically.</div></details>
+</section>
+<section class="card" id="audit-trail-card">
+<div class="title">WHAT CHANGED? — VERSIONED AUDIT TRAIL</div>
+<div class="tc-explainer"><strong>Automatic does not mean invisible.</strong> Every validated substantive update is appended to a provenance log showing the source, old value, new value, detection/validation time and the calculations affected. Failed validation does not overwrite the last verified observation.</div>
+<div id="audit-summary" class="four" style="margin-top:12px"><div class="sub">Loading audit trail…</div></div>
+<div id="audit-events" style="margin-top:12px"></div>
+<details style="margin-top:12px"><summary><strong>How the audit trail works</strong></summary><div class="sub" style="margin-top:10px;line-height:1.65">Source → detect → parse → validate → append audit event → recalculate → publish. The log is append-only JSONL. Runtime health checks that do not change a verified value are not presented as data revisions.</div></details>
+</section>
+</details>
+
 <details class="card" id="fwc-nmw-readiness"><summary><strong>FWC / NMW UPDATE READINESS — TECHNICAL DETAIL</strong></summary><div class="eyebrow">FWC / NATIONAL MINIMUM WAGE READINESS</div><h2>Decision date ≠ effective date</h2><p>The Fair Work Commission announced the 2026 Annual Wage Review decision on <strong>2 June 2026</strong>. The National Minimum Wage is <strong>$1,004.90/week</strong> or <strong>$26.44/hour</strong> from <strong>1 July 2026</strong>. Live treats an announced future rate as forthcoming and does not replace the legally current NMW until its operative/effective date.</p><div class="grid"><div class="stat"><div class="lab">Current NMW</div><div class="val">$1,004.90/wk</div><div class="sub">$26.44/hour · 38 hours</div></div><div class="stat"><div class="lab">Decision</div><div class="val">2 Jun 2026</div><div class="sub">[2026] FWCFB 3500</div></div><div class="stat"><div class="lab">Effective</div><div class="val">1 Jul 2026</div><div class="sub">National Minimum Wage Order 2026</div></div></div><p class="sub"><strong>Validation safeguard:</strong> claims, submissions, draft determinations, award-specific classifications and media commentary cannot overwrite the NMW. A validated effective NMW propagates to the ratio, gap, live cycle, scenarios, super, welfare, What Is Left, audit trail and synchronized state. The frozen 128-quarter publication dataset remains separately controlled.</p></details>
 <details id="cpi-release-readiness" class="section"><summary><strong>CPI UPDATE READINESS — TECHNICAL DETAIL</strong></summary><section class="card" style="max-width:1180px;margin:1rem auto">
 <h2>CPI RELEASE READINESS</h2>
@@ -2585,7 +2618,7 @@ It provides the data needed to test it.
 </div>
 <p class="sub"><strong>Reading rule:</strong> a larger or newer number is not automatically stronger evidence. Check its evidence class, reference period, source and calculation before interpreting it.</p>
 </section>
-<footer class="footer">THE CONSTANT Live v9.7.6 · PUBLIC SIMPLIFIED · Viewer-local clock · Official sources monitored hourly by default, with five-minute release-window checks. Last verified observations are retained when validation fails.</footer>
+<footer class="footer">THE CONSTANT Live v9.7.7 · PUBLIC SIMPLIFIED · Viewer-local clock · Official sources monitored hourly by default, with five-minute release-window checks. Last verified observations are retained when validation fails.</footer>
 </div></div>
 <script>
 const money=v=>v==null?'—':'$'+Number(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});

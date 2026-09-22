@@ -25,7 +25,7 @@ AUDIT_LOG_FILE = DATA_DIR / "audit_log.jsonl"
 AUDIT_MAX_ENTRIES = max(100, int(os.getenv("TC_AUDIT_MAX_ENTRIES", "2000")))
 
 DEFAULT = {
-    "version": "9.7.0",
+    "version": "9.7.7",
     "started_at": None,
     "last_check": None,
     "next_check": None,
@@ -4114,7 +4114,7 @@ def api_update_integrity():
       {"source":"RBA cash rate","value":o.get("cash_rate_pct"),"propagates_to":["Australia Now","source/release status"]},
       {"source":"Labour Force","value":lm.get("employment_persons"),"propagates_to":["Australia Now","labour-market panel","source/release status"]},
     ]
-    return jsonify({"version":"9.7.6","status":"SYNCHRONIZED","single_source_of_truth":"state core/official/labour_market after validation","current":state.get("live_derived",{}),"checks":checks,"rule":"A candidate release must validate before state changes. recalc() then rebuilds dependent live values before save/publish."})
+    return jsonify({"version":"9.7.7","status":"SYNCHRONIZED","single_source_of_truth":"state core/official/labour_market after validation","current":state.get("live_derived",{}),"checks":checks,"rule":"A candidate release must validate before state changes. recalc() then rebuilds dependent live values before save/publish."})
 
 @app.get("/api/rba-readiness")
 def api_rba_readiness():
@@ -4249,7 +4249,7 @@ def build_pre_release_audit():
     add("Visitor persistence configured", bool(os.getenv("UPSTASH_REDIS_REST_URL") and os.getenv("UPSTASH_REDIS_REST_TOKEN")), "Upstash env vars present" if os.getenv("UPSTASH_REDIS_REST_URL") and os.getenv("UPSTASH_REDIS_REST_TOKEN") else "persistent counter requires Upstash env vars in deployment")
     add("Audit trail path", bool(AUDIT_LOG_FILE), str(AUDIT_LOG_FILE))
     attention=[x for x in checks if x["status"]!="PASS"]
-    return {"version":"9.7.6","deployment_candidate":not attention,"checks":checks,"attention_count":len(attention),"principle":"Verified source state is authoritative; failed candidates retain the last verified observation. Frozen publication history is not silently rewritten by live updates."}
+    return {"version":"9.7.7","deployment_candidate":not attention,"checks":checks,"attention_count":len(attention),"principle":"Verified source state is authoritative; failed candidates retain the last verified observation. Frozen publication history is not silently rewritten by live updates."}
 
 @app.get("/api/pre-release-audit")
 def api_pre_release_audit():
