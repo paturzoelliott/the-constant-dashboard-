@@ -3295,6 +3295,15 @@ RELEASE_CALENDAR_SOURCES = {
     "FWC Annual Wage Review": "https://www.fwc.gov.au/hearings-decisions/major-cases/annual-wage-reviews",
 }
 
+# Near-term official schedule anchors verified 23 September 2026. These are
+# fallbacks only: official-page refresh can supersede them, but stale retained
+# calendar entries cannot hide a nearer verified release.
+VERIFIED_RELEASE_SEEDS = [
+    ("ABS Labour Force", "2026-09-24T11:30:00", RELEASE_CALENDAR_SOURCES["ABS Labour Force"]),
+    ("RBA Monetary Policy", "2026-09-29T14:30:00", "https://www.rba.gov.au/coming-up/"),
+    ("ABS CPI", "2026-09-30T11:30:00", RELEASE_CALENDAR_SOURCES["ABS CPI"]),
+]
+
 _MONTHS = {m.lower(): i for i,m in enumerate(
     ["January","February","March","April","May","June","July","August","September","October","November","December"], 1
 )}
@@ -3359,6 +3368,15 @@ def refresh_official_release_calendar(force=False):
             for dt in dates[:8]: detected.append(_calendar_window(source,dt,url))
         except Exception as exc:
             errors.append(f"{source}: {exc}")
+    # Always include currently verified near-term official anchors.
+    for source, iso_value, url in VERIFIED_RELEASE_SEEDS:
+        try:
+            dt = datetime.fromisoformat(iso_value).replace(tzinfo=SYDNEY_TZ)
+            if dt >= now:
+                detected.append(_calendar_window(source, dt, url, "verified official schedule"))
+        except Exception:
+            pass
+
     # Statutory/regular pension indexation monitoring dates: 20 March and 20 September.
     for year in range(now.year, now.year+2):
         for month in (3,9):
@@ -3548,7 +3566,13 @@ def visitor_count():
             storage = "persistent"
         else:
             vc["total_visits"] = int(vc.get("total_visits", 0) or 0) + 1
-            save_state()
+            try:
+                save_state()
+            except Exception as e:
+                # A visitor count must never make the public dashboard fail.
+                # On hosts without writable persistent storage, retain the
+                # in-memory fallback and surface persistence separately.
+                state.setdefault("errors", []).append("Visitor fallback persistence unavailable: " + str(e))
         session["tc_visit_counted"] = True
     else:
         persistent_total = _persistent_counter_read()
@@ -4090,7 +4114,7 @@ def api_update_integrity():
       {"source":"RBA cash rate","value":o.get("cash_rate_pct"),"propagates_to":["Australia Now","source/release status"]},
       {"source":"Labour Force","value":lm.get("employment_persons"),"propagates_to":["Australia Now","labour-market panel","source/release status"]},
     ]
-    return jsonify({"version":"9.7.5","status":"SYNCHRONIZED","single_source_of_truth":"state core/official/labour_market after validation","current":state.get("live_derived",{}),"checks":checks,"rule":"A candidate release must validate before state changes. recalc() then rebuilds dependent live values before save/publish."})
+    return jsonify({"version":"9.7.6","status":"SYNCHRONIZED","single_source_of_truth":"state core/official/labour_market after validation","current":state.get("live_derived",{}),"checks":checks,"rule":"A candidate release must validate before state changes. recalc() then rebuilds dependent live values before save/publish."})
 
 @app.get("/api/rba-readiness")
 def api_rba_readiness():
@@ -4225,7 +4249,7 @@ def build_pre_release_audit():
     add("Visitor persistence configured", bool(os.getenv("UPSTASH_REDIS_REST_URL") and os.getenv("UPSTASH_REDIS_REST_TOKEN")), "Upstash env vars present" if os.getenv("UPSTASH_REDIS_REST_URL") and os.getenv("UPSTASH_REDIS_REST_TOKEN") else "persistent counter requires Upstash env vars in deployment")
     add("Audit trail path", bool(AUDIT_LOG_FILE), str(AUDIT_LOG_FILE))
     attention=[x for x in checks if x["status"]!="PASS"]
-    return {"version":"9.7.5","deployment_candidate":not attention,"checks":checks,"attention_count":len(attention),"principle":"Verified source state is authoritative; failed candidates retain the last verified observation. Frozen publication history is not silently rewritten by live updates."}
+    return {"version":"9.7.6","deployment_candidate":not attention,"checks":checks,"attention_count":len(attention),"principle":"Verified source state is authoritative; failed candidates retain the last verified observation. Frozen publication history is not silently rewritten by live updates."}
 
 @app.get("/api/pre-release-audit")
 def api_pre_release_audit():

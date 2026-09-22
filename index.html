@@ -608,7 +608,7 @@ html{scroll-behavior:smooth;scroll-padding-top:92px}
 </style>
 
 <style id="tc-v975-readability">
-/* v9.7.5 — public readability pass: larger secondary text + stronger contrast */
+/* v9.7.6 — public readability pass: larger secondary text + stronger contrast */
 :root{--tc-muted:#c7d6e6;--tc-muted-strong:#dbe7f3;--tc-accent-soft:#a9efff;}
 body{font-size:16px;line-height:1.55;}
 .title{font-size:17px!important;color:var(--tc-muted-strong)!important;line-height:1.35;}
@@ -649,6 +649,20 @@ body{font-size:16px;line-height:1.55;}
   .clock{font-size:20px!important}.clocklabel{font-size:12px!important;}
   .footer{font-size:13px!important;}
 }
+</style>
+
+<style id="tc-v976-mobile-fixes">
+/* v9.7.6 mobile corrections */
+@media(max-width:760px){
+  .whatleft-table{min-width:720px;font-size:14px!important;}
+  .whatleft-table th,.whatleft-table td{padding:10px 12px!important;white-space:nowrap;}
+  #super-retirement-lab div[style*="overflow-x:auto"],#welfare-relativity-lab div[style*="overflow-x:auto"]{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding-bottom:4px;}
+  #evidence-chart{min-height:0!important;}
+  #evidence-controls button,#evidence-controls select{font-size:14px!important;}
+  #evidence-selected .val{font-size:28px!important;}
+}
+#next-release-strip summary{color:#dbe7f3!important;}
+#next-release-strip[open] summary{margin-bottom:10px;}
 </style>
 </head>
 <body>
@@ -1089,15 +1103,15 @@ Reference month: —
 </strong>
 
 <style id="tc-release-strip-style">
-#next-release-strip .tc-release-strip-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:12px}#next-release-strip .tc-release-tile{border:1px solid #d9e2ea;border-radius:9px;padding:10px;background:var(--card,#fff);min-height:112px}#next-release-strip .tc-release-name{font-weight:750;font-size:12px}.tc-release-count{font-size:18px;font-weight:800;margin:8px 0 3px}.tc-release-meta{font-size:11px;color:#789;line-height:1.45}.tc-release-due{border-color:#d58b00!important}.tc-release-attn{border-color:#d14b4b!important}@media(max-width:900px){#next-release-strip .tc-release-strip-grid{grid-template-columns:1fr 1fr}}@media(max-width:520px){#next-release-strip .tc-release-strip-grid{grid-template-columns:1fr}}
+#next-release-strip .tc-release-strip-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:12px}#next-release-strip .tc-release-tile{border:1px solid rgba(126,229,255,.20);border-radius:10px;padding:12px;background:#081a31;min-height:108px;color:#f4f8fc}#next-release-strip .tc-release-name{font-weight:850;font-size:13px;color:#7ee5ff}.tc-release-count{font-size:18px;font-weight:850;margin:8px 0 3px;color:#fff}.tc-release-meta{font-size:12px!important;color:#c7d6e6!important;line-height:1.5}.tc-release-due{border-color:#d58b00!important}.tc-release-attn{border-color:#d14b4b!important}@media(max-width:900px){#next-release-strip .tc-release-strip-grid{grid-template-columns:1fr 1fr}}@media(max-width:520px){#next-release-strip .tc-release-strip-grid{grid-template-columns:1fr}#next-release-strip .tc-release-tile{min-height:0}}
 </style>
-<section class="card" id="next-release-strip">
- <div class="title">NEXT RELEASES · AUTOMATIC UPDATE TIMING</div>
+<details class="card" id="next-release-strip">
+ <summary class="title" style="cursor:pointer">NEXT RELEASES · AUTOMATIC UPDATE TIMING</summary>
  <div class="tc-explainer"><strong>When should Live move next?</strong> Countdown to the next detected official release for CPI, Labour Force, RBA, FWC and Services Australia/DSS, together with the exact last source check. Normal monitoring is hourly; an active release window accelerates to five-minute checks.</div>
  <div id="tc-release-strip-summary" class="sub" style="margin-top:9px">Loading release timing…</div>
  <div id="tc-release-strip-grid" class="tc-release-strip-grid"></div>
  <div id="tc-release-strip-note" class="sub" style="margin-top:9px"></div>
-</section>
+</details>
 
 <div id="cpiprevrelease"></div>
 
@@ -2571,13 +2585,13 @@ It provides the data needed to test it.
 </div>
 <p class="sub"><strong>Reading rule:</strong> a larger or newer number is not automatically stronger evidence. Check its evidence class, reference period, source and calculation before interpreting it.</p>
 </section>
-<footer class="footer">THE CONSTANT Live v9.7.5 · PUBLIC SIMPLIFIED · Viewer-local clock · Official sources monitored hourly by default, with five-minute release-window checks. Last verified observations are retained when validation fails.</footer>
+<footer class="footer">THE CONSTANT Live v9.7.6 · PUBLIC SIMPLIFIED · Viewer-local clock · Official sources monitored hourly by default, with five-minute release-window checks. Last verified observations are retained when validation fails.</footer>
 </div></div>
 <script>
 const money=v=>v==null?'—':'$'+Number(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
 const pct=v=>v==null?'—':Number(v).toFixed(2)+'%';
 const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
-function clock(){document.getElementById('clock').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'})}
+function clock(){document.getElementById('clock').textContent=new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}
 function draw(s){
  const c=s.core||{},o=s.official||{},f=s.forward||{};
  const anLm=s.labour_market||{};
@@ -3604,8 +3618,8 @@ async function registerVisit(){
     if(el) el.textContent=Number(v.total_visits||0).toLocaleString();
     if(st) st.textContent=(v.storage==="persistent" ? "persistent" : "local fallback");
   }catch(e){
-    if(el) el.textContent="ERR";
-    if(st) st.textContent="counter unavailable";
+    if(el) el.textContent="—";
+    if(st) st.textContent="counter setup pending";
     console.error("THE CONSTANT visitor counter failed",e);
   }
 }
@@ -3670,14 +3684,14 @@ registerVisit();
    const x=i=>p+i*(W-2*p)/(a.length-1), y=v=>H-p-(v-lo)*(H-2*p)/(hi-lo);
    const pts=vals.map((v,i)=>x(i).toFixed(1)+','+y(v).toFixed(1)).join(' ');
    const iQ2=a.findIndex(o=>o.quarter==='2000 Q2'), iQ3=a.findIndex(o=>o.quarter==='2000 Q3');
-   document.getElementById('evidence-chart').innerHTML='<div class="sub" style="margin-bottom:5px">'+labels[metric]+'</div><svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+labels[metric]+' across 128 quarters" style="width:100%;height:auto;background:#fff;border:1px solid #d9e2ea;border-radius:8px">'+
-    '<line x1="'+p+'" y1="'+(H-p)+'" x2="'+(W-p)+'" y2="'+(H-p)+'" stroke="#9aa8b5"/>'+ 
-    '<line x1="'+x(iQ2)+'" y1="'+p+'" x2="'+x(iQ2)+'" y2="'+(H-p)+'" stroke="#999" stroke-dasharray="5 5"/>'+ 
-    '<line x1="'+x(iQ3)+'" y1="'+p+'" x2="'+x(iQ3)+'" y2="'+(H-p)+'" stroke="#999" stroke-dasharray="5 5"/>'+ 
-    '<polyline fill="none" stroke="currentColor" stroke-width="3" points="'+pts+'"/>'+ 
-    '<text x="'+p+'" y="'+(H-12)+'" font-size="13">1995 Q1</text><text x="'+(W-p-58)+'" y="'+(H-12)+'" font-size="13">2026 Q4</text>'+ 
-    '<text x="'+(x(iQ2)-22)+'" y="'+(p-8)+'" font-size="12">2000 Q2</text><text x="'+(x(iQ3)+5)+'" y="'+(p+8)+'" font-size="12">Q3 break</text>'+ 
-    '<text x="8" y="'+(p+4)+'" font-size="12">'+n(hi,metric==='ratio_pct'?2:0)+'</text><text x="8" y="'+(H-p)+'" font-size="12">'+n(lo,metric==='ratio_pct'?2:0)+'</text></svg>';
+   document.getElementById('evidence-chart').innerHTML='<div class="sub" style="margin-bottom:8px">'+labels[metric]+'</div><svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+labels[metric]+' across 128 quarters" style="width:100%;height:auto;background:#081a31;border:1px solid rgba(126,229,255,.28);border-radius:10px">'+
+    '<line x1="'+p+'" y1="'+(H-p)+'" x2="'+(W-p)+'" y2="'+(H-p)+'" stroke="#70849a"/>'+ 
+    '<line x1="'+x(iQ2)+'" y1="'+p+'" x2="'+x(iQ2)+'" y2="'+(H-p)+'" stroke="#b7c6d7" stroke-dasharray="5 5"/>'+ 
+    '<line x1="'+x(iQ3)+'" y1="'+p+'" x2="'+x(iQ3)+'" y2="'+(H-p)+'" stroke="#ff7676" stroke-dasharray="5 5"/>'+ 
+    '<polyline fill="none" stroke="#55c8ff" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" points="'+pts+'"/>'+ 
+    '<text fill="#dbe7f3" x="'+p+'" y="'+(H-12)+'" font-size="14">1995 Q1</text><text fill="#dbe7f3" x="'+(W-p-70)+'" y="'+(H-12)+'" font-size="14">2026 Q4</text>'+ 
+    '<text fill="#dbe7f3" x="'+(x(iQ2)-28)+'" y="'+(p-8)+'" font-size="13">2000 Q2</text><text fill="#ffb0b0" x="'+(x(iQ3)+6)+'" y="'+(p+10)+'" font-size="13">Q3 break</text>'+ 
+    '<text fill="#dbe7f3" x="8" y="'+(p+4)+'" font-size="13">'+n(hi,metric==='ratio_pct'?2:0)+'</text><text fill="#dbe7f3" x="8" y="'+(H-p)+'" font-size="13">'+n(lo,metric==='ratio_pct'?2:0)+'</text></svg>';
  }
  async function loadEvidence(){
    const st=document.getElementById('evidence-status'), controls=document.getElementById('evidence-controls');
