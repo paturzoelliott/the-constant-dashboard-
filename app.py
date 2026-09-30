@@ -1337,6 +1337,45 @@ def parse_complete_abs_cpi_detail(text):
         r"[^0-9+\-]{0,100}([+\-]?[0-9]+(?:\.[0-9]+)?)(?:%|\s+per\s+cent)",
     ])
 
+    # Robust ABS analytical-table fallback. On ABS release pages the row is
+    # commonly rendered as: "CPI excluding volatile items*  0.9  3.7"
+    # (monthly change first, annual change second) without the words
+    # "monthly" or "annual" next to the values. Keep the match on a single
+    # row so we do not accidentally consume the next analytical series.
+    if ex_volatile_monthly is None or ex_volatile_annual is None:
+        row = re.search(
+            r"CPI\s+excluding\s+volatile\s+items\*?"
+            r"[^\n0-9+\-]{0,50}"
+            r"([+\-]?[0-9]+(?:\.[0-9]+)?)\s*(?:%|per\s+cent)?"
+            r"[^\n0-9+\-]{1,40}"
+            r"([+\-]?[0-9]+(?:\.[0-9]+)?)\s*(?:%|per\s+cent)?",
+            text, re.I
+        )
+        if row:
+            try:
+                if ex_volatile_monthly is None:
+                    ex_volatile_monthly = float(row.group(1))
+                if ex_volatile_annual is None:
+                    ex_volatile_annual = float(row.group(2))
+            except Exception:
+                pass
+
+    # Robust Food fallback for ABS headings and narrative wording using either
+    # '%' or 'per cent'. Examples include:
+    # "Food and non-alcoholic beverages group (+3.2%)" and
+    # "Food and non-alcoholic beverages, rising 3.2 per cent".
+    if food is None:
+        food_patterns = [
+            r"Food\s+(?:and|&)\s+non-alcoholic\s+beverages(?:\s+group)?"
+            r"\s*\(\s*\+?([0-9]+(?:\.[0-9]+)?)\s*(?:%|per\s+cent)\s*\)",
+            r"Food\s+(?:and|&)\s+non-alcoholic\s+beverages"
+            r"[^.\n]{0,160}?(?:rose|rising|increased|was|were)\s+(?:by\s+)?"
+            r"\+?([0-9]+(?:\.[0-9]+)?)\s*(?:%|per\s+cent)",
+            r"Food\s+(?:and|&)\s+non-alcoholic\s+beverages"
+            r"[^\n]{0,80}?\+?([0-9]+(?:\.[0-9]+)?)\s*(?:%|per\s+cent)",
+        ]
+        food = find(food_patterns)
+
     # ---------------------------------------------------------
     # Automotive fuel — monthly movement
     # ---------------------------------------------------------
@@ -2898,6 +2937,21 @@ def check_all():
                         or detail_changed
                     )
 
+                    _cm = (
+                        state.get("official", {})
+                        .get("cpi_monthly", {})
+                        .get("current", {})
+                    )
+                    if isinstance(_cm, dict):
+                        _log(
+                            "ABS CPI detail: "
+                            f"ref={_cm.get('reference_period')} "
+                            f"food={_cm.get('food_annual_pct')} "
+                            f"exvol_annual={_cm.get('ex_volatile_annual_pct')} "
+                            f"exvol_monthly={_cm.get('ex_volatile_monthly_pct')} "
+                            f"fuel={_cm.get('automotive_fuel_monthly_pct')}"
+                        )
+
                 except Exception as e:
 
                     print(
@@ -3313,7 +3367,7 @@ def check_now():
 # Rebuild all derived values from current official/base state.
 # ------------------------------------------------------------
 
-state["version"] = "5.7.6"
+state["version"] = "5.7.7"
 
 # v5.7.2 current-policy migration.
 # RBA cash-rate target effective 30 September 2026 is 4.60%.
