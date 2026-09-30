@@ -3242,7 +3242,7 @@ def check_now():
 # Rebuild all derived values from current official/base state.
 # ------------------------------------------------------------
 
-state["version"] = "5.7.4"
+state["version"] = "5.7.5"
 
 # v5.7.2 current-policy migration.
 # RBA cash-rate target effective 30 September 2026 is 4.60%.
@@ -3262,6 +3262,27 @@ state["rba_policy"]["change_basis_points"] = 25
 state["rba_policy"]["effective_date"] = "30 September 2026"
 state["rba_policy"]["last_decision_date"] = "2026-09-29"
 state["rba_policy"]["last_decision"] = "Increase 25 basis points"
+
+# v5.7.5 August 2026 CPI detail migration.
+# Verified from the 30 September 2026 ABS release; this aligns the
+# monthly-detail/archive module with the headline CPI already in live state.
+update_cpi_monthly_detail(
+    reference_period="August 2026",
+    annual_cpi_pct=4.0,
+    monthly_original_pct=0.4,
+    monthly_sa_pct=0.7,
+    housing_annual_pct=5.7,
+    food_annual_pct=None,
+    transport_annual_pct=5.6,
+    trimmed_mean_annual_pct=3.6,
+    release_date="30 September 2026",
+)
+_aug_cpi = state.setdefault("official", {}).setdefault("cpi_monthly", {}).get("current")
+if isinstance(_aug_cpi, dict) and _aug_cpi.get("reference_period") == "August 2026":
+    _aug_cpi["automotive_fuel_monthly_pct"] = 14.8
+    for _row in state["official"]["cpi_monthly"].get("archive", []):
+        if isinstance(_row, dict) and _row.get("reference_period") == "August 2026":
+            _row["automotive_fuel_monthly_pct"] = 14.8
 
 lm = state.setdefault("labour_market", {})
 lm.update({
