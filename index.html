@@ -797,7 +797,7 @@ Fuel is shown separately so major volatile movements remain visible.
 
 <div class="stat">
 <div class="lab">Fuel Movement</div>
-<div class="val orange">+7.5%</div>
+<div id="rbafuel" class="val orange">—</div>
 <div class="sub">latest monthly</div>
 </div>
 
@@ -2354,7 +2354,7 @@ function draw(s){
  tcSet('changedfuel',tcPct(cm.automotive_fuel_monthly_pct));
  tcSet('changedfuelsub',(cm.reference_period||o.cpi_reference_period||'Latest')+' monthly movement');
  tcSet('changedannualref',(cm.reference_period||o.cpi_reference_period||'Latest official ABS')+' · previous '+tcPct((cpiModel.previous||{}).annual_cpi_pct));
- tcSet('rbaheadline',tcPct(liveAnnual)); tcSet('rbatrimmed',tcPct(cm.trimmed_mean_annual_pct));
+ tcSet('rbaheadline',tcPct(liveAnnual)); tcSet('rbatrimmed',tcPct(cm.trimmed_mean_annual_pct)); tcSet('rbafuel',tcPct(cm.automotive_fuel_monthly_pct));
  renderCPIMonthComparison(s);renderFullLECI(s);
  // v5.7.5 frontend live bindings: keep every visible CPI/RBA field synchronized.
  tcSet('rbaheadline', pct(o.cpi_annual_pct));
