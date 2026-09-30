@@ -962,6 +962,9 @@ def update_cpi_monthly_detail(
     food_annual_pct=None,
     transport_annual_pct=None,
     trimmed_mean_annual_pct=None,
+    ex_volatile_annual_pct=None,
+    ex_volatile_monthly_pct=None,
+    automotive_fuel_monthly_pct=None,
     release_date=None,
 ):
 
@@ -1025,6 +1028,15 @@ def update_cpi_monthly_detail(
 
         "trimmed_mean_annual_pct":
             trimmed_mean_annual_pct,
+
+        "ex_volatile_annual_pct":
+            ex_volatile_annual_pct,
+
+        "ex_volatile_monthly_pct":
+            ex_volatile_monthly_pct,
+
+        "automotive_fuel_monthly_pct":
+            automotive_fuel_monthly_pct,
 
         "source":
             "ABS Consumer Price Index, Australia",
@@ -1295,12 +1307,62 @@ def parse_complete_abs_cpi_detail(text):
 
         r"Trimmed\s+mean\s+inflation"
         r"[^0-9]{0,100}"
-        r"([0-9]+(?:\.[0-9]+)?)%",
+        r"([0-9]+(?:\.[0-9]+)?)(?:%|\s+per\s+cent)",
 
         r"trimmed\s+mean"
         r"[^0-9]{0,100}"
-        r"([0-9]+(?:\.[0-9]+)?)%",
+        r"([0-9]+(?:\.[0-9]+)?)(?:%|\s+per\s+cent)",
     ])
+
+    # ---------------------------------------------------------
+    # CPI excluding volatile items (annual + monthly)
+    # ---------------------------------------------------------
+
+    ex_volatile_annual = find([
+        r"CPI\s+(?:excluding|excludes)\s+volatile\s+items"
+        r"[^.\n]{0,180}?(?:annual|12\s+months|year)"
+        r"[^0-9+\-]{0,80}([+\-]?[0-9]+(?:\.[0-9]+)?)(?:%|\s+per\s+cent)",
+        r"CPI\s+(?:excluding|excludes)\s+volatile\s+items"
+        r"[^0-9+\-]{0,100}([+\-]?[0-9]+(?:\.[0-9]+)?)(?:%|\s+per\s+cent)"
+        r"[^.\n]{0,120}?(?:annual|12\s+months|year)",
+        r"(?:annual\s+)?CPI\s+excluding\s+volatile\s+items"
+        r"[^0-9+\-]{0,100}([+\-]?[0-9]+(?:\.[0-9]+)?)(?:%|\s+per\s+cent)",
+    ])
+
+    ex_volatile_monthly = find([
+        r"CPI\s+(?:excluding|excludes)\s+volatile\s+items"
+        r"[^.\n]{0,180}?(?:month|monthly)"
+        r"[^0-9+\-]{0,80}([+\-]?[0-9]+(?:\.[0-9]+)?)(?:%|\s+per\s+cent)",
+        r"(?:monthly\s+)?CPI\s+excluding\s+volatile\s+items"
+        r"[^0-9+\-]{0,100}([+\-]?[0-9]+(?:\.[0-9]+)?)(?:%|\s+per\s+cent)",
+    ])
+
+    # ---------------------------------------------------------
+    # Automotive fuel — monthly movement
+    # ---------------------------------------------------------
+
+    automotive_fuel = find([
+        r"Automotive\s+fuel(?:\s+prices)?"
+        r"[^.\n]{0,140}?(?:rose|increased|grew)\s+(?:by\s+)?"
+        r"([+]?\d+(?:\.\d+)?)(?:%|\s+per\s+cent)"
+        r"[^.\n]{0,80}?(?:in|during)\s+[A-Za-z]+",
+        r"Automotive\s+fuel(?:\s+prices)?"
+        r"[^.\n]{0,140}?(?:fell|decreased|declined)\s+(?:by\s+)?"
+        r"(-?\d+(?:\.\d+)?)(?:%|\s+per\s+cent)",
+        r"Automotive\s+fuel"
+        r"[^0-9+\-]{0,80}([+\-]?[0-9]+(?:\.[0-9]+)?)(?:%|\s+per\s+cent)",
+    ])
+
+    # If a narrative says fuel 'fell 7.0 per cent', the generic capture above
+    # is positive. Correct the sign from the local verb when present.
+    fuel_fall = re.search(
+        r"Automotive\s+fuel(?:\s+prices)?[^.\n]{0,140}?"
+        r"(?:fell|decreased|declined)\s+(?:by\s+)?"
+        r"([0-9]+(?:\.[0-9]+)?)(?:%|\s+per\s+cent)",
+        text, re.I | re.S
+    )
+    if fuel_fall:
+        automotive_fuel = -float(fuel_fall.group(1))
 
     # ---------------------------------------------------------
     # July 2026 execution-validated fallback
@@ -1358,6 +1420,15 @@ def parse_complete_abs_cpi_detail(text):
 
         trimmed_mean_annual_pct=
             trimmed,
+
+        ex_volatile_annual_pct=
+            ex_volatile_annual,
+
+        ex_volatile_monthly_pct=
+            ex_volatile_monthly,
+
+        automotive_fuel_monthly_pct=
+            automotive_fuel,
     )
 
 
@@ -3242,7 +3313,7 @@ def check_now():
 # Rebuild all derived values from current official/base state.
 # ------------------------------------------------------------
 
-state["version"] = "5.7.5"
+state["version"] = "5.7.6"
 
 # v5.7.2 current-policy migration.
 # RBA cash-rate target effective 30 September 2026 is 4.60%.
@@ -3275,15 +3346,11 @@ update_cpi_monthly_detail(
     food_annual_pct=None,
     transport_annual_pct=5.6,
     trimmed_mean_annual_pct=3.6,
+    ex_volatile_annual_pct=None,
+    ex_volatile_monthly_pct=None,
+    automotive_fuel_monthly_pct=14.8,
     release_date="30 September 2026",
 )
-_aug_cpi = state.setdefault("official", {}).setdefault("cpi_monthly", {}).get("current")
-if isinstance(_aug_cpi, dict) and _aug_cpi.get("reference_period") == "August 2026":
-    _aug_cpi["automotive_fuel_monthly_pct"] = 14.8
-    for _row in state["official"]["cpi_monthly"].get("archive", []):
-        if isinstance(_row, dict) and _row.get("reference_period") == "August 2026":
-            _row["automotive_fuel_monthly_pct"] = 14.8
-
 lm = state.setdefault("labour_market", {})
 lm.update({
     "reference_period": "August 2026",
