@@ -285,6 +285,7 @@ SOURCES = {
     ),
     "ABS CPI": ("https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/consumer-price-index-australia/latest-release","abs_cpi"),
     "ABS Living Cost Indexes": ("https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/selected-living-cost-indexes-australia/latest-release","abs_lci"),
+    "ABS Monthly Household Spending": ("https://www.abs.gov.au/statistics/economy/finance/monthly-household-spending-indicator/latest-release","abs_mhsi"),
     "RBA Cash Rate": ("https://www.rba.gov.au/statistics/cash-rate/","rba"),
     "FWC National Minimum Wage": ("https://www.fwc.gov.au/work-conditions/minimum-wages-and-conditions/national-minimum-wage","fwc"),
     "Services Australia DSP Income Test": ("https://www.servicesaustralia.gov.au/income-test-for-disability-support-payment?context=22276","chart_c"),
@@ -1478,6 +1479,70 @@ def parse_lci(t):
         if v!=state["official"]["employee_lci_annual_pct"]:
             state["official"]["employee_lci_annual_pct"]=v; return True
     return False
+
+def parse_abs_mhsi(t):
+    """Parse latest ABS Monthly Household Spending Indicator category movements."""
+    ref = re.search(r"Reference period\s+([A-Za-z]+\s+20\d{2})", t, re.I)
+    if not ref:
+        return False
+    reference_period = ref.group(1).title()
+    try:
+        month_key = datetime.strptime(reference_period, "%B %Y").strftime("%Y-%m")
+    except Exception:
+        return False
+
+    start = re.search(r"Household spending by category", t, re.I)
+    section = t[start.start():] if start else t
+    end = re.search(r"Data downloads", section, re.I)
+    if end:
+        section = section[:end.start()]
+
+    labels = {
+        "food": r"Food",
+        "clothing_footwear": r"Clothing and footwear",
+        "furnishings_household_equipment": r"Furnishings and household equipment",
+        "health": r"Health",
+        "transport": r"Transport",
+        "miscellaneous_goods_services": r"Miscellaneous goods and services",
+        "total": r"Total",
+    }
+    category = {}
+    number = r"([+\-]?\d+(?:\.\d+)?)"
+    for key, label in labels.items():
+        m = re.search(r"\b" + label + r"\b\s+" + number + r"\s+" + number + r"\s+" + number, section, re.I)
+        if m:
+            try:
+                category[key] = float(m.group(3))
+            except Exception:
+                pass
+    if not category:
+        return False
+
+    official = state.setdefault("official", {})
+    model = official.setdefault("household_spending_monthly", {})
+    archive = model.setdefault("archive", [])
+    rows = {str(x.get("month")): x for x in archive if isinstance(x, dict) and x.get("month")}
+    row = {
+        "month": month_key,
+        "reference_period": reference_period,
+        "category_monthly_pct": category,
+        "source": "ABS Monthly Household Spending Indicator",
+        "official": True,
+    }
+    previous = rows.get(month_key)
+    rows[month_key] = row
+    model["archive"] = [rows[k] for k in sorted(rows.keys())][-84:]
+    model["current"] = row
+    model["reference_period"] = reference_period
+    _log(
+        "ABS household spending detail: "
+        f"ref={reference_period} food={category.get('food')} "
+        f"transport={category.get('transport')} health={category.get('health')} "
+        f"clothing={category.get('clothing_footwear')} "
+        f"household={category.get('furnishings_household_equipment')}"
+    )
+    return previous != row
+
 
 def _extract_rba_cash_rate(t):
     """Extract the current RBA cash-rate target across common RBA page wordings."""
@@ -2959,6 +3024,7 @@ def check_all():
                         e
                     )
             elif kind=="abs_lci": changed=parse_lci(t)
+            elif kind=="abs_mhsi": changed=parse_abs_mhsi(t)
             elif kind=="rba": changed=parse_rba(t)
             elif kind=="fwc": changed=parse_fwc(t)
             elif kind=="chart_c": changed=parse_chart_c(t)
@@ -3008,161 +3074,102 @@ def check_all():
 # =============================================================================
 
 def recalculate_leci_income_burden():
-
+    """Recalculate THE CONSTANT essential-burden model with transparent ABS movement proxies."""
     global state
 
-    costs = {
-
-        "rent":
-            650.00,
-
-        "electricity":
-            46.15,
-
-        "gas":
-            17.31,
-
-        "water_sewerage":
-            17.31,
-
-        "food":
-            180.00,
-
-        "transport":
-            100.00,
-
-        "health_medicines":
-            30.00,
-
-        "insurance":
-            25.00,
-
-        "household_necessities":
-            40.00,
-
-        "phone_internet":
-            25.00,
-
-        "clothing_personal_care":
-            20.00,
+    base_costs = {
+        "rent": 650.00,
+        "electricity": 46.15,
+        "gas": 17.31,
+        "water_sewerage": 17.31,
+        "food": 180.00,
+        "transport": 100.00,
+        "health_medicines": 30.00,
+        "insurance": 25.00,
+        "household_necessities": 40.00,
+        "phone_internet": 25.00,
+        "clothing_personal_care": 20.00,
     }
 
-    basket = round(
-        sum(costs.values()),
-        2
-    )
+    derived = state.setdefault("the_constant_derived", {})
+    basket_model = derived.setdefault("essential_basket_model", {})
+    basket_model.setdefault("base_reference_period", "July 2026")
+    basket_model.setdefault("base_month", "2026-07")
+    basket_model.setdefault("base_weekly_costs", dict(base_costs))
 
-    official = state.setdefault(
-        "official",
-        {}
-    )
+    costs = {k: float(v) for k, v in basket_model["base_weekly_costs"].items()}
+    mapping = {
+        "food": "food",
+        "transport": "transport",
+        "health_medicines": "health",
+        "household_necessities": "furnishings_household_equipment",
+        "clothing_personal_care": "clothing_footwear",
+    }
 
-    actual = float(
+    mhsi = state.setdefault("official", {}).get("household_spending_monthly", {}) or {}
+    archive = mhsi.get("archive", []) if isinstance(mhsi, dict) else []
+    applied = []
+    valid_rows = [x for x in archive if isinstance(x, dict) and str(x.get("month", "")) > basket_model["base_month"]]
+    for row in sorted(valid_rows, key=lambda x: str(x.get("month", ""))):
+        moves = row.get("category_monthly_pct", {}) or {}
+        used = {}
+        for item, category in mapping.items():
+            mv = moves.get(category)
+            if mv is None:
+                continue
+            try:
+                mv = float(mv)
+            except Exception:
+                continue
+            costs[item] = costs[item] * (1.0 + mv / 100.0)
+            used[item] = mv
+        if used:
+            applied.append({
+                "month": row.get("month"),
+                "reference_period": row.get("reference_period"),
+                "movements_pct": used,
+            })
 
-        official.get(
-            "national_minimum_wage_weekly",
-            1004.90
-        )
+    costs = {k: round(v, 2) for k, v in costs.items()}
+    basket = round(sum(costs.values()), 2)
 
-        or 1004.90
-    )
-
+    official = state.setdefault("official", {})
+    actual = float(official.get("national_minimum_wage_weekly", 1004.90) or 1004.90)
     proposed = float(state["core"]["chart_c_weekly"])
-
     average = 2083.70
-
     incomes = {
-
-        "minimum_wage": {
-
-            "label":
-                "National Minimum Wage",
-
-            "weekly":
-                actual,
-        },
-
-        "proposed_wage": {
-
-            "label":
-                "Chart C Proposed Wage",
-
-            "weekly":
-                proposed,
-        },
-
-        "average_wage": {
-
-            "label":
-                "Average Weekly Ordinary-Time Earnings",
-
-            "weekly":
-                average,
-        },
+        "minimum_wage": {"label": "National Minimum Wage", "weekly": actual},
+        "proposed_wage": {"label": "Chart C-aligned corrected wage", "weekly": proposed},
+        "average_wage": {"label": "Average Weekly Ordinary-Time Earnings", "weekly": average},
     }
-
-    for key, obj in incomes.items():
-
+    for obj in incomes.values():
         wage = obj["weekly"]
+        obj["item_burden_pct"] = {item: round(cost / wage * 100, 2) for item, cost in costs.items()}
+        obj["total_burden_pct"] = round(basket / wage * 100, 2)
+        obj["gross_remaining"] = round(wage - basket, 2)
 
-        obj[
-            "item_burden_pct"
-        ] = {
-
-            item:
-                round(
-                    cost / wage * 100,
-                    2
-                )
-
-            for item, cost
-            in costs.items()
-        }
-
-        obj[
-            "total_burden_pct"
-        ] = round(
-            basket / wage * 100,
-            2
-        )
-
-        obj[
-            "gross_remaining"
-        ] = round(
-            wage - basket,
-            2
-        )
-
-    derived = state.setdefault(
-        "the_constant_derived",
-        {}
-    )
-
-    derived[
-        "leci_income_burden"
-    ] = {
-
-        "reference_period":
-            "2026",
-
-        "before_tax":
-            True,
-
-        "weekly_costs":
-            costs,
-
-        "basket_total_weekly":
-            basket,
-
-        "incomes":
-            incomes,
-
-        "methodology":
-            "Same essential weekly cash-cost basket "
-            "divided by gross weekly income. "
-            "Before income tax and Medicare levy.",
+    latest_ref = applied[-1]["reference_period"] if applied else basket_model["base_reference_period"]
+    derived["leci_income_burden"] = {
+        "reference_period": latest_ref,
+        "before_tax": True,
+        "weekly_costs": costs,
+        "base_weekly_costs": basket_model["base_weekly_costs"],
+        "basket_total_weekly": basket,
+        "base_basket_total_weekly": round(sum(basket_model["base_weekly_costs"].values()), 2),
+        "incomes": incomes,
+        "official_movement_proxy": {
+            "source": "ABS Monthly Household Spending Indicator",
+            "base_reference_period": basket_model["base_reference_period"],
+            "latest_reference_period": latest_ref,
+            "applied_months": applied,
+            "mapped_categories": mapping,
+            "note": "Selected model-basket dollar amounts are rolled forward by official ABS monthly household-spending category movements. These movements include price and quantity effects and are not official weekly-dollar averages. Unmapped items retain their model-base amounts until a verified official movement source is added.",
+        },
+        "methodology": "THE CONSTANT model basket compared with gross weekly income. Selected categories are automatically rolled forward using verified ABS monthly household-spending movements; dollar levels remain model estimates, not ABS weekly-dollar averages.",
     }
 
+    # The full live basket remains separate from the book-calibrated LECIB model.
+    # This avoids silently rewriting published book assumptions.
     return True
 
 
@@ -3367,7 +3374,7 @@ def check_now():
 # Rebuild all derived values from current official/base state.
 # ------------------------------------------------------------
 
-state["version"] = "5.7.7"
+state["version"] = "5.7.9"
 
 # v5.7.2 current-policy migration.
 # RBA cash-rate target effective 30 September 2026 is 4.60%.
@@ -3405,6 +3412,30 @@ update_cpi_monthly_detail(
     automotive_fuel_monthly_pct=14.8,
     release_date="30 September 2026",
 )
+
+# v5.7.9 official household-spending baseline. Live parser advances later months.
+_mhsi = state.setdefault("official", {}).setdefault("household_spending_monthly", {})
+_mhsi_row = {
+    "month": "2026-08",
+    "reference_period": "August 2026",
+    "category_monthly_pct": {
+        "food": -0.3,
+        "clothing_footwear": -1.0,
+        "furnishings_household_equipment": -0.6,
+        "health": -0.9,
+        "transport": 2.3,
+        "miscellaneous_goods_services": 0.3,
+        "total": 0.0,
+    },
+    "source": "ABS Monthly Household Spending Indicator",
+    "official": True,
+}
+_mhsi_rows = {str(x.get("month")): x for x in _mhsi.get("archive", []) if isinstance(x, dict) and x.get("month")}
+_mhsi_rows["2026-08"] = _mhsi_row
+_mhsi["archive"] = [_mhsi_rows[k] for k in sorted(_mhsi_rows.keys())][-84:]
+_mhsi["current"] = _mhsi_row
+_mhsi["reference_period"] = "August 2026"
+
 lm = state.setdefault("labour_market", {})
 lm.update({
     "reference_period": "August 2026",
@@ -3432,6 +3463,7 @@ state["forward"]["chart_c_fortnightly"] = 2701.40
 state["forward"]["status"] = "Official Services Australia cut-off confirmed — effective 20 September 2026"
 
 recalc()
+recalculate_leci_income_burden()
 recalc_book_impact_model()
 recalc_income_support_counterfactual()
 maintain_constant_material_monitor()
