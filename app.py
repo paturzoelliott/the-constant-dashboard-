@@ -305,8 +305,8 @@ SOURCES = {
 
 TERMS = ("pension","jobseeker","social security","indexation","payment","income test","deeming","cost of living","allowance","supplement","minimum wage","wage","cpi","inflation")
 
-session = requests.Session()
-session.headers.update({"User-Agent":"THE-CONSTANT-Public-Monitor/4.1"})
+source_session = requests.Session()
+source_session.headers.update({"User-Agent":"THE-CONSTANT-Public-Monitor/4.1"})
 app = Flask(__name__)
 
 # v5.7.2 runtime scheduler diagnostics / wake-refresh guard
@@ -555,7 +555,7 @@ def fetch(name,url):
     last=None
     for attempt in range(3):
         try:
-            r=session.get(url,headers=headers,timeout=(5,12))
+            r=source_session.get(url,headers=headers,timeout=(5,12))
             m["last_checked"]=now_iso(); m["http_status"]=r.status_code
             if r.status_code==304:
                 m["error"]=None; return None
