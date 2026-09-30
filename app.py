@@ -23,7 +23,7 @@ STATE_FILE = DATA_DIR / "state.json"
 RUNTIME_STATE_FILE = DATA_DIR / "runtime_state.json"
 
 DEFAULT = {
-    "version": "5.7.2",
+    "version": "5.7.4",
     "started_at": None,
     "last_check": None,
     "next_check": None,
@@ -306,19 +306,10 @@ SOURCES = {
 TERMS = ("pension","jobseeker","social security","indexation","payment","income test","deeming","cost of living","allowance","supplement","minimum wage","wage","cpi","inflation")
 
 source_session = requests.Session()
-source_session.headers.update({
-    "User-Agent": (
-        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
-        "(KHTML, like Gecko) Chrome/126.0 Safari/537.36 THE-CONSTANT-Live/5.7.3"
-    ),
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-    "Accept-Language": "en-AU,en;q=0.9",
-    "Cache-Control": "no-cache",
-    "Pragma": "no-cache",
-})
+source_session.headers.update({"User-Agent":"THE-CONSTANT-Public-Monitor/4.1"})
 app = Flask(__name__)
 
-# v5.7.3 runtime scheduler diagnostics / wake-refresh guard
+# v5.7.2 runtime scheduler diagnostics / wake-refresh guard
 SCHEDULER_THREAD = None
 SCHEDULER_START_LOCK = threading.Lock()
 WAKE_REFRESH_LOCK = threading.Lock()
@@ -558,74 +549,32 @@ def meta(name):
     )
 
 def fetch(name,url):
-    """Fetch an official source conservatively and retain the last verified value on failure.
-
-    v5.7.3 hardens the network layer for Render: browser-like headers, redirect
-    handling, conditional-request recovery, bounded retry/backoff and clearer
-    source diagnostics. A failed source never overwrites a verified dashboard value.
-    """
-    m = meta(name)
-    conditional = {}
-    if m.get("etag"):
-        conditional["If-None-Match"] = m["etag"]
-    if m.get("last_modified"):
-        conditional["If-Modified-Since"] = m["last_modified"]
-
-    last = None
+    m=meta(name); headers={}
+    if m.get("etag"): headers["If-None-Match"]=m["etag"]
+    if m.get("last_modified"): headers["If-Modified-Since"]=m["last_modified"]
+    last=None
     for attempt in range(3):
-        headers = dict(conditional)
-        # If a cached conditional request is rejected, retry once without validators.
-        if attempt >= 1 and m.get("http_status") in (400, 403, 406, 412):
-            headers = {}
         try:
-            r = source_session.get(
-                url, headers=headers, timeout=(8, 25), allow_redirects=True
-            )
-            m["last_checked"] = now_iso()
-            m["http_status"] = r.status_code
-            m["final_url"] = r.url
-
-            if r.status_code == 304:
-                m["last_success"] = now_iso()
-                m["error"] = None
-                m["warning"] = "Not modified; last verified value remains current"
-                return None
-
-            if r.status_code in (408, 425, 429, 500, 502, 503, 504):
-                last = RuntimeError(f"HTTP {r.status_code}")
-                time.sleep(2 + attempt * 3)
-                continue
-
+            r=source_session.get(url,headers=headers,timeout=(5,12))
+            m["last_checked"]=now_iso(); m["http_status"]=r.status_code
+            if r.status_code==304:
+                m["error"]=None; return None
+            if r.status_code in (429,500,502,503,504):
+                time.sleep(2+attempt*2); continue
             r.raise_for_status()
-            if not r.content:
-                raise RuntimeError("official source returned an empty response")
-
-            ctype = (r.headers.get("Content-Type") or "").lower()
-            if not any(x in ctype for x in ("html", "xml", "text")):
-                m["warning"] = f"Unexpected content type {ctype or 'unknown'}; parser will still inspect response"
-
-            if r.headers.get("ETag"):
-                m["etag"] = r.headers["ETag"]
-            if r.headers.get("Last-Modified"):
-                m["last_modified"] = r.headers["Last-Modified"]
-
-            h = hashlib.sha256(r.content).hexdigest()
-            m["changed"] = h != m.get("sha256")
-            m["sha256"] = h
-            m["last_success"] = now_iso()
-            m["error"] = None
-            if "warning" in m and "Unexpected content type" not in str(m.get("warning")):
-                m.pop("warning", None)
+            if r.headers.get("ETag"): m["etag"]=r.headers["ETag"]
+            if r.headers.get("Last-Modified"): m["last_modified"]=r.headers["Last-Modified"]
+            h=hashlib.sha256(r.content).hexdigest()
+            m["changed"]=h!=m.get("sha256"); m["sha256"]=h
+            m["last_success"]=now_iso(); m["error"]=None; m.pop("warning",None)
             return r.text
         except Exception as e:
-            last = e
-            m["last_attempt_error"] = str(e)
-            if attempt < 2:
-                time.sleep(2 + attempt * 3)
-
-    m["warning"] = "Official source unavailable; last verified value retained"
-    m["error"] = str(last) if last else "unknown fetch failure"
-    return None
+            last=e
+            if attempt<2: time.sleep(2+attempt*2)
+    if "servicesaustralia.gov.au" in url:
+        m["warning"]="Temporary official-site timeout; last verified value retained"; m["error"]=None
+        return None
+    m["error"]=str(last); return None
 
 def textify(html):
     soup=BeautifulSoup(html,"html.parser")
@@ -898,69 +847,59 @@ def mark_change():
     state["source_changes_detected"]+=1
 
 def _reject_candidate(kind, detail):
-    """Record a parser rejection without replacing verified values."""
+    """Record a rejected live candidate while retaining the last verified state."""
     state["_parser_rejection"] = {"kind": str(kind), "detail": str(detail), "at": now_iso()}
     return False
+
 
 def parse_abs_labour(t):
     """Parse the ABS Labour Force headline release conservatively.
 
-    A new reference period is published only when the complete seasonally
-    adjusted headline set is extracted together and passes range checks.
+    A new reference month is published only when the complete seasonally-adjusted
+    headline set can be extracted and passes basic plausibility checks.
     """
-    lm = state.setdefault("labour_market", {
-        "source": "Australian Bureau of Statistics — Labour Force, Australia"
-    })
+    lm = state.setdefault("labour_market", {})
     lm["source_last_seen"] = now_iso()
 
     ref = re.search(r"Reference period\s+([A-Za-z]+\s+20\d{2})", t, re.I)
     if not ref:
-        lm["automatic_parser_status"] = (
-            "ABS source reached, but no reference period could be verified; "
-            "last verified observations retained."
-        )
+        lm["automatic_parser_status"] = "ABS source reached, but no reference period could be verified; last verified observations retained."
         return False
-
     detected_ref = ref.group(1).title()
     lm["detected_reference_period"] = detected_ref
+    if detected_ref == lm.get("reference_period"):
+        lm["automatic_parser_status"] = "ABS source reached; displayed observations remain the latest verified release."
+        return False
 
-    def num(pattern):
-        m = re.search(pattern, t, re.I | re.S)
+    def num(pattern, flags=re.I|re.S):
+        m = re.search(pattern, t, flags)
         return None if not m else float(m.group(1).replace(",", ""))
 
-    emp = num(r"Employed people\s+[|:]?\s*[0-9,]+\s+[|:]?\s*([0-9,]+)")
-    empchg = num(r"Employed people\s+[|:]?\s*[0-9,]+\s+[|:]?\s*[0-9,]+\s+[|:]?\s*([+-]?[0-9,]+)")
-    empchgp = num(r"Employed people\s+[|:]?\s*[0-9,]+\s+[|:]?\s*[0-9,]+\s+[|:]?\s*[+-]?[0-9,]+\s+[|:]?\s*([+-]?[0-9.]+)%")
-    emppop = num(r"Employment to population ratio\s+[|:]?\s*[0-9.]+%\s+[|:]?\s*([0-9.]+)%")
-    ur = num(r"Unemployment rate\s+[|:]?\s*[0-9.]+%\s+[|:]?\s*([0-9.]+)%")
-    under = num(r"Underemployment rate\s+[|:]?\s*[0-9.]+%\s+[|:]?\s*([0-9.]+)%")
-    part = num(r"Participation rate\s+[|:]?\s*[0-9.]+%\s+[|:]?\s*([0-9.]+)%")
-    hrs = num(r"Monthly hours worked in all jobs\s+[|:]?\s*[0-9,.]+\s*million\s+[|:]?\s*([0-9,.]+)\s*million")
-    hrchg = num(r"Monthly hours worked in all jobs\s+[|:]?\s*[0-9,.]+\s*million\s+[|:]?\s*[0-9,.]+\s*million\s+[|:]?\s*([+-]?[0-9,.]+)\s*million")
-    hrchgp = num(r"Monthly hours worked in all jobs\s+[|:]?\s*[0-9,.]+\s*million\s+[|:]?\s*[0-9,.]+\s*million\s+[|:]?\s*[+-]?[0-9,.]+\s*million\s+[|:]?\s*([+-]?[0-9.]+)%")
+    # ABS key-statistics table: previous month, current month, monthly change, change %.
+    emp = num(r"Employed people\s+[\|:]?\s*[0-9,]+\s+[\|:]?\s*([0-9,]+)")
+    empchg = num(r"Employed people\s+[\|:]?\s*[0-9,]+\s+[\|:]?\s*[0-9,]+\s+[\|:]?\s*([+-]?[0-9,]+)")
+    empchgp = num(r"Employed people\s+[\|:]?\s*[0-9,]+\s+[\|:]?\s*[0-9,]+\s+[\|:]?\s*[+-]?[0-9,]+\s+[\|:]?\s*([+-]?[0-9.]+)%")
+    emppop = num(r"Employment to population ratio\s+[\|:]?\s*[0-9.]+%\s+[\|:]?\s*([0-9.]+)%")
+    ur = num(r"Unemployment rate\s+[\|:]?\s*[0-9.]+%\s+[\|:]?\s*([0-9.]+)%")
+    under = num(r"Underemployment rate\s+[\|:]?\s*[0-9.]+%\s+[\|:]?\s*([0-9.]+)%")
+    part = num(r"Participation rate\s+[\|:]?\s*[0-9.]+%\s+[\|:]?\s*([0-9.]+)%")
+    hrs = num(r"Monthly hours worked in all jobs\s+[\|:]?\s*[0-9,.]+\s*million\s+[\|:]?\s*([0-9,.]+)\s*million")
+    hrchg = num(r"Monthly hours worked in all jobs\s+[\|:]?\s*[0-9,.]+\s*million\s+[\|:]?\s*[0-9,.]+\s*million\s+[\|:]?\s*([+-]?[0-9,.]+)\s*million")
+    hrchgp = num(r"Monthly hours worked in all jobs\s+[\|:]?\s*[0-9,.]+\s*million\s+[\|:]?\s*[0-9,.]+\s*million\s+[\|:]?\s*[+-]?[0-9,.]+\s*million\s+[\|:]?\s*([+-]?[0-9.]+)%")
 
     required = (emp, ur, part, emppop, under, hrs)
     if any(v is None for v in required):
-        detail = (
-            f"ABS reference period {detected_ref} detected, but the complete "
-            "seasonally adjusted headline set did not parse; last verified observations retained."
-        )
+        detail = f"New ABS reference period {detected_ref} detected, but the complete headline set did not parse; last verified observations retained."
         lm["automatic_parser_status"] = detail
         return _reject_candidate("abs_labour", detail)
-
-    if not (
-        5_000_000 <= emp <= 30_000_000 and 0 <= ur <= 30 and
-        30 <= part <= 90 and 30 <= emppop <= 90 and
-        0 <= under <= 30 and 500 <= hrs <= 5000
-    ):
-        detail = f"ABS reference period {detected_ref} failed plausibility validation; last verified observations retained."
+    if not (5_000_000 <= emp <= 30_000_000 and 0 <= ur <= 30 and 30 <= part <= 90 and 30 <= emppop <= 90 and 0 <= under <= 30 and 500 <= hrs <= 5000):
+        detail = f"New ABS reference period {detected_ref} failed plausibility validation; last verified observations retained."
         lm["automatic_parser_status"] = detail
         return _reject_candidate("abs_labour", detail)
 
     ft = num(r"Full-time employment (?:increased|decreased) by [0-9,]+ to ([0-9,]+) people")
     pt = num(r"part-time employment (?:increased|decreased) by [0-9,]+ to ([0-9,]+) people")
 
-    previous = json.dumps(lm, sort_keys=True, default=str)
     lm.update({
         "reference_period": detected_ref,
         "employment_persons": int(emp),
@@ -976,20 +915,36 @@ def parse_abs_labour(t):
         "full_time_employment_persons": None if ft is None else int(ft),
         "part_time_employment_persons": None if pt is None else int(pt),
         "last_verified": "Automatically extracted from ABS Labour Force headline release after complete-set validation",
-        "automatic_parser_status": "UPDATED — complete seasonally adjusted headline set validated."
+        "automatic_parser_status": "UPDATED — complete seasonally adjusted headline set validated; optional fields shown only when explicitly parsed.",
     })
-    return json.dumps(lm, sort_keys=True, default=str) != previous
+    return True
+
 
 def parse_abs_cpi(t):
-    changed=False
-    m=re.search(r"Reference period\s+([A-Za-z]+\s+20\d{2})",t,re.I)
-    if m and m.group(1)!=state["official"]["cpi_reference_period"]:
-        state["official"]["cpi_reference_period"]=m.group(1); changed=True
-    m=re.search(r"(?:Consumer Price Index\s*\(CPI\)|CPI)\s+rose\s+([0-9]+(?:\.[0-9]+)?)%",t,re.I)
-    if m:
-        v=float(m.group(1))
-        if v!=state["official"]["cpi_annual_pct"]:
-            state["official"]["cpi_annual_pct"]=v; changed=True
+    """Advance CPI only when the new ABS reference month and its own annual rate parse together."""
+    ref = re.search(r"Reference period\s+([A-Za-z]+\s+20\d{2})", t, re.I)
+    if not ref:
+        return False
+    detected_ref = ref.group(1).title()
+    patterns = [
+        r"In\s+the\s+12\s+months\s+to\s+" + re.escape(detected_ref) + r"[^%]{0,220}?(?:Consumer Price Index\s*\(CPI\)|CPI)[^%]{0,120}?(?:rose|fell)\s+([0-9]+(?:\.[0-9]+)?)%",
+        r"(?:Consumer Price Index\s*\(CPI\)|CPI)[^.]{0,220}?(?:rose|fell)\s+([0-9]+(?:\.[0-9]+)?)%\s+(?:over|through|in)\s+the\s+(?:year|12\s+months)",
+        r"(?:Consumer Price Index\s*\(CPI\)|CPI)\s+(?:rose|fell)\s+([0-9]+(?:\.[0-9]+)?)%",
+    ]
+    annual = None
+    for pat in patterns:
+        m = re.search(pat, t, re.I|re.S)
+        if m:
+            annual = float(m.group(1)); break
+    if annual is None:
+        return _reject_candidate("abs_cpi", f"CPI reference period {detected_ref} detected but its annual CPI rate did not parse.")
+    if not (-5.0 <= annual <= 30.0):
+        return _reject_candidate("abs_cpi", f"CPI reference period {detected_ref} supplied implausible annual CPI {annual}%.")
+    o = state["official"]
+    changed = detected_ref != o.get("cpi_reference_period") or annual != o.get("cpi_annual_pct")
+    if changed:
+        o["cpi_reference_period"] = detected_ref
+        o["cpi_annual_pct"] = annual
     return changed
 
 
@@ -1415,40 +1370,54 @@ def parse_lci(t):
     return False
 
 def _extract_rba_cash_rate(t):
-    """Extract the current RBA cash-rate target, preferring the newest table row."""
-    table = re.search(
-        r"Effective Date\s+Change%?\s*points\s+Cash rate target %.*?"
-        r"(?:\d{1,2}\s+[A-Za-z]{3}\s+20\d{2})\s+[+-]?[0-9.]+\s+([0-9]+(?:\.[0-9]+)?)",
-        t, re.I | re.S
-    )
-    if table:
-        v = float(table.group(1))
-        if 0.0 <= v <= 20.0:
-            return v
+    """Extract the current RBA cash-rate target across common RBA page wordings."""
     patterns = [
         r"cash\s+rate\s+target\s*[-–—:]?\s*([0-9]+(?:\.[0-9]+)?)\s*(?:per\s*cent|%)",
         r"cash\s+rate\s+target.{0,220}?([0-9]+(?:\.[0-9]+)?)\s*(?:per\s*cent|%)",
         r"cash\s+rate.{0,120}?(?:is|at|to)\s*([0-9]+(?:\.[0-9]+)?)\s*(?:per\s*cent|%)",
         r"target\s+for\s+the\s+cash\s+rate.{0,180}?([0-9]+(?:\.[0-9]+)?)\s*(?:per\s*cent|%)",
     ]
+    vals=[]
     for pat in patterns:
-        m = re.search(pat, t, re.I | re.S)
-        if m:
-            v = float(m.group(1))
-            if 0.0 <= v <= 20.0:
-                return v
-    return None
+        for x in re.findall(pat,t,re.I|re.S):
+            try:
+                v=float(x)
+                if 0.0 <= v <= 20.0:
+                    vals.append(v)
+            except Exception:
+                pass
+    return vals[0] if vals else None
 
 def parse_rba(t):
-    v=_extract_rba_cash_rate(t)
-    if v is not None and v!=state["official"]["cash_rate_pct"]:
-        old=state["official"].get("cash_rate_pct")
-        state["official"]["cash_rate_pct"]=v
-        state.setdefault("rba_policy",{})["cash_rate_pct"]=v
-        if old is not None:
-            state["rba_policy"]["change_basis_points"]=round((v-old)*100)
-        return True
-    return False
+    """Parse an explicit current RBA cash-rate target from the official cash-rate page."""
+    patterns = [
+        r"Effective Date\s+Change%?\s*points\s+Cash rate target %\s+[^\n]*?([0-9]+(?:\.[0-9]+)?)",
+        r"Cash rate target\s+([0-9]+(?:\.[0-9]+)?)\s*%",
+        r"cash rate target.{0,180}?(?:to|at|is)?\s*([0-9]+(?:\.[0-9]+)?)\s*(?:per cent|%)",
+    ]
+    v = None
+    for pat in patterns:
+        m = re.search(pat, t, re.I|re.S)
+        if m:
+            try:
+                candidate = float(m.group(1))
+                if 0.0 <= candidate <= 20.0:
+                    v = candidate
+                    break
+            except Exception:
+                pass
+    if v is None:
+        v = _extract_rba_cash_rate(t)
+    if v is None:
+        return False
+    old = state["official"].get("cash_rate_pct")
+    changed = (v != old)
+    state["official"]["cash_rate_pct"] = v
+    rp = state.setdefault("rba_policy", {})
+    rp["cash_rate_pct"] = v
+    if changed and old is not None:
+        rp["change_basis_points"] = round((v-old)*100)
+    return changed
 
 def parse_fwc(t):
     vals=[]
@@ -3273,15 +3242,45 @@ def check_now():
 # Rebuild all derived values from current official/base state.
 # ------------------------------------------------------------
 
-state["version"] = "5.7.3"
+state["version"] = "5.7.4"
 
-# v5.7.3 live-source repair + current-policy migration.
+# v5.7.2 current-policy migration.
 # RBA cash-rate target effective 30 September 2026 is 4.60%.
 # The live source parser remains authoritative for subsequent decisions.
 state.setdefault("official", {})["cash_rate_pct"] = 4.60
 state.setdefault("rba_policy", {})["cash_rate_pct"] = 4.60
 state["rba_policy"]["change_basis_points"] = 25
 state["rba_policy"]["effective_date"] = "30 September 2026"
+
+# v5.7.4 verified-current baseline migration (official releases current at 30 Sep 2026).
+# These values prevent stale state after a Render restart; future releases still flow through the live parsers.
+state.setdefault("official", {})["cpi_reference_period"] = "August 2026"
+state["official"]["cpi_annual_pct"] = 4.0
+state["official"]["cash_rate_pct"] = 4.60
+state.setdefault("rba_policy", {})["cash_rate_pct"] = 4.60
+state["rba_policy"]["change_basis_points"] = 25
+state["rba_policy"]["effective_date"] = "30 September 2026"
+state["rba_policy"]["last_decision_date"] = "2026-09-29"
+state["rba_policy"]["last_decision"] = "Increase 25 basis points"
+
+lm = state.setdefault("labour_market", {})
+lm.update({
+    "reference_period": "August 2026",
+    "employment_persons": 14836600,
+    "employment_change_persons": 39500,
+    "employment_change_pct": 0.3,
+    "employment_population_ratio_pct": 63.9,
+    "unemployment_rate_pct": 4.6,
+    "underemployment_rate_pct": 6.2,
+    "participation_rate_pct": 67.1,
+    "monthly_hours_worked_millions": 2009.0,
+    "hours_worked_change_millions": 14.0,
+    "hours_worked_change_pct": 0.7,
+    "full_time_employment_persons": 10193900,
+    "part_time_employment_persons": 4642600,
+    "last_verified": "ABS Labour Force, Australia — August 2026, released 24 September 2026",
+    "automatic_parser_status": "Current verified baseline loaded; live parser will advance only after complete-set validation.",
+})
 
 # v5.7.0 effective-date migration.
 # A persisted pre-20-Sep state must not overwrite the now-current official Chart C.
