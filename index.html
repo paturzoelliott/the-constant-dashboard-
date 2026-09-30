@@ -655,7 +655,7 @@ trimmed mean inflation and automotive fuel are kept separate.
 <div class="tc-inflation-table-wrap">
 <table class="tc-table tc-inflation-table">
 <thead>
-<tr>
+<tr id="inflationSixMonthHead">
 <th>Measure</th>
 <th>Mar</th>
 <th>Apr</th>
@@ -2354,8 +2354,8 @@ function draw(s){
  tcSet('changedfuel',tcPct(cm.automotive_fuel_monthly_pct));
  tcSet('changedfuelsub',(cm.reference_period||o.cpi_reference_period||'Latest')+' monthly movement');
  tcSet('changedannualref',(cm.reference_period||o.cpi_reference_period||'Latest official ABS')+' · previous '+tcPct((cpiModel.previous||{}).annual_cpi_pct));
- tcSet('rbaheadline',tcPct(liveAnnual)); tcSet('rbatrimmed',tcPct(cm.trimmed_mean_annual_pct)); tcSet('rbafuel',tcPct(cm.automotive_fuel_monthly_pct));
- renderCPIMonthComparison(s);renderFullLECI(s);
+ tcSet('rbaheadline',tcPct(liveAnnual)); tcSet('rbatrimmed',tcPct(cm.trimmed_mean_annual_pct)); tcSet('rbaexvolatile',tcPct(cm.ex_volatile_annual_pct)); tcSet('rbafuel',tcPct(cm.automotive_fuel_monthly_pct));
+ renderInflationSixMonth(s);renderCPIMonthComparison(s);renderFullLECI(s);
  // v5.7.5 frontend live bindings: keep every visible CPI/RBA field synchronized.
  tcSet('rbaheadline', pct(o.cpi_annual_pct));
  tcSet('tickercash', pct(o.cash_rate_pct));
@@ -2669,6 +2669,31 @@ function tcSet(id,value){
     }
 }
 
+
+function renderInflationSixMonth(s){
+  const o=(s&&s.official)||{};
+  const model=o.cpi_monthly||{};
+  const fallback={
+    '2026-03':{reference_period:'March 2026',annual_cpi_pct:4.6,monthly_original_pct:1.1,monthly_sa_pct:1.1,ex_volatile_annual_pct:3.9,ex_volatile_monthly_pct:0.1,trimmed_mean_annual_pct:3.3,housing_annual_pct:6.5,food_annual_pct:3.1,transport_annual_pct:8.9,automotive_fuel_monthly_pct:32.8},
+    '2026-04':{reference_period:'April 2026',annual_cpi_pct:4.2,monthly_original_pct:0.4,monthly_sa_pct:-0.1,ex_volatile_annual_pct:3.8,ex_volatile_monthly_pct:0.6,trimmed_mean_annual_pct:3.4,housing_annual_pct:6.3,food_annual_pct:2.8,transport_annual_pct:6.6,automotive_fuel_monthly_pct:-7.0},
+    '2026-05':{reference_period:'May 2026',annual_cpi_pct:4.0,monthly_original_pct:-0.7,monthly_sa_pct:-0.1,ex_volatile_annual_pct:3.9,ex_volatile_monthly_pct:-0.3,trimmed_mean_annual_pct:3.6,housing_annual_pct:6.5,food_annual_pct:3.3,transport_annual_pct:3.3,automotive_fuel_monthly_pct:-11.9},
+    '2026-06':{reference_period:'June 2026',annual_cpi_pct:3.8,monthly_original_pct:-0.1,monthly_sa_pct:-0.1,ex_volatile_annual_pct:4.2,ex_volatile_monthly_pct:0.3,trimmed_mean_annual_pct:3.6,housing_annual_pct:6.8,food_annual_pct:3.3,transport_annual_pct:0.1,automotive_fuel_monthly_pct:-10.9},
+    '2026-07':{reference_period:'July 2026',annual_cpi_pct:3.5,monthly_original_pct:1.0,monthly_sa_pct:0.6,ex_volatile_annual_pct:3.7,ex_volatile_monthly_pct:0.9,trimmed_mean_annual_pct:3.6,housing_annual_pct:5.0,food_annual_pct:3.2,transport_annual_pct:1.6,automotive_fuel_monthly_pct:7.5},
+    '2026-08':{reference_period:'August 2026',annual_cpi_pct:4.0,monthly_original_pct:0.4,monthly_sa_pct:0.7,trimmed_mean_annual_pct:3.6,housing_annual_pct:5.7,transport_annual_pct:5.6,automotive_fuel_monthly_pct:14.8}
+  };
+  const merged={...fallback};
+  for(const row of (model.archive||[])){ if(row&&row.month) merged[row.month]={...(merged[row.month]||{}),...row}; }
+  if(model.current&&model.current.month) merged[model.current.month]={...(merged[model.current.month]||{}),...model.current};
+  const months=Object.keys(merged).sort().slice(-6);
+  if(!months.length) return;
+  const label=m=>{ const rp=(merged[m]||{}).reference_period||''; return rp?rp.split(' ')[0].slice(0,3):m; };
+  const val=(v,signed=false)=>{ if(v===null||v===undefined||Number.isNaN(Number(v))) return '—'; const n=Number(v); return (signed&&n>0?'+':'')+n.toFixed(1)+'%'; };
+  const head=document.getElementById('inflationSixMonthHead');
+  if(head) head.innerHTML='<th>Measure</th>'+months.map(m=>'<th>'+label(m)+'</th>').join('');
+  const body=document.getElementById('inflationSixMonthBody'); if(!body) return;
+  const specs=[['Headline CPI — annual','annual_cpi_pct',false],['Headline CPI — monthly','monthly_original_pct',true],['Monthly CPI — seasonally adjusted','monthly_sa_pct',true],['Ex-volatile CPI — annual','ex_volatile_annual_pct',false],['Ex-volatile CPI — monthly','ex_volatile_monthly_pct',true],['Trimmed mean — annual','trimmed_mean_annual_pct',false],['Housing — annual','housing_annual_pct',false],['Food — annual','food_annual_pct',false],['Transport — annual','transport_annual_pct',false],['Automotive fuel — monthly','automotive_fuel_monthly_pct',true]];
+  body.innerHTML=specs.map(([lab,key,signed])=>'<tr><td><strong>'+lab+'</strong></td>'+months.map(m=>'<td>'+val((merged[m]||{})[key],signed)+'</td>').join('')+'</tr>').join('');
+}
 
 function renderCPIMonthComparison(state){
 
