@@ -23,7 +23,7 @@ STATE_FILE = DATA_DIR / "state.json"
 RUNTIME_STATE_FILE = DATA_DIR / "runtime_state.json"
 
 DEFAULT = {
-    "version": "5.7.1",
+    "version": "5.7.2",
     "started_at": None,
     "last_check": None,
     "next_check": None,
@@ -53,7 +53,7 @@ DEFAULT = {
         "pblci_annual_pct": 4.6,
         "age_pensioner_lci_annual_pct": 4.7,
         "lci_reference_base": "September 2025 quarter = 100",
-        "cash_rate_pct": 4.35
+        "cash_rate_pct": 4.60
     },
     "forward": {
         "status": "Official Services Australia cut-off confirmed — effective 20 September 2026",
@@ -202,7 +202,7 @@ DEFAULT = {
         "note": "Senior-office figures may be total remuneration; compare with minimum wage only when labels identify the remuneration basis."
     },
     "rba_policy": {
-        "cash_rate_pct": 4.35,
+        "cash_rate_pct": 4.60,
         "effective_date": "2026-08-12",
         "last_decision_date": "2026-08-11",
         "last_decision": "Unchanged",
@@ -308,6 +308,16 @@ TERMS = ("pension","jobseeker","social security","indexation","payment","income 
 session = requests.Session()
 session.headers.update({"User-Agent":"THE-CONSTANT-Public-Monitor/4.1"})
 app = Flask(__name__)
+
+# v5.7.2 runtime scheduler diagnostics / wake-refresh guard
+SCHEDULER_THREAD = None
+SCHEDULER_START_LOCK = threading.Lock()
+WAKE_REFRESH_LOCK = threading.Lock()
+LAST_WAKE_REFRESH_TRIGGER = 0.0
+
+def _log(msg):
+    print(f"[THE CONSTANT] {msg}", flush=True)
+
 app.secret_key = os.getenv("SECRET_KEY", "the-constant-live-v570-session-key")
 lock = threading.RLock()
 
@@ -1310,6 +1320,7 @@ def parse_lci(t):
 def _extract_rba_cash_rate(t):
     """Extract the current RBA cash-rate target across common RBA page wordings."""
     patterns = [
+        r"cash\s+rate\s+target\s*[-–—:]?\s*([0-9]+(?:\.[0-9]+)?)\s*(?:per\s*cent|%)",
         r"cash\s+rate\s+target.{0,220}?([0-9]+(?:\.[0-9]+)?)\s*(?:per\s*cent|%)",
         r"cash\s+rate.{0,120}?(?:is|at|to)\s*([0-9]+(?:\.[0-9]+)?)\s*(?:per\s*cent|%)",
         r"target\s+for\s+the\s+cash\s+rate.{0,180}?([0-9]+(?:\.[0-9]+)?)\s*(?:per\s*cent|%)",
@@ -2718,10 +2729,14 @@ def maintain_constant_material_monitor():
 
 
 def check_all():
+    _log("official-source refresh started")
     errors=[]
     for name,(url,kind) in SOURCES.items():
+        _log(f"fetching source: {name}")
         html=fetch(name,url)
-        if html is None: continue
+        if html is None:
+            _log(f"source unavailable; retaining last verified value: {name}")
+            continue
         try:
             if kind=="minister_rss": parse_rss(html); continue
             t=textify(html); changed=False
@@ -2763,8 +2778,12 @@ def check_all():
             elif kind=="income_support_age_pension": changed=parse_income_support_age_pension(t)
             elif kind=="income_support_jobseeker": changed=parse_income_support_jobseeker(t)
             elif kind=="acoss": changed=parse_acoss(t)
-            if changed: mark_change()
-        except Exception as e: errors.append(f"{name}: {e}")
+            if changed:
+                mark_change()
+                _log(f"source changed: {name}")
+        except Exception as e:
+            errors.append(f"{name}: {e}")
+            _log(f"source parse error [{name}]: {e}")
     maintain_union_archive()
 
     # v5.6.7 lifecycle:
@@ -2783,6 +2802,7 @@ def check_all():
         state["last_check"]=now_iso()
         state["next_check"]=next_refresh_time().isoformat(timespec="seconds")
         save_state()
+    _log(f"official-source refresh finished; errors={len(errors)} checks={state.get('checks_completed')}")
 
 
 # =============================================================================
@@ -2958,13 +2978,19 @@ def next_refresh_time(now=None):
 
 def loop():
     """
-    Run one source check at startup so the public dashboard is not stale,
-    then refresh hourly in Australia/Sydney time so scheduled releases are picked up promptly.
+    Run one source check at startup, then refresh hourly in Australia/Sydney time.
+    This function is deliberately started at module import so it also runs under Gunicorn.
     """
+    _log("scheduler thread entered")
     try:
         check_all()
     except Exception as e:
         state.setdefault("errors", []).append("Startup source check: " + str(e))
+        _log(f"startup source check failed: {e}")
+        try:
+            save_state()
+        except Exception:
+            pass
 
     while True:
         target = next_refresh_time()
@@ -2975,20 +3001,65 @@ def loop():
             except Exception:
                 pass
 
-        seconds = max(
-            1,
-            (target - datetime.now(SYDNEY_TZ)).total_seconds()
-        )
+        seconds = max(1, (target - datetime.now(SYDNEY_TZ)).total_seconds())
+        _log(f"next scheduled refresh: {state['next_check']}")
         time.sleep(seconds)
 
         try:
             check_all()
         except Exception as e:
             state.setdefault("errors", []).append("Scheduled source check: " + str(e))
+            _log(f"scheduled source check failed: {e}")
             try:
                 save_state()
             except Exception:
                 pass
+
+def start_scheduler_once():
+    """Start exactly one daemon refresh thread per Python process."""
+    global SCHEDULER_THREAD
+    if os.getenv("TC_DISABLE_SCHEDULER", "0") == "1":
+        _log("scheduler disabled by TC_DISABLE_SCHEDULER=1")
+        return False
+    with SCHEDULER_START_LOCK:
+        if SCHEDULER_THREAD is not None and SCHEDULER_THREAD.is_alive():
+            return True
+        SCHEDULER_THREAD = threading.Thread(
+            target=loop,
+            daemon=True,
+            name="the-constant-refresh",
+        )
+        SCHEDULER_THREAD.start()
+        _log("scheduler thread started")
+        return True
+
+def trigger_wake_refresh_if_stale(max_age_seconds=600):
+    """
+    Render free instances may sleep. On the first API request after wake, ensure a
+    background refresh is triggered if the last successful check is old or absent.
+    A throttle prevents the dashboard's polling requests from spawning duplicates.
+    """
+    global LAST_WAKE_REFRESH_TRIGGER
+    now_ts = time.time()
+    last = state.get("last_check")
+    stale = True
+    if last:
+        try:
+            dt = datetime.fromisoformat(str(last).replace("Z", "+00:00"))
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+            stale = (datetime.now(timezone.utc) - dt.astimezone(timezone.utc)).total_seconds() > max_age_seconds
+        except Exception:
+            stale = True
+    if not stale:
+        return False
+    with WAKE_REFRESH_LOCK:
+        if now_ts - LAST_WAKE_REFRESH_TRIGGER < 120:
+            return False
+        LAST_WAKE_REFRESH_TRIGGER = now_ts
+        threading.Thread(target=check_all, daemon=True, name="the-constant-wake-refresh").start()
+        _log("wake refresh triggered by API request")
+        return True
 
 
 def _counter_store_config():
@@ -3069,7 +3140,9 @@ def visitor_count():
 def home(): return send_from_directory(APP_DIR,"index.html")
 
 @app.get("/api/state")
-def api_state(): return jsonify(json.loads(json.dumps(state)))
+def api_state():
+    trigger_wake_refresh_if_stale()
+    return jsonify(json.loads(json.dumps(state)))
 
 @app.get("/health")
 def health():
@@ -3078,21 +3151,34 @@ def health():
         "version": state["version"],
         "last_check": state["last_check"],
         "next_check": state["next_check"],
+        "checks_completed": state.get("checks_completed", 0),
+        "errors": state.get("errors", []),
+        "scheduler_alive": bool(SCHEDULER_THREAD and SCHEDULER_THREAD.is_alive()),
+        "scheduler_thread": SCHEDULER_THREAD.name if SCHEDULER_THREAD else None,
         "refresh_timezone": "Australia/Sydney",
-        "refresh_times": ["hourly"]
+        "refresh_times": ["startup", "hourly", "wake-if-stale"]
     })
 
 @app.get("/api/check-now")
 def check_now():
-    threading.Thread(target=check_all,daemon=True).start()
-    return jsonify({"ok":True})
+    threading.Thread(target=check_all, daemon=True, name="the-constant-manual-refresh").start()
+    _log("manual refresh requested")
+    return jsonify({"ok": True, "started": True})
 
 # ------------------------------------------------------------
 # v5.4 startup model migration
 # Rebuild all derived values from current official/base state.
 # ------------------------------------------------------------
 
-state["version"] = "5.7.1"
+state["version"] = "5.7.2"
+
+# v5.7.2 current-policy migration.
+# RBA cash-rate target effective 30 September 2026 is 4.60%.
+# The live source parser remains authoritative for subsequent decisions.
+state.setdefault("official", {})["cash_rate_pct"] = 4.60
+state.setdefault("rba_policy", {})["cash_rate_pct"] = 4.60
+state["rba_policy"]["change_basis_points"] = 25
+state["rba_policy"]["effective_date"] = "30 September 2026"
 
 # v5.7.0 effective-date migration.
 # A persisted pre-20-Sep state must not overwrite the now-current official Chart C.
@@ -3108,11 +3194,9 @@ maintain_constant_material_monitor()
 
 save_state()
 
-if os.getenv("TC_DISABLE_SCHEDULER", "0") != "1":
-    threading.Thread(
-        target=loop,
-        daemon=True
-    ).start()
+# Start the official-source scheduler on import so Gunicorn and direct Python
+# execution use the same refresh behaviour.
+start_scheduler_once()
 
 if __name__=="__main__":
     app.run(
