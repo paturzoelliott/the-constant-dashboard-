@@ -1078,6 +1078,25 @@ def update_cpi_monthly_detail(
             "previous"
         ] = old_current
 
+    # v5.7.10: ABS pages can expose some monthly fields in separate tables.
+    # A later partial parse for the SAME reference month must enrich the
+    # verified row, not erase fields that were already verified at startup
+    # or by an earlier parser pass. Incoming non-None values win; missing
+    # values retain the existing same-month observation.
+    existing_same_month = rows.get(month)
+    if (
+        isinstance(old_current, dict)
+        and old_current.get("month") == month
+    ):
+        existing_same_month = {**(existing_same_month or {}), **old_current}
+
+    if isinstance(existing_same_month, dict):
+        merged_row = dict(existing_same_month)
+        for key, value in row.items():
+            if value is not None:
+                merged_row[key] = value
+        row = merged_row
+
     rows[month] = row
 
     archive = [
@@ -3374,7 +3393,7 @@ def check_now():
 # Rebuild all derived values from current official/base state.
 # ------------------------------------------------------------
 
-state["version"] = "5.7.9"
+state["version"] = "5.7.10"
 
 # v5.7.2 current-policy migration.
 # RBA cash-rate target effective 30 September 2026 is 4.60%.
