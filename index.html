@@ -5,180 +5,6 @@
 <title>THE CONSTANT — Live</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;padding:0;background:#07111f!important}.tc-shell{min-height:100vh;padding:1px 0;color:#fff;background:radial-gradient(circle at 18% 18%,rgba(0,200,255,.16),transparent 30%),radial-gradient(circle at 82% 12%,rgba(123,97,255,.14),transparent 28%),linear-gradient(180deg,#081423 0%,#0b1830 45%,#07111f 100%);background-attachment:fixed;}body{color:#fff;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#07111f!important;}font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{max-width:1450px;margin:auto;padding:20px}.header{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;padding:20px 0 26px;border-bottom:1px solid rgba(255,255,255,.08)}.logo{font-size:34px;font-weight:950;color:#00c8ff}.badge{display:inline-block;margin-top:7px;padding:6px 11px;border-radius:999px;color:#51cf66;background:rgba(81,207,102,.1);border:1px solid rgba(81,207,102,.25);font-size:11px;font-weight:800}.clock{font:900 28px ui-monospace,monospace;color:#00c8ff;text-align:right}.clocklabel{font-size:10px;color:rgba(255,255,255,.35);text-align:right}.grid{display:grid;grid-template-columns:2fr 1fr;gap:22px;margin-top:22px}.card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.065);border-radius:19px;padding:22px;margin-bottom:22px}.title{font-size:15px;font-weight:850;color:rgba(255,255,255,.65);margin-bottom:15px}.four{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.stat{text-align:center;padding:15px 9px;border-radius:13px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.045)}.lab{font-size:10px;text-transform:uppercase;color:rgba(255,255,255,.37);font-weight:800}.val{font-size:22px;font-weight:900;margin-top:4px}.cyan{color:#00c8ff}.gold{color:#ffd43b}.red{color:#ff6b6b}.purple{color:#b197fc}.orange{color:#ffa94d}.source,.event,.upcoming-event{padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:11px}.row{display:flex;justify-content:space-between;gap:12px}.ok{color:#51cf66;font-weight:800}.warn{color:#ffd43b;font-weight:800}.err{color:#ff6b6b;font-weight:800}.sub{font-size:10px;color:rgba(255,255,255,.3);margin-top:4px}.claimtable{width:100%;border-collapse:collapse;font-size:11px}.claimtable th,.claimtable td{padding:9px 8px;border-bottom:1px solid rgba(255,255,255,.06);text-align:left}.claimtable th{color:rgba(255,255,255,.42);font-size:9px;text-transform:uppercase}.claimtag{display:inline-block;padding:3px 7px;border-radius:999px;background:rgba(0,200,255,.1);color:#7ee5ff;font-weight:800;font-size:9px}.archivebtn{border:0;background:rgba(255,255,255,.08);color:white;padding:9px 12px;border-radius:9px;font-weight:800;cursor:pointer}.archivepanel{display:none;margin-top:14px}.archivepanel.open{display:block}.announcement-archive-btn{border:0;background:rgba(255,255,255,.08);color:white;padding:9px 12px;border-radius:9px;font-weight:800;cursor:pointer;margin-top:12px}.announcement-archive{display:none;margin-top:12px}.announcement-archive.open{display:block}.linkedin{display:inline-block;text-decoration:none;color:white;background:#0a66c2;padding:11px 16px;border-radius:10px;font-weight:800;font-size:12px}.footer{border-top:1px solid rgba(255,255,255,.06);padding:18px 0;color:rgba(255,255,255,.28);font-size:11px}@media(max-width:1000px){.grid{grid-template-columns:1fr}.four{grid-template-columns:repeat(2,1fr)}}@media(max-width:620px){.four,.three{grid-template-columns:1fr}.header{justify-content:center;text-align:center}.clock,.clocklabel{text-align:center}}
-
-
-/* ========================================================================
-   THE CONSTANT LIVE v5.7.0
-   CPI MONTH COMPARISON + THREE-INCOME LECI
-   ======================================================================== */
-
-.tc-cpi-compare-grid{
-    display:grid;
-    grid-template-columns:
-        repeat(2,minmax(0,1fr));
-    gap:16px;
-    align-items:stretch;
-    margin-top:14px;
-}
-
-.tc-cpi-month-card{
-    border:
-        1px solid
-        rgba(125,190,255,.28);
-    border-radius:16px;
-    padding:16px;
-    background:
-        rgba(6,28,56,.66);
-}
-
-.tc-cpi-month-card.current{
-    border-color:
-        rgba(0,215,255,.58);
-}
-
-.tc-cpi-month-heading{
-    font-size:.82rem;
-    font-weight:800;
-    letter-spacing:.09em;
-    margin-bottom:10px;
-    opacity:.9;
-}
-
-.tc-cpi-detail-table,
-.tc-leci-full-table{
-    width:100%;
-    border-collapse:collapse;
-}
-
-.tc-cpi-detail-table td,
-.tc-leci-full-table td,
-.tc-leci-full-table th{
-    padding:9px 7px;
-    border-bottom:
-        1px solid
-        rgba(255,255,255,.08);
-}
-
-.tc-cpi-detail-table td:last-child,
-.tc-leci-full-table td:not(:first-child),
-.tc-leci-full-table th:not(:first-child){
-    text-align:right;
-    font-variant-numeric:
-        tabular-nums;
-}
-
-.tc-cpi-reference{
-    margin-top:12px;
-    padding-top:10px;
-    text-align:center;
-    border-top:
-        1px solid
-        rgba(255,255,255,.08);
-    font-size:.88rem;
-    line-height:1.45;
-}
-
-.tc-leci-scroll{
-    overflow-x:auto;
-}
-
-.tc-leci-full-table{
-    min-width:850px;
-}
-
-.tc-leci-total td{
-    font-weight:800;
-}
-
-.tc-leci-negative{
-    color:#ff7373;
-    font-weight:800;
-}
-
-.tc-leci-positive{
-    color:#77efb2;
-    font-weight:800;
-}
-
-.tc-method-note{
-    margin-top:12px;
-    font-size:.88rem;
-    opacity:.83;
-    line-height:1.5;
-}
-
-.tc-cpi-archive-table{
-    display:none;
-    margin-top:14px;
-    overflow-x:auto;
-}
-
-.tc-cpi-archive-table.open{
-    display:block;
-}
-
-@media(max-width:760px){
-
-    .tc-cpi-compare-grid{
-        grid-template-columns:1fr;
-    }
-}
-
-
-
-/* =======================================================================================
-   THE CONSTANT LIVE v5.6.8 — SIX-MONTH INFLATION RESPONSIVE PRESENTATION
-   ======================================================================================= */
-
-.tc-inflation-table-wrap{
-    width:100%;
-    display:flex;
-    justify-content:center;
-    margin-top:14px;
-}
-
-.tc-inflation-table{
-    width:100%;
-    max-width:900px;
-    margin-left:auto;
-    margin-right:auto;
-    table-layout:fixed;
-}
-
-.tc-inflation-table th,
-.tc-inflation-table td{
-    text-align:center;
-    vertical-align:middle;
-    overflow-wrap:anywhere;
-}
-
-@media (max-width:1024px){
-    .tc-inflation-table{
-        max-width:100%;
-        font-size:.92em;
-    }
-
-    .tc-inflation-table th,
-    .tc-inflation-table td{
-        padding-left:6px;
-        padding-right:6px;
-    }
-}
-
-@media (max-width:620px){
-    .tc-inflation-table-wrap{
-        display:block;
-        overflow-x:auto;
-        -webkit-overflow-scrolling:touch;
-    }
-
-    .tc-inflation-table{
-        width:680px;
-        max-width:none;
-        table-layout:auto;
-    }
-}
-
 </style>
 
 <style id="the-constant-dark-blue-fix">
@@ -387,153 +213,6 @@ body,
 }
 </style>
 
-
-<style id="tc-v56-style">
-
-.tc-status-key {
-    display:flex;
-    flex-wrap:wrap;
-    gap:7px;
-    margin:10px 0 16px;
-}
-
-.tc-chip {
-    display:inline-block;
-    padding:4px 8px;
-    border-radius:999px;
-    font-size:9px;
-    font-weight:900;
-    letter-spacing:.03em;
-}
-
-.tc-official {
-    color:#51cf66;
-    background:rgba(81,207,102,.10);
-    border:1px solid rgba(81,207,102,.24);
-}
-
-.tc-derived {
-    color:#ffd43b;
-    background:rgba(255,212,59,.09);
-    border:1px solid rgba(255,212,59,.22);
-}
-
-.tc-modelled {
-    color:#b197fc;
-    background:rgba(177,151,252,.10);
-    border:1px solid rgba(177,151,252,.24);
-}
-
-.tc-proposed {
-    color:#7ee5ff;
-    background:rgba(0,200,255,.09);
-    border:1px solid rgba(0,200,255,.22);
-}
-
-.tc-calendar-item {
-    padding:13px 0;
-    border-bottom:1px solid rgba(255,255,255,.055);
-}
-
-.tc-calendar-date {
-    color:#ffd43b;
-    font-weight:900;
-    font-size:11px;
-}
-
-.tc-calendar-title {
-    color:#fff;
-    font-weight:850;
-    margin-top:3px;
-    font-size:12px;
-}
-
-.tc-calendar-why {
-    color:rgba(255,255,255,.48);
-    font-size:10px;
-    margin-top:5px;
-    line-height:1.5;
-}
-
-.tc-review-status {
-    display:inline-block;
-    padding:3px 7px;
-    border-radius:999px;
-    background:rgba(0,200,255,.08);
-    color:#7ee5ff;
-    border:1px solid rgba(0,200,255,.18);
-    font-size:9px;
-    font-weight:850;
-}
-
-.tc-cost-balance {
-    margin-top:14px;
-    padding:14px;
-    border-radius:12px;
-    background:#07182f;
-    border:1px solid rgba(255,255,255,.06);
-}
-
-.tc-policy-details {
-    margin-top:12px;
-    border:1px solid rgba(0,200,255,.18);
-    border-radius:14px;
-    overflow:hidden;
-    background:#07182f;
-}
-
-.tc-policy-details summary {
-    cursor:pointer;
-    padding:17px 18px;
-    color:#00c8ff;
-    font-weight:950;
-    font-size:14px;
-    list-style:none;
-}
-
-.tc-policy-details summary::-webkit-details-marker {
-    display:none;
-}
-
-.tc-policy-body {
-    padding:0 18px 20px;
-    font-size:12px;
-    line-height:1.72;
-    color:rgba(255,255,255,.78);
-}
-
-.tc-policy-body h3 {
-    color:#ffd43b;
-    font-size:13px;
-    margin-top:22px;
-}
-
-.tc-policy-body strong {
-    color:#fff;
-}
-
-.tc-final-question {
-    margin:17px 0;
-    padding:14px;
-    border-left:3px solid #00c8ff;
-    background:rgba(0,200,255,.05);
-    color:#fff;
-    line-height:1.65;
-}
-
-.tc-archive-note {
-    margin-top:10px;
-    padding:10px 12px;
-    border-radius:10px;
-    background:#07182f;
-    border:1px solid rgba(255,255,255,.05);
-    color:rgba(255,255,255,.45);
-    font-size:10px;
-    line-height:1.5;
-}
-
-</style>
-
 </head>
 <body><div class="tc-shell">
 
@@ -553,37 +232,62 @@ body,
 <header class="header"><div><div class="logo">THE CONSTANT</div><span class="badge">● LIVE OFFICIAL SOURCE MONITOR</span></div><div><div id="clock" class="clock">--:--:--</div><div class="clocklabel">Viewer local time</div></div>
 </header>
 
-<section class="card" id="visitor-counter" style="margin-top:22px">
-<div class="title">THE CONSTANT LIVE — VISITOR COUNTER</div>
-<div class="stat">
-<div class="lab">Dashboard Visits</div>
-<div id="visitcount" class="val cyan">—</div>
-<div class="sub">Counts once per browser session · no names or personal identifiers stored by this counter</div><div id="visitstorage" class="sub"></div>
+
+<section class="card tc-definition-card" id="what-is-chart-c">
+<div class="tc-definition-title">WHAT IS CHART C?</div>
+<div class="tc-definition-text">
+
+<p><strong>THE CONSTANT uses “Chart C” as shorthand for the single-person pension income-test cessation point.</strong>
+It is the level of assessable fortnightly income at which entitlement under the standard pension income test reaches zero.
+It is not a poverty line or minimum-income guarantee.</p>
+
+<p>Under the current standard rules, the first <strong>$226 per fortnight</strong> is income-free and pension entitlement is then reduced by <strong>50 cents per additional dollar</strong>.
+Services Australia currently publishes the standard single-person cut-off at <strong>$2,701.40 per fortnight</strong>, effective 20 September 2026.</p>
+
+<p>THE CONSTANT converts that fortnightly cut-off to a weekly equivalent and compares it with the National Minimum Wage.
+The comparison does not assume the two measures were legislated to be equal. The research question is how their historical relationship behaved over time and why it changed sharply around 2000.</p>
+
+<p>Chart C can move because of changes in pension rates, the income free area, taper rules and pension structure.
+THE CONSTANT therefore reconstructs the underlying policy parameters rather than treating Chart C as a simple price index.</p>
+
 </div>
 </section>
 
+<section class="card tc-live-report" id="live-report-2026-08-22">
 
+<div class="tc-live-report-title">THE CONSTANT LIVE — MATERIAL UPDATE</div>
+<div class="sub">20 September 2026 · official pension income-test rollover</div>
 
+<div class="tc-live-report-copy">
 
+<p>The Australian Government announced on <strong>20 August 2026</strong> that the maximum single pension rate will increase by <strong>$36.80 per fortnight</strong> to <strong>$1,237.70 per fortnight</strong> from 20 September.</p>
 
+<div class="tc-status-line">
+<strong>Current official cut-off:</strong> $2,701.40 per fortnight, effective 20 September 2026.<br><br>
+<strong>Previous cut-off:</strong> $2,627.80 per fortnight. The live monitor retains the previous observation in the historical comparison while current calculations now use the official $2,701.40 cut-off.
+</div>
 
+<table class="tc-report-table">
+<thead>
+<tr><th>Measure</th><th>Previous</th><th>Current · 20 Sep 2026</th></tr>
+</thead>
+<tbody>
+<tr><td>Single Chart C</td><td>$2,627.80/fn</td><td>$2,701.40/fn</td></tr>
+<tr><td>Weekly Chart C</td><td>$1,313.90</td><td>$1,350.70</td></tr>
+<tr><td>National Minimum Wage</td><td>$1,004.90/wk</td><td>$1,004.90/wk</td></tr>
+<tr><td>Weekly gap</td><td>$309.00</td><td>$345.80</td></tr>
+<tr><td>Wage / Chart C</td><td>76.48%</td><td>74.40%</td></tr>
+</tbody>
+</table>
 
+<p>The ABS reported that the Pensioner and Beneficiary Living Cost Index rose <strong>3.2%</strong> over the six months from December 2025 to June 2026, compared with <strong>2.0%</strong> for CPI. PBLCI rose <strong>0.6%</strong> in the June quarter and <strong>4.6%</strong> through the year.</p>
 
+<p>The September figure is now an official observed cut-off published by Services Australia. THE CONSTANT continues to separate official observations, calculated comparisons and counterfactual analysis.</p>
 
+<p>The live monitor deliberately separates <strong>official observations, derived policy arithmetic and THE CONSTANT counterfactual analysis</strong>.</p>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+</div>
+</section>
 
 <section class="card" id="current-verified">
     <div class="title">CURRENT VERIFIED — 20 SEPTEMBER 2026</div>
@@ -617,566 +321,15 @@ body,
     </div>
 </section>
 
-<section class="card tc-definition-card" id="what-is-chart-c">
-<div class="tc-definition-title">WHAT IS CHART C?</div>
-<div class="tc-definition-text">
-
-<p><strong>THE CONSTANT uses “Chart C” as shorthand for the single-person pension income-test cessation point.</strong>
-It is the level of assessable fortnightly income at which entitlement under the standard pension income test reaches zero.
-It is not a poverty line or minimum-income guarantee.</p>
-
-<p>Under the current standard rules, the first <strong>$226 per fortnight</strong> is income-free and pension entitlement is then reduced by <strong>50 cents per additional dollar</strong>.
-Services Australia publishes the standard single-person cut-off at <strong>$2,701.40 per fortnight</strong> from 20 September 2026.</p>
-
-<p>THE CONSTANT converts that fortnightly cut-off to a weekly equivalent and compares it with the National Minimum Wage.
-The comparison does not assume the two measures were legislated to be equal. The research question is how their historical relationship behaved over time and why it changed sharply around 2000.</p>
-
-<p>Chart C can move because of changes in pension rates, the income free area, taper rules and pension structure.
-THE CONSTANT therefore reconstructs the underlying policy parameters rather than treating Chart C as a simple price index.</p>
-
-</div>
-</section>
-
-<section class="card"><div class="title">PREVIOUS OBSERVATION → 20 SEPTEMBER 2026 OFFICIAL ROLLOVER</div><div class="four">
-<div class="stat"><div class="lab">Current Chart C</div><div id="fcc" class="val gold">—</div></div>
+<section class="card"><div class="title">20 SEPTEMBER 2026 — CURRENT OFFICIAL CHART C</div><div class="four">
+<div class="stat"><div class="lab">Official Chart C</div><div id="fcc" class="val gold">—</div></div>
 <div class="stat"><div class="lab">Weekly Chart C</div><div id="fcw" class="val gold">—</div></div>
 <div class="stat"><div class="lab">Current Gap</div><div id="fgap" class="val red">—</div></div>
 <div class="stat"><div class="lab">Current Ratio</div><div id="fratio" class="val red">—</div></div></div><div id="fstatus" class="sub" style="margin-top:10px"></div></section>
-
-<section class="card" id="tc-inflation-six-month">
-<div class="title">INFLATION INDICATOR — SIX-MONTH MOVEMENT</div>
-
-<div class="tc-explainer">
-Six months of official ABS inflation measures are displayed together.
-Headline CPI, seasonally adjusted monthly CPI, CPI excluding volatile items,
-trimmed mean inflation and automotive fuel are kept separate.
-</div>
-
-<div class="tc-inflation-table-wrap">
-<table class="tc-table tc-inflation-table">
-<thead>
-<tr>
-<th>Measure</th>
-<th>Feb</th>
-<th>Mar</th>
-<th>Apr</th>
-<th>May</th>
-<th>Jun</th>
-<th>Jul</th>
-</tr>
-</thead>
-<tbody id="inflationSixMonthBody">
-
-<tr>
-<td><strong>Headline CPI — annual</strong></td>
-<td>3.7%</td><td>4.6%</td><td>4.2%</td>
-<td>4.0%</td><td>3.8%</td><td>3.5%</td>
-</tr>
-
-<tr>
-<td><strong>Headline CPI — monthly</strong></td>
-<td>0.0%</td><td>+1.1%</td><td>+0.4%</td>
-<td>-0.7%</td><td>-0.1%</td><td>+1.0%</td>
-</tr>
-
-<tr>
-<td><strong>Monthly CPI — seasonally adjusted</strong></td>
-<td>+0.2%</td><td>+1.1%</td><td>-0.1%</td>
-<td>-0.1%</td><td>-0.1%</td><td>+0.6%</td>
-</tr>
-
-<tr>
-<td><strong>Ex-volatile CPI — annual</strong></td>
-<td>4.2%</td><td>3.9%</td><td>3.8%</td>
-<td>3.9%</td><td>4.2%</td><td>3.7%</td>
-</tr>
-
-<tr>
-<td><strong>Ex-volatile CPI — monthly</strong></td>
-<td>+0.1%</td><td>+0.1%</td><td>+0.6%</td>
-<td>-0.3%</td><td>+0.3%</td><td>+0.9%</td>
-</tr>
-
-<tr>
-<td><strong>Trimmed mean — annual</strong></td>
-<td>3.3%</td><td>3.3%</td><td>3.4%</td>
-<td>3.6%</td><td>3.6%</td><td>3.6%</td>
-</tr>
-
-<tr>
-<td><strong>Housing — annual</strong></td>
-<td>7.2%</td><td>6.5%</td><td>6.3%</td>
-<td>6.5%</td><td>6.8%</td><td>5.0%</td>
-</tr>
-
-<tr>
-<td><strong>Food — annual</strong></td>
-<td>3.1%</td><td>3.1%</td><td>2.8%</td>
-<td>3.3%</td><td>3.3%</td><td>3.2%</td>
-</tr>
-
-<tr>
-<td><strong>Transport — annual</strong></td>
-<td>-0.2%</td><td>8.9%</td><td>6.6%</td>
-<td>3.3%</td><td>0.1%</td><td>1.6%</td>
-</tr>
-
-<tr>
-<td><strong>Automotive fuel — monthly</strong></td>
-<td>-3.4%</td><td>+32.8%</td><td>-7.0%</td>
-<td>-11.9%</td><td>-10.9%</td><td>+7.5%</td>
-</tr>
-
-</tbody>
-</table>
-</div>
-
-<div class="sub" style="margin-top:12px">
-Ex-volatile CPI excludes automotive fuel, fruit and vegetables.
-Fuel is shown separately so major volatile movements remain visible.
-</div>
-</section>
-
-<section class="card" id="tc-what-changed">
-<div class="title">WHAT CHANGED THIS MONTH?</div>
-
-<div class="four">
-
-<div class="stat">
-<div class="lab">Annual CPI</div>
-<div id="changedannual" class="val green">—</div>
-<div id="changedannualref" class="sub">latest official ABS</div>
-</div>
-
-<div class="stat">
-<div class="lab">Monthly CPI</div>
-<div id="changedmonthly" class="val orange">—</div>
-<div class="sub">original series</div>
-</div>
-
-<div class="stat">
-<div class="lab">Monthly CPI — SA</div>
-<div id="changedsa" class="val orange">—</div>
-<div class="sub">seasonally adjusted</div>
-</div>
-
-<div class="stat">
-<div class="lab">Automotive Fuel</div>
-<div id="changedfuel" class="val orange">—</div>
-<div class="sub">July monthly movement</div>
-</div>
-
-</div>
-
-<div class="sub" style="margin-top:12px">
-Annual headline inflation eased from 3.8% to 3.5%.
-The monthly increase is shown alongside the separate automotive-fuel
-movement and underlying-inflation measures.
-</div>
-
-</section>
-
-<section class="card" id="tc-rba-policy">
-<div class="title">RBA POLICY MONITOR</div>
-
-<div class="four">
-
-<div class="stat">
-<div class="lab">Headline CPI</div>
-<div class="val orange">3.5%</div>
-<div class="sub">latest annual</div>
-</div>
-
-<div class="stat">
-<div class="lab">Trimmed Mean</div>
-<div id="rbatrimmed" class="val purple">—</div>
-<div class="sub">latest annual</div>
-</div>
-
-<div class="stat">
-<div class="lab">Ex-Volatile CPI</div>
-<div id="rbaexvolatile" class="val purple">—</div>
-<div class="sub">latest annual</div>
-</div>
-
-<div class="stat">
-<div class="lab">Fuel Movement</div>
-<div class="val orange">+7.5%</div>
-<div class="sub">latest monthly</div>
-</div>
-
-</div>
-
-<div class="sub" style="margin-top:12px">
-THE CONSTANT presents headline, underlying and volatile-item inflation
-together. No single monthly observation is treated as sufficient evidence
-for an RBA policy decision.
-</div>
-
-</section>
-
-<section class="card" id="tc-low-essential-cost-index">
-<div class="title">THE CONSTANT — LOW ESSENTIAL COST INDEX (LECI)</div>
-
-<div class="tc-explainer">
-LECI measures the same weekly essential-cost basket against three income
-benchmarks and shows the share of gross weekly income required by essential
-costs. Income comparisons are before tax.
-</div>
-
-<div class="three" style="margin-top:14px">
-
-<div class="stat">
-<div class="lab">National Minimum Wage</div>
-<div class="val cyan">$1,004.90/wk</div>
-<div class="sub">
-Essential burden 114.52%<br>
-Remaining −$145.87
-</div>
-</div>
-
-<div class="stat">
-<div class="lab">Chart C Proposed Wage</div>
-<div class="val gold">$1,350.70/wk</div>
-<div class="sub">
-Essential burden 85.20%<br>
-Remaining $199.93
-</div>
-</div>
-
-<div class="stat">
-<div class="lab">Average Weekly Ordinary-Time Earnings</div>
-<div class="val purple">$2,083.70/wk</div>
-<div class="sub">
-Essential burden 55.23%<br>
-Remaining $932.93
-</div>
-</div>
-
-</div>
-
-<div class="sub" style="margin-top:12px;text-align:center">
-Essential-cost basket: <strong>$1,150.77 per week</strong> — before tax.
-</div>
-
-</section>
-
-<section
-    class="card"
-    id="tc-cpi-monthly-comparison"
->
-
-<div class="title">
-ABS MONTHLY CPI — PREVIOUS MONTH vs CURRENT MONTH
-</div>
-
-<div class="tc-cpi-compare-grid">
-
-<div class="tc-cpi-month-card previous">
-
-<div class="tc-cpi-month-heading">
-PREVIOUS MONTH
-</div>
-
-<table class="tc-cpi-detail-table">
-<tbody>
-
-<tr>
-<td>Annual CPI</td>
-<td id="cpiprevannual">—</td>
-</tr>
-
-<tr>
-<td>Monthly CPI — original</td>
-<td id="cpiprevmonthly">—</td>
-</tr>
-
-<tr>
-<td>Monthly CPI — seasonally adjusted</td>
-<td id="cpiprevsa">—</td>
-</tr>
-
-<tr>
-<td>Housing — annual</td>
-<td id="cpiprevhousing">—</td>
-</tr>
-
-<tr>
-<td>Food & non-alcoholic beverages — annual</td>
-<td id="cpiprevfood">—</td>
-</tr>
-
-<tr>
-<td>Transport — annual</td>
-<td id="cpiprevtransport">—</td>
-</tr>
-
-<tr>
-<td>Trimmed mean inflation — annual</td>
-<td id="cpiprevtrimmed">—</td>
-</tr>
-
-</tbody>
-</table>
-
-<div class="tc-cpi-reference">
-
-<strong id="cpiprevreference">
-Reference month: —
-</strong>
-
-<div id="cpiprevrelease"></div>
-
-</div>
-
-</div>
-
-
-<div class="tc-cpi-month-card current">
-
-<div class="tc-cpi-month-heading">
-CURRENT MONTH
-</div>
-
-<table class="tc-cpi-detail-table">
-<tbody>
-
-<tr>
-<td>Annual CPI</td>
-<td id="cpicurrentannual">—</td>
-</tr>
-
-<tr>
-<td>Monthly CPI — original</td>
-<td id="cpicurrentmonthly">—</td>
-</tr>
-
-<tr>
-<td>Monthly CPI — seasonally adjusted</td>
-<td id="cpicurrentsa">—</td>
-</tr>
-
-<tr>
-<td>Housing — annual</td>
-<td id="cpicurrenthousing">—</td>
-</tr>
-
-<tr>
-<td>Food & non-alcoholic beverages — annual</td>
-<td id="cpicurrentfood">—</td>
-</tr>
-
-<tr>
-<td>Transport — annual</td>
-<td id="cpicurrenttransport">—</td>
-</tr>
-
-<tr>
-<td>Trimmed mean inflation — annual</td>
-<td id="cpicurrenttrimmed">—</td>
-</tr>
-
-</tbody>
-</table>
-
-<div class="tc-cpi-reference">
-
-<strong id="cpicurrentreference">
-Reference month: —
-</strong>
-
-<div id="cpicurrentrelease"></div>
-
-</div>
-
-</div>
-
-</div>
-
-<div class="tc-method-note">
-
-Official ABS observations. When a new monthly CPI
-release is detected, the current observation moves
-to Previous Month and the new observation becomes
-Current Month.
-
-Up to seven years / 84 months are retained.
-
-</div>
-
-<button
-    class="archivebtn"
-    style="margin-top:12px"
-    onclick="toggleCPIArchive()"
->
-VIEW 7-YEAR CPI ARCHIVE
-</button>
-
-<div
-    id="cpiarchive"
-    class="tc-cpi-archive-table"
-></div>
-
-</section>
-
-<section class="card tc-live-report" id="live-report-2026-08-22">
-
-<div class="tc-live-report-title">THE CONSTANT LIVE — MATERIAL UPDATE</div>
-<div class="sub">22 August 2026 · September pension indexation</div>
-
-<div class="tc-live-report-copy">
-
-<p>The Australian Government announced on <strong>20 August 2026</strong> that the maximum single pension rate will increase by <strong>$36.80 per fortnight</strong> to <strong>$1,237.70 per fortnight</strong> from 20 September.</p>
-
-<div class="tc-status-line">
-<strong>Previous official cut-off:</strong> $2,627.80 per fortnight.<br><br>
-<strong>20 September official cut-off:</strong> using the announced $1,237.70 pension rate, the current $226 free area and the 50-cent taper gives <strong>$2,701.40 per fortnight</strong>.
-</div>
-
-<table class="tc-report-table">
-<thead>
-<tr><th>Measure</th><th>Pre-20 Sep</th><th>20 Sep 2026</th></tr>
-</thead>
-<tbody>
-<tr><td>Single Chart C</td><td>$2,627.80/fn</td><td>$2,701.40/fn</td></tr>
-<tr><td>Weekly Chart C</td><td>$1,313.90</td><td>$1,350.70</td></tr>
-<tr><td>National Minimum Wage</td><td>$1,004.90/wk</td><td>$1,004.90/wk</td></tr>
-<tr><td>Weekly gap</td><td>$309.00</td><td>$345.80</td></tr>
-<tr><td>Wage / Chart C</td><td>76.48%</td><td>74.40%</td></tr>
-</tbody>
-</table>
-
-<p>The ABS reported that the Pensioner and Beneficiary Living Cost Index rose <strong>3.2%</strong> over the six months from December 2025 to June 2026, compared with <strong>2.0%</strong> for CPI. PBLCI rose <strong>0.6%</strong> in the June quarter and <strong>4.6%</strong> through the year.</p>
-
-<p>The 20 September figure is now the current official cessation point. THE CONSTANT retains the pre-20 September observation so the movement remains visible in the historical record.</p>
-
-<p>The live monitor deliberately separates <strong>official observations, derived policy arithmetic and THE CONSTANT counterfactual analysis</strong>.</p>
-
-</div>
-</section>
-
 <section class="card"><div class="title">CURRENT ECONOMIC INFORMATION SET</div><div class="three">
 <div class="stat"><div class="lab">Monthly CPI</div><div id="cpi" class="val orange">—</div><div id="cpirp" class="sub"></div></div>
 <div class="stat"><div class="lab">Employee LCI</div><div id="lci" class="val purple">—</div></div>
 <div class="stat"><div class="lab">RBA Cash Rate</div><div id="cash" class="val cyan">—</div></div></div></section>
-
-<section class="card" id="labour-market-pulse">
-
-<div class="title">LABOUR MARKET PULSE — ABS</div>
-
-<div class="tc-explainer">
-<strong>Official ABS labour-market indicators.</strong>
-Unemployment is displayed with participation, underemployment,
-employment and hours worked so minimum-wage and income-support
-developments are not interpreted without the broader labour-market context.
-</div>
-
-<div class="four">
-
-<div class="stat">
-<div class="lab">Unemployment Rate</div>
-<div id="unemployment" class="val orange">—</div>
-<div id="unemploymentref" class="sub">
-Awaiting verified ABS source update
-</div>
-</div>
-
-<div class="stat">
-<div class="lab">Participation Rate</div>
-<div id="participation" class="val cyan">—</div>
-<div class="sub">seasonally adjusted</div>
-</div>
-
-<div class="stat">
-<div class="lab">Underemployment</div>
-<div id="underemployment" class="val purple">—</div>
-<div class="sub">seasonally adjusted</div>
-</div>
-
-<div class="stat">
-<div class="lab">Employment Change</div>
-<div id="employmentchange" class="val gold">—</div>
-<div class="sub">monthly persons</div>
-</div>
-
-</div>
-
-<div class="three" style="margin-top:12px">
-
-<div class="stat">
-<div class="lab">Employment</div>
-<div id="employmentlevel" class="val cyan">—</div>
-<div class="sub">persons</div>
-</div>
-
-<div class="stat">
-<div class="lab">Hours Worked Change</div>
-<div id="hourschange" class="val purple">—</div>
-<div class="sub">monthly</div>
-</div>
-
-<div class="stat">
-<div class="lab">Employment / Population</div>
-<div id="emppop" class="val cyan">—</div>
-<div class="sub">seasonally adjusted</div>
-</div>
-
-</div>
-
-<div class="tc-archive-note">
-Labour-market observations are official ABS data. THE CONSTANT does not
-infer unemployment effects from the wage/Chart C relationship without
-separate empirical testing.
-</div>
-
-</section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<section class="card" id="tc-material-developments">
-<div class="title">MATERIAL DEVELOPMENTS — RELEVANT TO THE CONSTANT</div>
-
-<div class="tc-explainer">
-Official developments are included when they can materially affect
-THE CONSTANT's benchmarks, calculations or economic interpretation.
-</div>
-
-<div class="tc-archive-note" style="margin-top:14px">
-<strong>26 August 2026 — July CPI released</strong><br>
-<span class="sub">Australian Bureau of Statistics · OFFICIAL</span>
-<div style="margin-top:7px">
-Annual CPI eased from 3.8% in June to 3.5% in July.
-Automotive fuel rose 7.5% in July.
-</div>
-</div>
-
-<div class="tc-archive-note" style="margin-top:12px">
-<strong>20 September 2026 — pension indexation effective</strong><br>
-<span class="sub">Australian Government / Services Australia · EFFECTIVE / OFFICIAL</span>
-<div style="margin-top:7px">
-The announced pension increase affects the derived Chart C benchmark,
-weekly Chart C, wage/Chart C ratio and weekly gap.
-</div>
-</div>
-
-</section>
 
 
 <section class="card">
@@ -1193,17 +346,17 @@ weekly Chart C, wage/Chart C ratio and weekly gap.
 <div class="four">
 <div class="stat"><div class="lab">NMW Growth</div><div id="wagegrowth" class="val cyan">6.00%</div><div class="sub">current annual wage change</div></div>
 <div class="stat"><div class="lab">Employee LCI</div><div id="leciannual2" class="val purple">3.70%</div><div class="sub">annual</div></div>
-<div class="stat"><div class="lab">Monthly CPI</div><div id="cpi2" class="val orange">3.50%</div><div class="sub">July 2026 annual CPI</div></div>
+<div class="stat"><div class="lab">Monthly CPI</div><div id="cpi2" class="val orange">—</div><div class="sub">latest annual rate</div></div>
 <div class="stat"><div class="lab">Structural Shortfall</div><div id="shortfall2" class="val red">23.51%</div><div class="sub">THE CONSTANT derived metric</div></div>
 </div>
 <div class="sub" style="margin-top:10px">Current-period wage growth and living-cost movements are shown separately from the long-run structural Chart C shortfall.</div>
 </section>
 
 <section class="card">
-<div class="title">CHART C — PREVIOUS vs CURRENT OFFICIAL</div>
+<div class="title">CHART C — PREVIOUS & CURRENT OFFICIAL</div>
 <div class="four">
-<div class="stat"><div class="lab">Pre-20 Sep</div><div id="legacycurrentcc" class="val gold">$2,627.80</div><div class="sub">previous official · per fortnight</div></div>
-<div class="stat"><div class="lab">20 Sep Current</div><div id="legacyforwardcc" class="val gold">$2,701.40</div><div class="sub">current official · per fortnight</div></div>
+<div class="stat"><div class="lab">Previous</div><div id="legacycurrentcc" class="val gold">$2,627.80</div><div class="sub">before 20 Sep 2026</div></div>
+<div class="stat"><div class="lab">Current Official</div><div id="legacyforwardcc" class="val gold">$2,701.40</div><div class="sub">from 20 Sep 2026</div></div>
 <div class="stat"><div class="lab">Gap Change</div><div id="legacygapchange" class="val red">+$36.80</div><div class="sub">per week</div></div>
 <div class="stat"><div class="lab">Ratio Movement</div><div class="val red"><span id="legacyratiofrom">76.49%</span> → <span id="legacyratioto">74.40%</span></div><div class="sub">previous → current official</div></div>
 </div>
@@ -1220,37 +373,30 @@ weekly Chart C, wage/Chart C ratio and weekly gap.
 </section>
 
 <section class="card">
-<div class="title">SEPTEMBER 2026 PENSION INDEXATION INPUTS</div>
+<div class="title">INDEXATION FRAMEWORK</div>
 <div class="three">
-<div class="stat"><div class="lab">CPI</div><div id="indexcpi" class="val orange">2.00%</div><div class="sub">Dec 2025 → Jun 2026 six-month CPI</div></div>
-<div class="stat"><div class="lab">Pensioner LCI</div><div id="indexpblci" class="val purple">3.20%</div><div class="sub">Dec 2025 → Jun 2026 six-month PBLCI</div></div>
+<div class="stat"><div class="lab">CPI</div><div id="indexcpi" class="val orange">—</div><div class="sub">latest annual CPI — separate from pension six-month indexation inputs</div></div>
+<div class="stat"><div class="lab">Pensioner LCI</div><div id="indexpblci" class="val purple">4.60%</div><div class="sub">living-cost safeguard where applicable</div></div>
 <div class="stat"><div class="lab">MTAWE Benchmark</div><div class="val cyan">Statutory</div><div class="sub">benchmarking rule — not a 60/40 weighted formula</div></div>
 </div>
 </section>
 
 <section class="card">
-<div class="title">THE CONSTANT — ECONOMIC & POLICY CALENDAR</div>
-
-<div class="tc-explainer">
-<strong>Forward-looking official calendar.</strong>
-Tracks scheduled ABS releases, labour-market data, wage-setting milestones,
-pension indexation, productivity publications, monetary-policy decisions
-and relevant government or parliamentary reviews. Dates remain subject
-to amendment by the issuing institution.
-</div>
-
+<div class="title">UPCOMING OFFICIAL EVENTS</div>
 <div id="eventlist"></div>
 </section>
 
-
-
-
-
-
-
-
-<section class="card"><div class="title">ABS EMPLOYEE LIVING COST INDEX</div>
-<div class="tc-explainer" data-explainer="ABS EMPLOYEE LIVING COST INDEX">
+<section class="card">
+<div class="title">LIVE TICKER</div>
+<div class="four">
+<div class="stat"><div class="lab">Chart C</div><div id="tickercc" class="val gold">—</div></div>
+<div class="stat"><div class="lab">Weekly Gap</div><div id="tickergap" class="val red">—</div></div>
+<div class="stat"><div class="lab">Employee LCI</div><div id="tickerlci" class="val purple">3.70%</div></div>
+<div class="stat"><div class="lab">RBA Cash Rate</div><div id="tickercash" class="val cyan">—</div></div>
+</div>
+</section>
+<section class="card"><div class="title">LECI — EMPLOYEE LIVING COST INDEX</div>
+<div class="tc-explainer" data-explainer="LECI — EMPLOYEE LIVING COST INDEX">
 <strong>Official ABS measure.</strong>
         Shows changes in living costs experienced by employee households.
         It provides an observed cost-pressure measure and is kept separate
@@ -1285,148 +431,16 @@ to amendment by the issuing institution.
 <div class="sub" style="margin-top:10px">Official ABS observations only. These are not THE CONSTANT LECI/LECIB.</div>
 </section>
 
-
-
-
-
-
-<section
-    class="card"
-    id="tc-leci-income-burden-full"
->
-
-<div class="title">
-THE CONSTANT — ESSENTIAL COST BURDEN BY INCOME
+<section class="card">
+<div class="title">2. THE CONSTANT LECI / LECIB — LOW-PAID CONSEQUENCE</div>
+<div class="four">
+<div class="stat"><div class="lab">Essential Cost Basket</div><div id="lecibbasket" class="val orange">—</div><div class="sub">book-calibrated weekly basket</div></div>
+<div class="stat"><div class="lab">Actual Wage Burden</div><div id="lecibactual" class="val red">—</div><div class="sub">essential costs / actual wage</div></div>
+<div class="stat"><div class="lab">Corrected Wage Burden</div><div id="lecibcorrected" class="val green">—</div><div class="sub">same costs / corrected wage</div></div>
+<div class="stat"><div class="lab">Burden Difference</div><div id="lecibrelief" class="val gold">—</div><div class="sub">percentage points</div></div>
 </div>
-
-<div
-    class="sub"
-    style="margin-bottom:12px"
->
-
-The same weekly essential cash basket is measured
-against three income levels.
-
-<strong>
-All burden percentages are before income tax and Medicare levy.
-</strong>
-
-</div>
-
-<div class="tc-leci-scroll">
-
-<table class="tc-leci-full-table">
-
-<thead>
-
-<tr>
-
-<th>
-Essential weekly cost
-</th>
-
-<th>
-Cash cost
-</th>
-
-<th>
-National Minimum Wage
-<br>
-<span id="leciminwagehead">
-$1,004.90/wk
-</span>
-</th>
-
-<th>
-Chart C Proposed Wage
-<br>
-<span id="leciproposedhead">
-$1,350.70/wk
-</span>
-</th>
-
-<th>
-Average Wage
-<br>
-<span id="leciaveragehead">
-$2,083.70/wk
-</span>
-</th>
-
-</tr>
-
-</thead>
-
-<tbody id="lecifullbody">
-</tbody>
-
-<tfoot>
-
-<tr class="tc-leci-total">
-
-<td>
-Total essential basket
-</td>
-
-<td id="lecifulltotal">
-$1,150.77
-</td>
-
-<td id="leciminburden">
-114.5%
-</td>
-
-<td id="lecipropburden">
-85.2%
-</td>
-
-<td id="leciavgburden">
-55.2%
-</td>
-
-</tr>
-
-<tr class="tc-leci-total">
-
-<td>
-Gross income remaining
-</td>
-
-<td>—</td>
-
-<td id="leciminremaining">
-−$145.87
-</td>
-
-<td id="lecipropremaining">
-$199.93
-</td>
-
-<td id="leciavgremaining">
-$932.93
-</td>
-
-</tr>
-
-</tfoot>
-
-</table>
-
-</div>
-
-<div class="tc-method-note">
-
-THE CONSTANT derived adequacy/stress measure.
-The essential basket is held constant across all
-three income cases.
-
-Official ABS measures and THE CONSTANT derived
-measures remain separately identified.
-
-</div>
-
+<div class="sub" style="margin-top:10px">Counterfactual book measure: the living-cost environment is held constant while the wage base changes from actual to corrected.</div>
 </section>
-
 
 <section class="card">
 <div class="title">3. WORKERS' COMPENSATION — PREMIUMS & FEES</div>
@@ -1537,29 +551,6 @@ Shows compulsory superannuation generated by the actual minimum wage
 </div>
 </section>
 
-<section class="card" id="acoss-policy-monitor">
-<div class="title">ACOSS — INCOME ADEQUACY &amp; POLICY BENCHMARK MONITOR</div>
-<div class="tc-explainer">
-<strong>Independent policy position.</strong> This is not THE CONSTANT methodology and is not Australian Government policy.
-ACOSS positions are monitored separately from official government data. THE CONSTANT expresses the current ACOSS weekly benchmark
-against Chart C only to place different adequacy benchmarks on a common denominator.
-</div>
-<div class="four">
-<div class="stat"><div class="lab">ACOSS Weekly Benchmark</div><div id="acossweekly" class="val cyan">—</div><div class="sub">latest monitored position</div></div>
-<div class="stat"><div class="lab">Fortnightly Equivalent</div><div id="acossfn" class="val gold">—</div><div class="sub">weekly benchmark × 2</div></div>
-<div class="stat"><div class="lab">ACOSS / Chart C</div><div id="acossratio" class="val purple">—</div><div class="sub">like-for-like fortnightly comparison</div></div>
-<div class="stat"><div class="lab">Status</div><div id="acossstatus" class="val cyan" style="font-size:14px">—</div><div id="acossdate" class="sub"></div></div>
-</div>
-<div class="tc-final-question">
-<strong>A COMMON QUESTION ABOUT THE BASE</strong><br><br>
-ACOSS argues that ordinary indexation is insufficient when the underlying income-support payment is inadequate.
-THE CONSTANT independently asks whether annual percentage wage increases can repair a minimum-wage base that has been structurally displaced.
-The methodologies and policy propositions are different. The common mathematical question is:
-<strong>Can correct indexation repair an incorrect or inadequate starting level?</strong>
-</div>
-<div class="tc-archive-note" id="acossnote"></div>
-</section>
-
 <section class="card">
 <div class="title">6. INCOME SUPPORT — ACTUAL vs CORRECTED-WAGE COUNTERFACTUAL</div>
 <div class="tc-explainer" data-explainer="INCOME SUPPORT">
@@ -1581,6 +572,22 @@ Official payment rates are shown in the Actual column. THE CONSTANT counterfactu
 Age Pension and JobSeeker official rates are monitored from Services Australia. DSP adult single rates are retained from the current Australian Government payments guide and share the pension-rate structure for the displayed comparison period.
 </div>
 </section>
+<section class="card" id="acoss-policy-monitor">
+<div class="title">ACOSS — INCOME ADEQUACY & POLICY BENCHMARK MONITOR</div>
+<div class="tc-explainer">
+<strong>Independent policy position — not Australian Government policy and not THE CONSTANT methodology.</strong>
+ACOSS derives its current benchmark from pension and Pension Supplement parity. THE CONSTANT independently translates that benchmark onto the Chart C denominator so the measures can be compared on a common basis.
+</div>
+<div class="four">
+<div class="stat"><div class="lab">ACOSS Weekly Benchmark</div><div id="acossweekly" class="val purple">—</div><div class="sub">latest monitored policy position</div></div>
+<div class="stat"><div class="lab">Fortnightly Equivalent</div><div id="acossfortnightly" class="val purple">—</div><div class="sub">2 × weekly benchmark</div></div>
+<div class="stat"><div class="lab">ACOSS / Chart C</div><div id="acosschartc" class="val gold">—</div><div class="sub">THE CONSTANT common-denominator calculation</div></div>
+<div class="stat"><div class="lab">ACOSS / NMW</div><div id="acossnmw" class="val cyan">—</div><div class="sub">weekly benchmark / current NMW</div></div>
+</div>
+<div class="tc-status-line" id="acossnote">ACOSS does not derive its benchmark from Chart C. THE CONSTANT independently expresses the ACOSS proposal against Chart C.</div>
+<div class="sub" id="acossbasis"></div>
+</section>
+
 <section class="card"><div class="title">INCOME & REMUNERATION COMPARISON</div>
 <div class="tc-explainer" data-explainer="INCOME & REMUNERATION COMPARISON">
 Compares movements affecting minimum-wage workers with remuneration
@@ -1599,36 +606,18 @@ Compares movements affecting minimum-wage workers with remuneration
 <div class="stat"><div class="lab">Comparison Rule</div><div class="val cyan">Like-for-like</div><div class="sub">salary and total remuneration kept distinct</div></div>
 </div></section>
 
-
-<section class="card" id="productivity-review-monitor">
-
-<div class="title">
-PRODUCTIVITY & GOVERNMENT REVIEW TRACKER
+<section class="card"><div class="title">RBA POLICY MONITOR</div>
+<div class="tc-explainer" data-explainer="RBA POLICY MONITOR">
+Tracks official monetary-policy decisions that can affect borrowing
+        costs, household expenditure and living-cost pressure. Official RBA
+        decisions are kept separate from THE CONSTANT's interpretation.
 </div>
-
-<div class="tc-explainer">
-Tracks productivity reports, inquiries, government reviews,
-parliamentary committee processes and formal responses relevant to
-wages, productivity, tax-transfer settings, pensions, workplace relations,
-superannuation, workers' compensation, employment policy, GST and
-household living costs.
-</div>
-
-<div id="reviewtracker"></div>
-
-<div class="tc-archive-note">
-<strong>Review lifecycle:</strong>
-Commenced → Submissions open → Consultation / hearings →
-Interim findings → Final report → Government response →
-Implementation outcome.<br><br>
-Completed matters remain on the live page for 30 days and are then
-retained in the seven-year archive.
-</div>
-
-</section>
-
-
-
+<div class="four">
+<div class="stat"><div class="lab">Cash Rate</div><div id="rbapolicycash" class="val cyan">—</div></div>
+<div class="stat"><div class="lab">Latest Decision</div><div id="rbadecision" class="val green">—</div><div id="rbadecisiondate" class="sub">—</div></div>
+<div class="stat"><div class="lab">2026 Movement</div><div id="rbaytd" class="val red">—</div><div id="rbaytdsub" class="sub">year to date</div></div>
+<div class="stat"><div class="lab">Next Decision</div><div id="rbanext" class="val gold">—</div><div id="rbanextsub" class="sub">official schedule</div></div>
+</div><div class="sub" style="margin-top:10px">Monitors official RBA monetary-policy decisions and cash-rate changes. Policy facts are kept separate from THE CONSTANT derived interpretations.</div></section>
 
 <section class="card">
 <div class="title">LOW-PAID & AWARD CLAIMS MONITOR</div>
@@ -1638,9 +627,9 @@ Tracks wage claims and award applications affecting low-paid and
         outcomes are retained so the progression of each matter can be seen.
 </div>
 
-<div class="sub" style="margin-bottom:12px">Union claims and award applications stay on the main screen for 30 days, then move to the seven-year archive. Current rate, claimed rate and outcome are kept side by side.</div>
+<div class="sub" style="margin-bottom:12px">Union claims and award applications stay on the main screen for 30 days, then move to the 18-month archive. Current rate, claimed rate and outcome are kept side by side.</div>
 <div id="unionactive"></div>
-<button class="archivebtn" onclick="toggleArchive()">VIEW 7-YEAR ARCHIVE</button>
+<button class="archivebtn" onclick="toggleArchive()">VIEW 18-MONTH ARCHIVE</button>
 <div id="unionarchive" class="archivepanel"></div>
 </section>
 </main><aside>
@@ -1653,16 +642,16 @@ Shows whether each official source was successfully checked.
 </div>
 <div id="sources">Loading…</div></section>
 <section class="card">
-<div class="title">OFFICIAL ANNOUNCEMENTS — LAST 30 DAYS</div>
+<div class="title">OFFICIAL ANNOUNCEMENTS — LAST 7 DAYS</div>
 <div class="tc-explainer" data-explainer="OFFICIAL ANNOUNCEMENTS">
 Relevant official announcements remain on the main dashboard for
         seven days and then move automatically to the 18-month archive,
         preserving a rolling public record of relevant developments.
 </div>
 
-<div class="sub" style="margin-bottom:10px">All official announcements remain on the main page for 30 days, then move automatically to the seven-year archive.</div>
+<div class="sub" style="margin-bottom:10px">All official announcements remain on the main page for 7 days, then move automatically to the 18-month archive.</div>
 <div id="feed">Loading…</div>
-<button class="announcement-archive-btn" onclick="toggleAnnouncementArchive()">VIEW 7-YEAR ANNOUNCEMENT ARCHIVE</button>
+<button class="announcement-archive-btn" onclick="toggleAnnouncementArchive()">VIEW 18-MONTH ANNOUNCEMENT ARCHIVE</button>
 <div id="announcementarchive" class="announcement-archive"></div>
 </section>
 <section class="card">
@@ -2058,265 +1047,6 @@ svg.innerHTML = out;
 
 </script>
 
-
-<section class="card" id="why-the-constant">
-
-<div class="title">
-WHY THE CONSTANT WAS CREATED
-</div>
-
-<div class="three">
-
-<div class="stat">
-<div class="lab">National Minimum Wage</div>
-<div id="whynmw" class="val cyan">$1,004.90</div>
-<div class="sub">weekly current</div>
-</div>
-
-<div class="stat">
-<div class="lab">Chart C</div>
-<div id="whychartc" class="val gold">$1,350.70</div>
-<div class="sub">weekly current</div>
-</div>
-
-<div class="stat">
-<div class="lab">Current Relationship</div>
-<div id="whyratio" class="val red">74.40%</div>
-<div id="whygap" class="sub">$345.80 weekly difference</div>
-</div>
-
-</div>
-
-<div class="tc-final-question">
-
-<strong>The question THE CONSTANT asks:</strong><br>
-
-Why did two important Australian income benchmarks that once operated much
-closer together separate — and what would Australia look like if the
-National Minimum Wage benchmark were restored to 100% of weekly Chart C?
-
-</div>
-
-<details class="tc-policy-details">
-
-<summary>
-EXPLORE THE CONSTANT PROPOSITION ▾
-</summary>
-
-<div class="tc-policy-body">
-
-<div class="tc-status-key">
-
-<span class="tc-chip tc-official">
-OFFICIAL
-</span>
-
-<span class="tc-chip tc-derived">
-DERIVED
-</span>
-
-<span class="tc-chip tc-modelled">
-MODELLED
-</span>
-
-<span class="tc-chip tc-proposed">
-PROPOSED
-</span>
-
-</div>
-
-
-<h3>Why Chart C is valuable</h3>
-
-<p>
-Chart C is THE CONSTANT's shorthand for the standard single-person
-pension income-test cessation point. It is not a poverty line.
-It is an administrative income boundary created by the interaction
-of the pension payment rate, income-free area and taper.
-</p>
-
-<p>
-That makes it analytically valuable because it belongs to Australia's
-income-support architecture rather than being only a price index.
-Its movement can reflect pension indexation, income-test design and
-policy structure.
-</p>
-
-<p>
-THE CONSTANT therefore reconstructs its underlying parameters rather
-than assuming Chart C simply measures inflation.
-</p>
-
-
-<h3>The 100% proposition</h3>
-
-<p>
-<span class="tc-chip tc-proposed">PROPOSED</span>
-THE CONSTANT proposes testing an integrated income architecture in which
-<strong>weekly Chart C becomes the 100% reference benchmark and the
-National Minimum Wage is benchmarked at 100% of weekly Chart C.</strong>
-</p>
-
-<p>
-Other payments and statutory wage categories would not necessarily equal
-Chart C. Pensions, JobSeeker, apprentices, trainees, supported wages and
-other provisions could instead be expressed as transparent policy
-percentages of the same central benchmark.
-</p>
-
-<p>
-The objective is not to remove policy discretion. It is to ensure that
-changes in one part of Australia's income architecture remain visible
-to the others.
-</p>
-
-
-<h3>One benchmark — many connected rates</h3>
-
-<p>
-Under the proposition:
-</p>
-
-<p>
-<strong>
-Chart C = 100% reference point<br>
-National Minimum Wage = 100% Chart C benchmark<br>
-Other statutory payments and wage rates = explicit policy percentages
-of the same reference
-</strong>
-</p>
-
-<p>
-This could provide a transparent common anchor for minimum wages,
-pensions, unemployment support, apprentice and trainee arrangements,
-supported wages and other income provisions while still allowing
-different statutory percentages where policy requires them.
-</p>
-
-
-<h3>Household shock-absorption capacity</h3>
-
-<p>
-<span class="tc-chip tc-modelled">MODELLED</span>
-THE CONSTANT tests whether a larger margin after essential expenditure
-could give households greater capacity to absorb increases in rent,
-food, electricity, gas, fuel, transport, insurance, health costs and
-other economic shocks.
-</p>
-
-<p>
-The expanded LECI/LECIB panels express this as:
-<strong>income → essential costs → income remaining after essential costs.</strong>
-</p>
-
-<p>
-The hypothesis is that households with a larger remaining income margin
-may be less vulnerable to sudden price and living-cost shocks than
-households whose essential costs consume most of their income.
-</p>
-
-
-<h3>Business taxation and economic reform</h3>
-
-<p>
-<span class="tc-chip tc-proposed">
-PROPOSED / TO BE TESTED
-</span>
-THE CONSTANT does not claim that a Chart-C-aligned wage automatically
-finances reductions in business taxation.
-</p>
-
-<p>
-Instead, it proposes testing the full system.
-A higher wage base may change PAYG receipts, GST-bearing consumption,
-superannuation contributions, payroll-related revenue, transfer reliance,
-workers' compensation contributions and other fiscal flows.
-Those effects must be measured against the additional wage and employment
-costs faced by employers.
-</p>
-
-<p>
-Only after both sides are modelled should the research ask whether any
-net fiscal improvement could create scope to reduce taxes, charges or
-other costs imposed on employment and business.
-</p>
-
-
-<h3>Economic resilience</h3>
-
-<p>
-The larger proposition is that a transparent income benchmark could
-increase the capacity of households and the wider economy to respond to
-shocks without requiring every adjustment to be made independently through
-wages, transfers, concessions, emergency relief or ad-hoc fiscal measures.
-</p>
-
-<p>
-That proposition remains an empirical question. THE CONSTANT Live therefore
-tracks inflation, living costs, unemployment, productivity, wage decisions,
-pension indexation, government reviews and the fiscal consequences of the
-alternative wage benchmark.
-</p>
-
-
-<h3>What THE CONSTANT does not claim</h3>
-
-<p>
-The historical relationship does not by itself prove that Chart C caused
-minimum-wage outcomes. Nor does it prove that 100% alignment is the only
-possible policy response.
-</p>
-
-<p>
-Any proposed alignment must be tested against employment, employer costs,
-inflation, productivity, taxation, government expenditure, distributional
-effects, social-security design and Australia's existing wage-setting
-institutions.
-</p>
-
-
-<h3>How the proposition is tested</h3>
-
-<p>
-THE CONSTANT Live deliberately separates four evidence categories:
-</p>
-
-<p>
-<span class="tc-chip tc-official">OFFICIAL</span>
-figures directly published by government institutions.
-</p>
-
-<p>
-<span class="tc-chip tc-derived">DERIVED</span>
-arithmetic calculated directly from official policy parameters.
-</p>
-
-<p>
-<span class="tc-chip tc-modelled">MODELLED</span>
-counterfactual estimates and analytical scenarios.
-</p>
-
-<p>
-<span class="tc-chip tc-proposed">PROPOSED</span>
-policy architecture that remains open to independent testing,
-criticism and alternative modelling.
-</p>
-
-<div class="tc-final-question">
-
-<strong>
-THE CONSTANT does not ask Australians to accept the proposition.
-It provides the data needed to test it.
-</strong>
-
-</div>
-
-</div>
-
-</details>
-
-</section>
-
 <div class="title">FOLLOW THE AUTHOR</div><a class="linkedin" href="https://www.linkedin.com/in/robert-paturzo-elliott-b878771a8" target="_blank" rel="noopener">LinkedIn — Robert Paturzo-Elliott</a></section>
 <section class="card"><div class="title">LIVE MONITOR STATUS</div>
 <div class="row"><span>Checks completed</span><strong id="checks">0</strong></div>
@@ -2326,7 +1056,7 @@ It provides the data needed to test it.
 <div class="sub" style="margin-top:8px">Scheduled daily at 10:00 AM and 10:00 PM Australia/Sydney (AEST/AEDT automatically).</div>
 </section>
 </aside></div>
-<footer class="footer">THE CONSTANT Live Official Monitor v5.7.0 · The clock is local to each viewer. Monitored official and independent-policy sources refresh at 10:00 AM and 10:00 PM Australia/Sydney time.</footer>
+<footer class="footer">THE CONSTANT Live Official Monitor v5.6 · The clock is local to each viewer. Official-source data refreshes at 10:00 AM and 10:00 PM Australia/Sydney time.</footer>
 </div></div>
 <script>
 const money=v=>v==null?'—':'$'+Number(v).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -2336,69 +1066,16 @@ function clock(){document.getElementById('clock').textContent=new Date().toLocal
 function draw(s){
  const c=s.core||{},o=s.official||{},f=s.forward||{};
  document.getElementById("mw").textContent=money(c.minimum_wage_weekly);document.getElementById("cc").textContent=money(c.chart_c_fortnightly);document.getElementById("ratio").textContent=pct(c.ratio_pct);document.getElementById("gap").textContent=money(c.weekly_gap);
- document.getElementById("cpi2").textContent=pct(o.cpi_annual_pct);
- document.getElementById("talkgap").textContent=pct(100-(c.ratio_pct||0));
- document.getElementById("shortfall2").textContent=pct(100-(c.ratio_pct||0));
- document.getElementById("whynmw").textContent=money(c.minimum_wage_weekly);
- document.getElementById("whychartc").textContent=money(c.chart_c_weekly);
- document.getElementById("whyratio").textContent=pct(c.ratio_pct);
- document.getElementById("whygap").textContent=money(c.weekly_gap)+" weekly difference";
- const ac=s.acoss_monitor||{};
- document.getElementById("acossweekly").textContent=money(ac.benchmark_weekly);
- document.getElementById("acossfn").textContent=money(ac.benchmark_fortnightly);
- document.getElementById("acossratio").textContent=pct(ac.chart_c_ratio_pct);
- document.getElementById("acossstatus").textContent=ac.status||"—";
- document.getElementById("acossdate").textContent=ac.source_date||"";
- document.getElementById("acossnote").textContent=(ac.relationship_note||"")+" "+(ac.benchmark_basis||"");
-
  document.getElementById("fcc").textContent=money(f.chart_c_fortnightly);document.getElementById("fcw").textContent=money(f.chart_c_weekly);document.getElementById("fgap").textContent=money(f.weekly_gap);document.getElementById("fratio").textContent=pct(f.ratio_pct);document.getElementById("fstatus").textContent=f.status||'';
- const cm=(s.cpi_monthly_model||{}).current||{};
- tcSet('changedannual',tcPct(cm.annual_cpi_pct)); tcSet('changedmonthly',tcPct(cm.monthly_original_pct)); tcSet('changedsa',tcPct(cm.monthly_sa_pct));
- tcSet('changedannualref',(cm.reference_period||'Latest official ABS')+' · previous '+tcPct(((s.cpi_monthly_model||{}).previous||{}).annual_cpi_pct));
- tcSet('rbaheadline',tcPct(cm.annual_cpi_pct)); tcSet('rbatrimmed',tcPct(cm.trimmed_mean_annual_pct));
- renderCPIMonthComparison(s);renderFullLECI(s);document.getElementById("cpi").textContent=pct(o.cpi_annual_pct);document.getElementById("cpirp").textContent=o.cpi_reference_period||'';document.getElementById("lci").textContent=pct(o.employee_lci_annual_pct);document.getElementById("cash").textContent=pct(o.cash_rate_pct);document.getElementById("leciannual").textContent=pct(o.employee_lci_annual_pct);document.getElementById("rbapolicycash").textContent=pct((s.rba_policy||{}).cash_rate_pct);
- 
-document.getElementById("checks").textContent=s.checks_completed||0;
-document.getElementById("changes").textContent=s.source_changes_detected||0;
-document.getElementById("lastcheck").textContent=s.last_check||'—';
-document.getElementById("nextcheck").textContent=s.next_check||'—';
-
-const lm=s.labour_market||{};
-
-document.getElementById("unemployment").textContent=
-    lm.unemployment_rate_pct==null?'—':pct(lm.unemployment_rate_pct);
-
-document.getElementById("unemploymentref").textContent=
-    lm.reference_period||'Awaiting verified ABS source update';
-
-document.getElementById("participation").textContent=
-    lm.participation_rate_pct==null?'—':pct(lm.participation_rate_pct);
-
-document.getElementById("underemployment").textContent=
-    lm.underemployment_rate_pct==null?'—':pct(lm.underemployment_rate_pct);
-
-document.getElementById("employmentchange").textContent=
-    lm.employment_change_persons==null?'—':
-    Number(lm.employment_change_persons).toLocaleString();
-
-document.getElementById("employmentlevel").textContent=
-    lm.employment_persons==null?'—':
-    Number(lm.employment_persons).toLocaleString();
-
-document.getElementById("hourschange").textContent=
-    lm.hours_worked_change_pct==null?'—':
-    pct(lm.hours_worked_change_pct);
-
-document.getElementById("emppop").textContent=
-    lm.employment_population_ratio_pct==null?'—':
-    pct(lm.employment_population_ratio_pct);
-
-document.getElementById("eventlist").innerHTML=
-    economicCalendar(s.upcoming_events||[]);
-
-document.getElementById("reviewtracker").innerHTML=
-    reviewTracker(s.review_monitor||{});
-
+ document.getElementById("cpi").textContent=pct(o.cpi_annual_pct);document.getElementById("cpirp").textContent=o.cpi_reference_period||'';document.getElementById("lci").textContent=pct(o.employee_lci_annual_pct);document.getElementById("cash").textContent=pct(o.cash_rate_pct);document.getElementById("leciannual").textContent=pct(o.employee_lci_annual_pct);document.getElementById("rbapolicycash").textContent=pct((s.rba_policy||{}).cash_rate_pct);
+ document.getElementById("cpi2").textContent=pct(o.cpi_annual_pct); document.getElementById("indexcpi").textContent=pct(o.cpi_annual_pct); document.getElementById("tickercc").textContent=money(c.chart_c_fortnightly); document.getElementById("tickergap").textContent=money(c.weekly_gap); document.getElementById("tickercash").textContent=pct(o.cash_rate_pct);
+ const rp=s.rba_policy||{};
+ document.getElementById("rbapolicycash").textContent=pct(rp.cash_rate_pct??o.cash_rate_pct);
+ document.getElementById("rbadecision").textContent=rp.last_decision||'—';
+ document.getElementById("rbadecisiondate").textContent=rp.last_decision_date||rp.effective_date||'—';
+ document.getElementById("rbaytd").textContent=(rp.year_to_date_change_basis_points===undefined||rp.year_to_date_change_basis_points===null)?'—':`${Number(rp.year_to_date_change_basis_points)>=0?'+':''}${Number(rp.year_to_date_change_basis_points).toFixed(0)} bp`;
+ document.getElementById("rbanext").textContent=rp.next_decision||'—';
+ document.getElementById("checks").textContent=s.checks_completed||0;document.getElementById("changes").textContent=s.source_changes_detected||0;document.getElementById("lastcheck").textContent=s.last_check||'—';document.getElementById("nextcheck").textContent=s.next_check||'—';
 
  const bm=s.book_impact_model||{}, bc=bm.calculated||{}, bl=bm.lecib||{}, bw=bm.workers_comp||{}, bt=bm.tax_medicare||{}, bs=bm.superannuation||{};
 
@@ -2429,22 +1106,6 @@ document.getElementById("reviewtracker").innerHTML=
  document.getElementById("lecibactual").textContent=pct(bc.lecib_actual_burden_pct);
  document.getElementById("lecibcorrected").textContent=pct(bc.lecib_corrected_burden_pct);
  document.getElementById("lecibrelief").textContent=pct(bc.lecib_burden_relief_pp).replace('%',' pp');
-
-document.getElementById("costbasket2").textContent=
-    money(bl.essential_cost_basket_weekly);
-
-document.getElementById("actualremaining").textContent=
-    money(
-        (bm.actual_wage_weekly||0) -
-        (bl.essential_cost_basket_weekly||0)
-    );
-
-document.getElementById("correctedremaining").textContent=
-    money(
-        (bm.corrected_wage_weekly||0) -
-        (bl.essential_cost_basket_weekly||0)
-    );
-
 
  document.getElementById("wcprate").textContent=pct(bw.latest_standardised_average_premium_rate_pct);
  document.getElementById("wcpactual").textContent=money(bc.workers_comp_actual_premium_annual);
@@ -2492,6 +1153,14 @@ document.getElementById("correctedremaining").textContent=
  document.getElementById("sgprojected").textContent=money(bc.super_projected_difference);
 
 
+ const ap=s.acoss_policy||{};
+ document.getElementById("acossweekly").textContent=money(ap.weekly_benchmark);
+ document.getElementById("acossfortnightly").textContent=money(ap.fortnightly_benchmark);
+ document.getElementById("acosschartc").textContent=pct(ap.chart_c_ratio_pct);
+ document.getElementById("acossnmw").textContent=pct(ap.nmw_ratio_pct);
+ document.getElementById("acossnote").textContent=ap.note||'';
+ document.getElementById("acossbasis").textContent=(ap.source_date?'ACOSS position '+ap.source_date+' · ':'')+(ap.basis||'');
+
  const ism=s.income_support_counterfactual||{};
  document.getElementById("isactualwage").textContent=money(ism.actual_nmw_weekly);
  document.getElementById("iscorrectedwage").textContent=money(ism.corrected_wage_weekly);
@@ -2499,7 +1168,7 @@ document.getElementById("correctedremaining").textContent=
 
  const ua=s.union_award_monitor||{};
  document.getElementById("unionactive").innerHTML=claimTable(ua.active||[],'No union/award claim detected in the last 30 days.');
- document.getElementById("unionarchive").innerHTML=claimTable(ua.archive||[],'No archived items within the last seven years.');
+ document.getElementById("unionarchive").innerHTML=claimTable(ua.archive||[],'No archived items within the last 18 months.');
  let sh='';Object.entries(s.sources||{}).forEach(([n,i])=>{let cls='ok',lab='OK';if(i.error){
     const e=String(i.error||'').toLowerCase();
 
@@ -2522,51 +1191,18 @@ document.getElementById("correctedremaining").textContent=
 }else if(i.warning){
     cls='warn';
     lab='TEMPORARY';
-}const retained=retainedSourceSummary(n,s);
-
-sh+=`
-<div class="source">
-
-<div class="row">
-<span>${esc(n)}</span>
-<span class="${cls}">${lab}</span>
-</div>
-
-${
-    (i.warning || (i.error && cls==="warn"))
-    ? `<div class="sub">
-       Temporary official-source access issue — last verified value retained.
-       </div>`
-    : ''
-}
-
-${
-    retained && cls==="warn"
-    ? `<div class="sub" style="margin-top:3px;color:rgba(255,255,255,.52)">
-       ${retained}
-       </div>`
-    : ''
-}
-
-${
-    i.last_success
-    ? `<div class="sub">
-       Last successful source access: ${esc(i.last_success)}
-       </div>`
-    : ''
-}
-
-${
-    i.error && cls==="err"
-    ? `<div class="sub">${esc(i.error)}</div>`
-    : ''
-}
-
-</div>
-`;
-
-});document.getElementById("sources").innerHTML=sh||'Waiting for first source check…';
- document.getElementById("feed").innerHTML=announcementFeed(s.latest_announcements||[],'No official announcements in the last 7 days.');document.getElementById("announcementarchive").innerHTML=announcementFeed(s.announcement_archive||[],'No archived official announcements within the last seven years.');
+}sh+=`<div class="source"><div class="row"><span>${esc(n)}</span><span class="${cls}">${lab}</span></div>${i.warning?`<div class="sub">Temporary official-source access issue — last verified value retained.</div>`:''}${i.error?`<div class="sub">${
+    (
+      String(i.error).toLowerCase().includes('timed out') ||
+      String(i.error).toLowerCase().includes('timeout') ||
+      String(i.error).toLowerCase().includes('403') ||
+      String(i.error).toLowerCase().includes('forbidden') ||
+      String(i.error).toLowerCase().includes('connection')
+    )
+    ? 'Temporary official-source access issue — last verified value retained.'
+    : esc(i.error)
+}</div>`:''}</div>`});document.getElementById("sources").innerHTML=sh||'Waiting for first source check…';
+ document.getElementById("feed").innerHTML=announcementFeed(s.latest_announcements||[],'No official announcements in the last 7 days.');document.getElementById("announcementarchive").innerHTML=announcementFeed(s.announcement_archive||[],'No archived official announcements within the last 18 months.');
 }
 
 function incomeSupportTable(model){
@@ -2595,559 +1231,6 @@ function claimTable(items,emptyText){
  }).join('');
  return `<div style="overflow-x:auto"><table class="claimtable"><thead><tr><th>Organisation / matter</th><th>Rate before</th><th>Claim / applied</th><th>Outcome</th><th>Date</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
-
-
-function tcPct(v){
-
-    return (
-        v===null
-        || v===undefined
-        || Number.isNaN(Number(v))
-    )
-
-    ? '—'
-
-    : Number(v).toFixed(1)+'%';
-}
-
-
-function tcMoney(v){
-
-    if(
-        v===null
-        || v===undefined
-        || Number.isNaN(Number(v))
-    ){
-
-        return '—';
-    }
-
-    const n=Number(v);
-
-    const sign=
-        n<0
-        ? '−'
-        : '';
-
-    return (
-        sign
-        +'$'
-        +Math.abs(n).toLocaleString(
-            undefined,
-            {
-                minimumFractionDigits:2,
-                maximumFractionDigits:2
-            }
-        )
-    );
-}
-
-
-function tcSet(id,value){
-
-    const el=
-        document.getElementById(id);
-
-    if(el){
-
-        el.textContent=value;
-    }
-}
-
-
-function renderCPIMonthComparison(state){
-
-    const model=
-        ((state.official||{}).cpi_monthly)
-        || {};
-
-    const prev=
-        model.previous
-        || {};
-
-    const cur=
-        model.current
-        || {};
-
-    tcSet(
-        'cpiprevannual',
-        tcPct(
-            prev.annual_cpi_pct
-        )
-    );
-
-    tcSet(
-        'cpiprevmonthly',
-        tcPct(
-            prev.monthly_original_pct
-        )
-    );
-
-    tcSet(
-        'cpiprevsa',
-        tcPct(
-            prev.monthly_sa_pct
-        )
-    );
-
-    tcSet(
-        'cpiprevhousing',
-        tcPct(
-            prev.housing_annual_pct
-        )
-    );
-
-    tcSet(
-        'cpiprevfood',
-        tcPct(
-            prev.food_annual_pct
-        )
-    );
-
-    tcSet(
-        'cpiprevtransport',
-        tcPct(
-            prev.transport_annual_pct
-        )
-    );
-
-    tcSet(
-        'cpiprevtrimmed',
-        tcPct(
-            prev.trimmed_mean_annual_pct
-        )
-    );
-
-    tcSet(
-        'cpiprevreference',
-        'Reference month: '
-        +(prev.reference_period||'—')
-    );
-
-    tcSet(
-        'cpiprevrelease',
-
-        prev.release_date
-
-        ? 'ABS release date: '
-          +prev.release_date
-
-        : ''
-    );
-
-
-    tcSet(
-        'cpicurrentannual',
-        tcPct(
-            cur.annual_cpi_pct
-        )
-    );
-
-    tcSet(
-        'cpicurrentmonthly',
-        tcPct(
-            cur.monthly_original_pct
-        )
-    );
-
-    tcSet(
-        'cpicurrentsa',
-        tcPct(
-            cur.monthly_sa_pct
-        )
-    );
-
-    tcSet(
-        'cpicurrenthousing',
-        tcPct(
-            cur.housing_annual_pct
-        )
-    );
-
-    tcSet(
-        'cpicurrentfood',
-        tcPct(
-            cur.food_annual_pct
-        )
-    );
-
-    tcSet(
-        'cpicurrenttransport',
-        tcPct(
-            cur.transport_annual_pct
-        )
-    );
-
-    tcSet(
-        'cpicurrenttrimmed',
-        tcPct(
-            cur.trimmed_mean_annual_pct
-        )
-    );
-
-    tcSet(
-        'cpicurrentreference',
-        'Reference month: '
-        +(cur.reference_period||'—')
-    );
-
-    tcSet(
-        'cpicurrentrelease',
-
-        cur.release_date
-
-        ? 'ABS release date: '
-          +cur.release_date
-
-        : ''
-    );
-
-
-    const archive=
-        (model.archive||[])
-        .slice()
-        .reverse();
-
-    const rows=
-        archive
-        .map(
-            x=>`
-
-<tr>
-
-<td>
-${x.reference_period||'—'}
-</td>
-
-<td>
-${tcPct(x.annual_cpi_pct)}
-</td>
-
-<td>
-${tcPct(x.monthly_original_pct)}
-</td>
-
-<td>
-${tcPct(x.monthly_sa_pct)}
-</td>
-
-<td>
-${tcPct(x.housing_annual_pct)}
-</td>
-
-<td>
-${tcPct(x.food_annual_pct)}
-</td>
-
-<td>
-${tcPct(x.transport_annual_pct)}
-</td>
-
-<td>
-${tcPct(x.trimmed_mean_annual_pct)}
-</td>
-
-</tr>
-
-`
-        )
-        .join('');
-
-
-    const box=
-        document.getElementById(
-            'cpiarchive'
-        );
-
-    if(box){
-
-        box.innerHTML=`
-
-<table class="tc-leci-full-table">
-
-<thead>
-
-<tr>
-
-<th>Month</th>
-<th>Annual CPI</th>
-<th>Monthly original</th>
-<th>Monthly SA</th>
-<th>Housing</th>
-<th>Food</th>
-<th>Transport</th>
-<th>Trimmed mean</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-${rows}
-
-</tbody>
-
-</table>
-
-`;
-    }
-}
-
-
-function toggleCPIArchive(){
-
-    const el=
-        document.getElementById(
-            'cpiarchive'
-        );
-
-    if(el){
-
-        el.classList.toggle(
-            'open'
-        );
-    }
-}
-
-
-function renderFullLECI(state){
-
-    const model=
-        (
-            (
-                state
-                .the_constant_derived
-                || {}
-            )
-            .leci_income_burden
-        )
-        || {};
-
-    const costs=
-        model.weekly_costs
-        || {};
-
-    const incomes=
-        model.incomes
-        || {};
-
-    const minimum=
-        incomes.minimum_wage
-        || {};
-
-    const proposed=
-        incomes.proposed_wage
-        || {};
-
-    const average=
-        incomes.average_wage
-        || {};
-
-
-    tcSet(
-        'leciminwagehead',
-        tcMoney(minimum.weekly)
-        +'/wk'
-    );
-
-    tcSet(
-        'leciproposedhead',
-        tcMoney(proposed.weekly)
-        +'/wk'
-    );
-
-    tcSet(
-        'leciaveragehead',
-        tcMoney(average.weekly)
-        +'/wk'
-    );
-
-
-    const labels={
-
-        rent:
-            'Rent',
-
-        electricity:
-            'Electricity',
-
-        gas:
-            'Gas',
-
-        water_sewerage:
-            'Water / sewerage',
-
-        food:
-            'Food',
-
-        transport:
-            'Transport',
-
-        health_medicines:
-            'Health / medicines',
-
-        insurance:
-            'Insurance',
-
-        household_necessities:
-            'Household necessities',
-
-        phone_internet:
-            'Phone / internet',
-
-        clothing_personal_care:
-            'Clothing / personal care'
-    };
-
-
-    const order=[
-
-        'rent',
-
-        'electricity',
-
-        'gas',
-
-        'water_sewerage',
-
-        'food',
-
-        'transport',
-
-        'health_medicines',
-
-        'insurance',
-
-        'household_necessities',
-
-        'phone_internet',
-
-        'clothing_personal_care'
-    ];
-
-
-    const rows=
-        order
-        .map(
-            key=>`
-
-<tr>
-
-<td>
-${labels[key]}
-</td>
-
-<td>
-${tcMoney(costs[key])}
-</td>
-
-<td>
-${tcPct(
-    (minimum.item_burden_pct||{})[key]
-)}
-</td>
-
-<td>
-${tcPct(
-    (proposed.item_burden_pct||{})[key]
-)}
-</td>
-
-<td>
-${tcPct(
-    (average.item_burden_pct||{})[key]
-)}
-</td>
-
-</tr>
-
-`
-        )
-        .join('');
-
-
-    const body=
-        document.getElementById(
-            'lecifullbody'
-        );
-
-    if(body){
-
-        body.innerHTML=rows;
-    }
-
-
-    tcSet(
-        'lecifulltotal',
-        tcMoney(
-            model.basket_total_weekly
-        )
-    );
-
-    tcSet(
-        'leciminburden',
-        tcPct(
-            minimum.total_burden_pct
-        )
-    );
-
-    tcSet(
-        'lecipropburden',
-        tcPct(
-            proposed.total_burden_pct
-        )
-    );
-
-    tcSet(
-        'leciavgburden',
-        tcPct(
-            average.total_burden_pct
-        )
-    );
-
-    tcSet(
-        'leciminremaining',
-        tcMoney(
-            minimum.gross_remaining
-        )
-    );
-
-    tcSet(
-        'lecipropremaining',
-        tcMoney(
-            proposed.gross_remaining
-        )
-    );
-
-    tcSet(
-        'leciavgremaining',
-        tcMoney(
-            average.gross_remaining
-        )
-    );
-
-
-    const minRemain=
-        document.getElementById(
-            'leciminremaining'
-        );
-
-    if(minRemain){
-
-        minRemain.className=
-
-            Number(
-                minimum.gross_remaining
-            ) < 0
-
-            ? 'tc-leci-negative'
-
-            : 'tc-leci-positive';
-    }
-}
-
-
 function toggleArchive(){document.getElementById('unionarchive').classList.toggle('open')}
 function toggleAnnouncementArchive(){document.getElementById('announcementarchive').classList.toggle('open')}
 function announcementFeed(items, emptyText){
@@ -3161,201 +1244,7 @@ function announcementFeed(items, emptyText){
   });
   return out||`<div class="sub">${esc(emptyText)}</div>`;
 }
-
-function economicCalendar(items){
-
-    if(!items || !items.length){
-        return `
-        <div class="sub">
-        No scheduled monitored events currently displayed.
-        </div>`;
-    }
-
-    return items.map(x=>`
-        <div class="tc-calendar-item">
-
-        <div class="tc-calendar-date">
-        ${esc(x.display_date||x.date||'')}
-        </div>
-
-        <div class="tc-calendar-title">
-        ${esc(x.label||'')}
-        </div>
-
-        <div class="sub">
-        ${esc(x.source||'')}
-        </div>
-
-        ${
-            x.why_it_matters
-            ? `<div class="tc-calendar-why">
-               ${esc(x.why_it_matters)}
-               </div>`
-            : ''
-        }
-
-        </div>
-    `).join('');
-}
-
-
-function reviewTracker(model){
-
-    const active=(model.active||[]);
-    const archive=(model.archive||[]);
-
-    if(!active.length){
-        return `
-        <div class="sub">
-        No active monitored review currently recorded.
-        The monitor remains active for new productivity,
-        government and parliamentary review developments.
-        </div>`;
-    }
-
-    return active.map(x=>`
-        <div class="event">
-
-        <div class="row">
-        <b>${esc(x.title||'')}</b>
-        <span class="tc-review-status">
-        ${esc(x.status||'Monitoring')}
-        </span>
-        </div>
-
-        <div class="sub">
-        ${esc(x.agency||'')}
-        </div>
-
-        ${
-            x.next_milestone
-            ? `<div>${esc(x.next_milestone)}</div>`
-            : ''
-        }
-
-        ${
-            x.relevance
-            ? `<div class="tc-calendar-why">
-               ${esc(x.relevance)}
-               </div>`
-            : ''
-        }
-
-        </div>
-    `).join('');
-}
-
-
-
-function retainedSourceSummary(name, s){
-
-    const c=s.core||{};
-    const bm=s.book_impact_model||{};
-    const wc=bm.workers_comp||{};
-    const tx=bm.tax_medicare||{};
-    const sg=bm.superannuation||{};
-    const ism=s.income_support_counterfactual||{};
-    const payments=ism.payments||{};
-    const rem=s.remuneration||{};
-
-    if(name==="Services Australia DSP Income Test"){
-        return "Last verified retained: Chart C "
-            + money(c.chart_c_fortnightly)
-            + "/fn · free area "
-            + money(c.income_free_area_fortnightly)
-            + "/fn · taper "
-            + Math.round((c.taper||0)*100)
-            + "c per $1.";
-    }
-
-    if(name==="Services Australia — Age Pension Rates"){
-        const basic=payments.age_pension_single_basic||{};
-        const total=payments.age_pension_single_total||{};
-
-        return "Last verified retained: single basic "
-            + money(basic.actual_fortnightly)
-            + "/fn · single total "
-            + money(total.actual_fortnightly)
-            + "/fn.";
-    }
-
-    if(name==="Services Australia — JobSeeker Rates"){
-        const js=payments.jobseeker_single_no_children||{};
-
-        return "Last verified retained: single, no children "
-            + money(js.actual_fortnightly)
-            + "/fn.";
-    }
-
-    if(name==="Safe Work Australia — Premiums"){
-        return "Last verified retained: standardised average premium rate "
-            + pct(wc.latest_standardised_average_premium_rate_pct)
-            + " · "
-            + esc(wc.latest_rate_period||"reference period retained")
-            + ".";
-    }
-
-    if(name==="ATO — Medicare Levy"){
-        return "Last verified retained in model: Medicare levy "
-            + pct(tx.medicare_levy_rate_pct)
-            + ".";
-    }
-
-    if(name==="ATO — Payday Super"){
-        return "Last verified retained in model: SG rate "
-            + pct(sg.sg_rate_pct)
-            + ".";
-    }
-
-    if(name==="ATO — 2026 PAYG Tax Tables"){
-        return "Current retained model: 2026–27 resident tax settings. "
-            + "Exact weekly PAYG coefficients remain separately identified "
-            + "as pending direct implementation.";
-    }
-
-    if(name==="Remuneration Tribunal — Document Library"){
-        return "Last verified retained: federal MP base salary "
-            + money(rem.parliamentary_base_salary_annual)
-            + "/year · 2026 general adjustment "
-            + pct(rem.review_2026_general_adjustment_pct)
-            + ".";
-    }
-
-    return "";
-}
-
-
 async function pull(){try{const r=await fetch('/api/state',{cache:'no-store'});if(r.ok)draw(await r.json())}catch(e){}}
 clock();setInterval(clock,1000);pull();setInterval(pull,15000);
-
-async function registerVisit(){
-  try{
-    const r=await fetch("/api/visit",{method:"POST",credentials:"same-origin"});
-    if(!r.ok) return;
-    const v=await r.json();
-    const el=document.getElementById("visitcount");
-    if(el) el.textContent=Number(v.total_visits||0).toLocaleString();
-    const st=document.getElementById("visitstorage");
-    if(st) st.textContent=(v.storage==="persistent" ? "Lifetime count stored persistently" : "Counter running in local fallback mode");
-  }catch(e){}
-}
-registerVisit();
-
 </script>
-
-<!-- ======================================================================================
-     THE CONSTANT LIVE v5.6.8 — DISPLAY-BINDING COMPATIBILITY LAYER
-     These nodes preserve draw() DOM integrity without creating duplicate visible panels.
-     ====================================================================================== -->
-<div id="tc-v568-binding-compatibility" style="display:none" aria-hidden="true">
-    <span id="rbapolicycash"></span>
-    <span id="lecibbasket"></span>
-    <span id="lecibactual"></span>
-    <span id="lecibcorrected"></span>
-    <span id="lecibrelief"></span>
-    <span id="costbasket2"></span>
-    <span id="actualremaining"></span>
-    <span id="correctedremaining"></span>
-</div>
-
 </body></html>
