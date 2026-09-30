@@ -534,6 +534,12 @@ body,
 
 </style>
 
+<style id="tc-igr-lab-style">.scenario-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:14px}.scenario-controls label{font-size:12px;color:#9fb0c8;font-weight:700}.scenario-controls select,.scenario-controls input{display:block;width:100%;margin-top:6px;padding:9px;border-radius:8px;background:#07182f;color:#fff;border:1px solid rgba(255,255,255,.15)}#igrScenarioChart{width:100%;min-width:650px}</style>
+<style id="tc-igr-restore-style">
+#scenario-igr-lab{border-color:rgba(255,212,59,.25)}
+#scenario-igr-lab>.title{color:#ffd43b}
+@media(max-width:600px){#scenario-igr-lab .three{grid-template-columns:1fr}}
+</style>
 </head>
 <body><div class="tc-shell">
 
@@ -1544,6 +1550,33 @@ Relevant official announcements remain on the main dashboard for
 </section>
 <section class="card">
 
+<section class="card" id="scenario-igr-lab">
+<div class="title">INTERGENERATIONAL REPORT — WAGE TRANSMISSION QUESTION</div>
+<div class="tc-explainer"><strong>Why this sits in the main evidence flow.</strong> Treasury's Intergenerational Report framework examines long-run growth through population, participation and productivity. THE CONSTANT adds a separate question for readers to test: how completely does long-run economic growth transmit to the statutory wage floor and household living standards?</div>
+<div class="three" style="margin-top:14px">
+<div class="stat"><div class="lab">TREASURY FRAMEWORK</div><div class="val cyan" style="font-size:19px">3Ps</div><div class="sub">Population · Participation · Productivity</div></div>
+<div class="stat"><div class="lab">THE CONSTANT QUESTION</div><div class="val gold" style="font-size:19px">WAGE TRANSMISSION</div><div class="sub">Does growth reach the wage floor?</div></div>
+<div class="stat"><div class="lab">COMPARISON RULE</div><div class="val purple" style="font-size:19px">LIKE WITH LIKE</div><div class="sub">Separate nominal scenarios from real living-standard measures</div></div>
+</div>
+<div class="tc-explainer" style="margin-top:14px"><strong>Scenario / counterfactual — not a forecast of Fair Work Commission decisions.</strong> Test alternative wage-to-Chart-C relationships over 10, 20, 30 or 40 years. The relationship and growth assumptions remain visible, and the real/nominal safeguard remains explicit.</div>
+
+<div class="scenario-controls">
+<label>Relationship<select id="igrRatio"><option value="0.72">~72% empirical post-break reference</option><option value="0.743985" selected>74.3985% current 2026 Q4 observation</option><option value="0.934641">93.4641% 2000 Q2 preservation counterfactual</option><option value="1">100% Chart C alignment</option><option value="custom">Custom</option></select></label>
+<label id="igrCustomWrap" style="display:none">Custom %<input id="igrCustom" type="number" min="1" max="150" step="0.01" value="80"></label>
+<label>Horizon<select id="igrHorizon"><option>10</option><option>20</option><option>30</option><option selected>40</option></select></label>
+<label>Chart C annual growth %<input id="igrGrowth" type="number" min="-10" max="20" step="0.000001" value="2.585722"></label>
+<label>Price basis<select id="igrBasis"><option value="nominal" selected>Nominal dollars</option><option value="real">Real 2026 dollars</option></select></label>
+<label id="igrInflationWrap" style="display:none">Inflation / deflator %<input id="igrInflation" type="number" min="-5" max="20" step="0.1" value="2.5"></label>
+</div>
+
+<div class="three" style="margin-top:14px"><div class="stat"><div class="lab">Endpoint Chart C</div><div class="val gold" id="igrChartEnd">—</div><div class="sub" id="igrChartSub">—</div></div><div class="stat"><div class="lab">Endpoint Wage</div><div class="val cyan" id="igrWageEnd">—</div><div class="sub" id="igrRatioSub">—</div></div><div class="stat"><div class="lab">Endpoint Difference</div><div class="val red" id="igrGapEnd">—</div><div class="sub" id="igrGapAnnual">—</div></div></div>
+<div class="tc-scenario-chart-wrap"><svg id="igrScenarioChart" viewBox="0 0 1000 500" role="img" aria-label="Interactive Chart C and wage relationship scenario"></svg></div>
+<div class="tc-scenario-legend"><span class="gold">● Chart C</span> <span class="cyan">● selected wage relationship</span></div>
+<div class="sub" id="igrMethod"></div>
+<div class="sub" style="margin-top:8px"><strong>Evidence separation:</strong> ~72% is an empirical post-break reference; 74.3985% is the observed 2026 Q4 ratio; 93.4641% is the immediate pre-rupture preservation counterfactual; 100% is THE CONSTANT alignment scenario. None is presented as an official government target.</div>
+<div class="sub" style="margin-top:8px"><strong>IGR comparison safeguard:</strong> a nominal Chart C scenario and a real per-capita income projection are not directly comparable. Select <em>Real 2026 dollars</em> and supply an explicit deflator assumption before making a common-price-basis comparison.</div>
+</section>
+
 <section class="card" id="ten-year-scenario">
 
 <div class="title">
@@ -2212,6 +2245,7 @@ const esc=v=>String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replac
 function clock(){document.getElementById('clock').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'})}
 function draw(s){
  const c=s.core||{},o=s.official||{},f=s.forward||{};
+ window.TC_LIVE_CURRENT=c;
  tcSet("mw",money(c.minimum_wage_weekly));tcSet("cc",money(c.chart_c_weekly));tcSet("ratio",pct(c.ratio_pct));tcSet("gap",money(c.weekly_gap));
  document.getElementById("cpi2").textContent=pct(o.cpi_annual_pct);
  tcSet("talkgap",pct(100-(c.ratio_pct||0)));
@@ -2237,6 +2271,7 @@ function draw(s){
  tcSet('changedannualref',(cm.reference_period||o.cpi_reference_period||'Latest official ABS')+' · previous '+tcPct((cpiModel.previous||{}).annual_cpi_pct));
  tcSet('rbaheadline',tcPct(liveAnnual)); tcSet('rbatrimmed',tcPct(cm.trimmed_mean_annual_pct)); tcSet('rbaexvolatile',tcPct(cm.ex_volatile_annual_pct)); tcSet('rbafuel',tcPct(cm.automotive_fuel_monthly_pct));
  renderInflationSixMonth(s);renderCPIMonthComparison(s);renderFullLECI(s);
+ if(typeof renderIgrLab==='function') renderIgrLab();
  // v5.7.5 frontend live bindings: keep every visible CPI/RBA field synchronized.
  tcSet('rbaheadline', pct(o.cpi_annual_pct));
  tcSet('tickercash', pct(o.cash_rate_pct));
@@ -3273,6 +3308,32 @@ async function registerVisit(){
 }
 registerVisit();
 
+</script>
+
+
+<script id="tc-igr-restored-js">
+function tcMoney(x){return '$'+Number(x).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
+function renderIgrLab(){
+ const sel=document.getElementById('igrRatio'); if(!sel)return;
+ const custom=sel.value==='custom'; document.getElementById('igrCustomWrap').style.display=custom?'':'none';
+ const basis=document.getElementById('igrBasis').value; document.getElementById('igrInflationWrap').style.display=basis==='real'?'':'none';
+ let ratio=custom?Number(document.getElementById('igrCustom').value)/100:Number(sel.value);
+ let years=Number(document.getElementById('igrHorizon').value), g=Number(document.getElementById('igrGrowth').value)/100;
+ let infl=Number(document.getElementById('igrInflation').value)/100, base=Number(window.TC_LIVE_CURRENT?.chart_c_weekly||1350.70), pts=[];
+ if(!isFinite(ratio)||!isFinite(years)||!isFinite(g)||ratio<=0)return;
+ for(let y=0;y<=years;y++){let c=base*Math.pow(1+g,y); if(basis==='real')c/=Math.pow(1+infl,y); pts.push({y,c,w:c*ratio});}
+ let e=pts[pts.length-1], gap=e.c-e.w;
+ document.getElementById('igrChartEnd').textContent=tcMoney(e.c); document.getElementById('igrWageEnd').textContent=tcMoney(e.w); document.getElementById('igrGapEnd').textContent=tcMoney(gap);
+ document.getElementById('igrChartSub').textContent=years+'-year endpoint · '+(basis==='real'?'real 2026 dollars':'nominal dollars');
+ document.getElementById('igrRatioSub').textContent=(ratio*100).toFixed(4).replace(/0+$/,'').replace(/\.$/,'')+'% of Chart C'; document.getElementById('igrGapAnnual').textContent=tcMoney(gap*52)+' per year';
+ document.getElementById('igrMethod').innerHTML='<strong>Method:</strong> current verified Chart C '+tcMoney(base)+'/week × (1 + '+(g*100).toFixed(6)+'%)<sup>t</sup>; wage = '+(ratio*100).toFixed(4)+'% of Chart C.'+(basis==='real'?' Nominal values are deflated by '+(infl*100).toFixed(2)+'% a year into 2026-dollar terms.':' Values remain nominal; no inflation adjustment is applied.');
+ const svg=document.getElementById('igrScenarioChart'), W=1000,H=500,L=80,R=30,T=30,B=65, max=Math.max(...pts.map(p=>p.c))*1.06;
+ const x=i=>L+(W-L-R)*i/(pts.length-1||1), y=v=>T+(H-T-B)*(1-v/max), path=k=>pts.map((p,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(p[k]).toFixed(1)).join(' ');
+ let grid=''; for(let i=0;i<=4;i++){let v=max*i/4, yy=y(v);grid+=`<line x1="${L}" y1="${yy}" x2="${W-R}" y2="${yy}" stroke="rgba(255,255,255,.12)"/><text x="${L-10}" y="${yy+5}" text-anchor="end" fill="#9fb0c8" font-size="18">$${Math.round(v).toLocaleString()}</text>`;}
+ svg.innerHTML=grid+`<line x1="${L}" y1="${H-B}" x2="${W-R}" y2="${H-B}" stroke="rgba(255,255,255,.3)"/><path d="${path('c')}" fill="none" stroke="#f3c64e" stroke-width="5"/><path d="${path('w')}" fill="none" stroke="#4fd4ff" stroke-width="5"/><text x="${L}" y="${H-20}" fill="#9fb0c8" font-size="18">2026</text><text x="${W-R}" y="${H-20}" text-anchor="end" fill="#9fb0c8" font-size="18">${2026+years}</text>`;
+}
+['igrRatio','igrCustom','igrHorizon','igrGrowth','igrBasis','igrInflation'].forEach(id=>{document.addEventListener('change',e=>{if(e.target&&e.target.id===id)renderIgrLab();});document.addEventListener('input',e=>{if(e.target&&e.target.id===id)renderIgrLab();});});
+window.addEventListener('load',renderIgrLab);
 </script>
 
 <!-- ======================================================================================
